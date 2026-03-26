@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
-const API_CATALOGO = window.API_CATALOGO;
+const API_URL = process.env.API_URL;
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

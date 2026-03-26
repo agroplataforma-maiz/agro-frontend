@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
-const API_URL = process.env.API_URL;
+const API_URL = "http://backend";
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

@@ -310,15 +310,15 @@ async function apiFetch(path, opciones = {}) {
 
 
 const getPrefix = (cat) => "catalogo";
-const listar = (cat) => apiFetch(`/${getPrefix(cat)}/${cat}/`);
-const obtener = (cat, id) => apiFetch(`/${getPrefix(cat)}/${cat}/${id}/`);
+const listar = (cat) => apiFetch(`/${getPrefix(cat)}/${cat}`);
+const obtener = (cat, id) => apiFetch(`/${getPrefix(cat)}/${cat}/${id}`);
 const crear = (cat, d) =>
-  apiFetch(`/${getPrefix(cat)}/${cat}/`, {
+  apiFetch(`/${getPrefix(cat)}/${cat}`, {
     method: "POST",
     body: JSON.stringify(d),
   });
 const actualizar = (cat, id, d) =>
-  apiFetch(`/${getPrefix(cat)}/${cat}/${id}/`, {
+  apiFetch(`/${getPrefix(cat)}/${cat}/${id}`, {
     method: "PUT",
     body: JSON.stringify(d),
   });

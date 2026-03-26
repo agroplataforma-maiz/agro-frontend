@@ -2,7 +2,7 @@
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
 // Cambia el puerto si tu backend expone otro diferente a 8000
-const API_CATALOGO = "http://backend";
+const API_CATALOGO = "http://backend/api";
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

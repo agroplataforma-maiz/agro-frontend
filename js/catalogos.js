@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
-const API_URL = "backend";
+const API_CATALOGO = "backend";
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

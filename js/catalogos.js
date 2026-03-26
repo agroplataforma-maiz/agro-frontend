@@ -2,7 +2,8 @@
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
 // Cambia el puerto si tu backend expone otro diferente a 8000
-const API_CATALOGO = "http://localhost:8080/api";
+// Usar URL relativa para que el frontend use el mismo host/IP
+const API_CATALOGO = "/api";
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

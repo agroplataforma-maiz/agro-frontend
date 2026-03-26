@@ -4,7 +4,7 @@
 // Cambia el puerto si tu backend expone otro diferente a 8000
 // Usar URL relativa para que el frontend use el mismo host/IP
 // Usar el mismo host pero siempre el puerto 8080
-const API_CATALOGO = window.location.protocol + '//' + window.location.hostname + ':8080/api';
+const API_CATALOGO = window.location.protocol + '//' + window.location.hostname + '/api';
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

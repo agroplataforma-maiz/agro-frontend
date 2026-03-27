@@ -27,17 +27,16 @@
     <div class="sidebar-item" onclick="cargarCatalogo('color_grano')" data-cat="color_grano">
       <div class="si-dot"></div><span class="si-nombre">Colores de grano</span>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('estado_conservacion')" data-cat="estado_conservacion">
-      <div class="si-dot"></div><span class="si-nombre">Estado conservación</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('origen_muestra')" data-cat="origen_muestra">
-      <div class="si-dot"></div><span class="si-nombre">Origen de muestra</span>
-    </div>
     <div class="sidebar-item" onclick="cargarCatalogo('uso_maiz')" data-cat="uso_maiz">
       <div class="si-dot"></div><span class="si-nombre">Uso del maíz</span>
     </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('estado_conservacion')" data-cat="estado_conservacion">
+      <div class="si-dot"></div><span class="si-nombre">Estado conservación</span>
+    </div>
+   
 
-    <div class="sidebar-group-label">Agronómico</div>
+    <div class="sidebar-group-label">Agronómico y fenotipo</div>
+
     <div class="sidebar-item" onclick="cargarCatalogo('tipo_practica')" data-cat="tipo_practica">
       <div class="si-dot"></div><span class="si-nombre">Tipo práctica</span>
     </div>
@@ -46,6 +45,18 @@
     </div>
     <div class="sidebar-item" onclick="cargarCatalogo('sistema_manejo')" data-cat="sistema_manejo">
       <div class="si-dot"></div><span class="si-nombre">Sistema de manejo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('sistema_cultivo')" data-cat="sistema_cultivo">
+      <div class="si-dot"></div><span class="si-nombre">Sistemas de cultivo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('metodo_almacenamiento')" data-cat="metodo_almacenamiento">
+      <div class="si-dot"></div><span class="si-nombre">Métodos de almacenamiento</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_fenotipo')" data-cat="tipo_fenotipo">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de fenotipo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('etapa_fenologica')" data-cat="etapa_fenologica">
+      <div class="si-dot"></div><span class="si-nombre">Etapas fenológicas</span>
     </div>
 
     <div class="sidebar-group-label">Territorio</div>
@@ -64,30 +75,83 @@
     <div class="sidebar-item" onclick="cargarCatalogo('colonia')" data-cat="colonia">
       <div class="si-dot"></div><span class="si-nombre">Colonias</span>
     </div>
-
-    <div class="sidebar-group-label">Suelo y ambiente</div>
     <div class="sidebar-item" onclick="cargarCatalogo('clase_uso_suelo')" data-cat="clase_uso_suelo">
-      <div class="si-dot"></div><span class="si-nombre">Clases uso de suelo</span>
+    <div class="si-dot"></div><span class="si-nombre">Clases uso de suelo</span>
     </div>
+        
+
+    <div class="sidebar-group-label">Ambiental</div>
     <div class="sidebar-item" onclick="cargarCatalogo('tipo_evento_climatico')" data-cat="tipo_evento_climatico">
       <div class="si-dot"></div><span class="si-nombre">Eventos climáticos</span>
     </div>
     <div class="sidebar-item" onclick="cargarCatalogo('variable_ambiental')" data-cat="variable_ambiental">
       <div class="si-dot"></div><span class="si-nombre">Variables ambientales</span>
     </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_amenaza')" data-cat="tipo_amenaza">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de amenaza</span>
+    </div>
+    
 
     <div class="sidebar-group-label">Social y cultural</div>
 
 
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_productor')" data-cat="tipo_productor">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de productor</span>
+    </div>
     <div class="sidebar-item" onclick="cargarCatalogo('lengua')" data-cat="lengua">
       <div class="si-dot"></div><span class="si-nombre">Lenguas</span>
     </div>
     <div class="sidebar-item" onclick="cargarCatalogo('pueblo_originario')" data-cat="pueblo_originario">
       <div class="si-dot"></div><span class="si-nombre">Pueblos originarios</span>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_productor')" data-cat="tipo_productor">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de productor</span>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_ritual_agricola')" data-cat="tipo_ritual_agricola">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de ritual agrícola</span>
     </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_narrativa_oral')" data-cat="tipo_narrativa_oral">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de narrativa oral</span>
+    </div>
+     
+    <div class="sidebar-item" onclick="cargarCatalogo('categoria_saber_agricola')" data-cat="categoria_saber_agricola">
+      <div class="si-dot"></div><span class="si-nombre">Categorías saber agrícola</span>
+    </div> 
+    <div class="sidebar-item" onclick="cargarCatalogo('ocasion')" data-cat="ocasion">
+      <div class="si-dot"></div><span class="si-nombre">Ocasiones</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('mecanismo_transmision')" data-cat="mecanismo_transmision">
+      <div class="si-dot"></div><span class="si-nombre">Mecanismos de transmisión</span>
+    </div>
+     <div class="sidebar-item" onclick="cargarCatalogo('vinculo_maiz')" data-cat="vinculo_maiz">
+      <div class="si-dot"></div><span class="si-nombre">Vínculos del maíz</span>
+    </div>
+    
+    <div class="sidebar-group-label">Trazabilidad</div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_producto_dron')" data-cat="tipo_producto_dron">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de producto dron</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('formato_archivo')" data-cat="formato_archivo">
+      <div class="si-dot"></div><span class="si-nombre">Formatos de archivo</span>
+    </div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_capa_sig')" data-cat="tipo_capa_sig">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de capa SIG</span>
+    </div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('fuente_captura')" data-cat="fuente_captura">
+      <div class="si-dot"></div><span class="si-nombre">Fuentes de captura</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('fuente_informacion')" data-cat="fuente_informacion">
+      <div class="si-dot"></div><span class="si-nombre">Fuentes de información</span>
+    </div>
+    
+    <div class="sidebar-item" onclick="cargarCatalogo('origen_muestra')" data-cat="origen_muestra">
+      <div class="si-dot"></div><span class="si-nombre">Origen de muestra</span>
+    </div>
+    
+    <div class="sidebar-item" onclick="cargarCatalogo('origen_semilla')" data-cat="origen_semilla">
+      <div class="si-dot"></div><span class="si-nombre">Origen de semilla</span>
+    </div>
+   
   </aside>
 
   <!-- ── MAIN ── -->
@@ -155,6 +219,13 @@
   <div class="toast-wrap" id="toast-wrap"></div>
 
   <script src="js/catalogos.js"></script>
+</body>
+<script>
+// Cargar el catálogo inicial automáticamente al cargar la página
+window.addEventListener('DOMContentLoaded', function() {
+  cargarCatalogo('raza_maiz');
+});
+</script>
 </body>
 
 </html>

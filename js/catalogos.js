@@ -1,13 +1,31 @@
-// ═══════════════════════════════════════════════════════
-// CONFIGURACIÓN
-// ═══════════════════════════════════════════════════════
-// Cambia el puerto si tu backend expone otro diferente a 8000
 const API_CATALOGO = 'https://agromaiz.mx/api';
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }
 // type: text | number | textarea | select | boolean
 const CATALOGO = {
+      formato_archivo: {
+        nombre: "Formatos de archivo",
+        campos: [
+          { key: "nombre", label: "Nombre", type: "text", required: true },
+          { key: "descripcion", label: "Descripción", type: "textarea" }
+        ],
+      },
+      categoria_saber_agricola: {
+        nombre: "Categorías saber agrícola",
+        campos: [
+          { key: "nombre", label: "Nombre", type: "text", required: true },
+          { key: "descripcion", label: "Descripción", type: "textarea" }
+        ],
+      },
+    etapa_fenologica: {
+      nombre: "Etapas fenológicas",
+      campos: [
+        { key: "nombre", label: "Nombre", type: "text", required: true },
+        { key: "descripcion", label: "Descripción", type: "textarea" },
+        //{ key: "orden", label: "Orden", type: "number" },
+      ],
+    },
   raza_maiz: {
     nombre: "Razas del maíz",
     campos: [
@@ -15,9 +33,7 @@ const CATALOGO = {
       { key: "descripcion", label: "Descripción", type: "textarea" },
       { key: "region_origen", label: "Región de origen", type: "text" },
       { key: "tipo_ciclo", label: "Tipo de ciclo", type: "text" },
-      { key: "es_nativa", label: "¿Es nativa?", type: "boolean" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "es_nativa", label: "¿Es nativa?", type: "boolean" }
     ],
   },
   color_grano: {
@@ -25,9 +41,7 @@ const CATALOGO = {
     campos: [
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "descripcion", label: "Descripción", type: "textarea" },
-      { key: "es_nativo", label: "¿Es nativo?", type: "boolean" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "es_nativo", label: "¿Es nativo?", type: "boolean" }
     ],
   },
   estado_conservacion: {
@@ -36,9 +50,8 @@ const CATALOGO = {
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "descripcion", label: "Descripción", type: "textarea" },
       { key: "nivel_riesgo", label: "Nivel de riesgo", type: "number" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      //{ key: "created_at", label: "Creado el", type: "text" },
+      //{ key: "updated_at", label: "Actualizado el", type: "text" },
     ],
   },
   uso_maiz: {
@@ -57,10 +70,7 @@ const CATALOGO = {
       { key: "categoria_general", label: "Categoría general", type: "text" },
       { key: "descripcion", label: "Descripción", type: "textarea" },
       { key: "relevante_maiz", label: "Relevante para maíz", type: "boolean" },
-      { key: "activo", label: "Activo", type: "boolean" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "activo", label: "Activo", type: "boolean" }
     ],
   },
   tipo_evento_climatico: {
@@ -68,10 +78,7 @@ const CATALOGO = {
     campos: [
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "severidad_base", label: "Severidad base", type: "number" },
-      { key: "descripcion", label: "Descripción", type: "textarea" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
     ],
   },
   variable_ambiental: {
@@ -80,10 +87,7 @@ const CATALOGO = {
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "unidad", label: "Unidad", type: "text" },
       { key: "valor_min", label: "Valor mínimo", type: "number" },
-      { key: "valor_max", label: "Valor máximo", type: "number" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "valor_max", label: "Valor máximo", type: "number" }
     ],
   },
   tipo_productor: {
@@ -91,7 +95,6 @@ const CATALOGO = {
     campos: [
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "descripcion", label: "Descripción", type: "textarea" },
-      // { key: 'id', label: 'ID', type: 'number' },
     ],
   },
   tipo_practica: {
@@ -106,9 +109,7 @@ const CATALOGO = {
     campos: [
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "descripcion", label: "Descripción", type: "textarea" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      // { key: 'id', label: 'ID', type: 'number' }
     ],
   },
   sistema_manejo: {
@@ -116,9 +117,7 @@ const CATALOGO = {
     campos: [
       { key: "nombre", label: "Nombre", type: "text", required: true },
       { key: "descripcion", label: "Descripción", type: "textarea" },
-      { key: "es_tradicional", label: "Es tradicional", type: "boolean" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "es_tradicional", label: "Es tradicional", type: "boolean" }
     ],
   },
   lengua: {
@@ -136,10 +135,8 @@ const CATALOGO = {
         type: "text",
       },
       { key: "variante", label: "Variante", type: "text" },
-      { key: "clave_inali", label: "Clave INALI", type: "text" },
+      { key: "clave_inali", label: "Clave INALI", type: "text" }
       // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
     ],
   },
   pueblo_originario: {
@@ -154,9 +151,7 @@ const CATALOGO = {
         label: "Municipios con presencia",
         type: "textarea",
       },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      // { key: 'id', label: 'ID', type: 'number' }
     ],
   },
   origen_muestra: {
@@ -179,10 +174,8 @@ const CATALOGO = {
         required: true,
       },
       { key: "nombre", label: "Nombre", type: "text", required: true },
-      { key: "abreviatura", label: "Abreviatura", type: "text" },
+      { key: "abreviatura", label: "Abreviatura", type: "text" }
       // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
     ],
   },
   municipio: {
@@ -212,9 +205,6 @@ const CATALOGO = {
         type: "number",
       },
       { key: "superficie_km2", label: "Superficie (km²)", type: "number" },
-      // { key: 'id', label: 'ID', type: 'number' },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
     ],
   },
   comunidad: {
@@ -235,9 +225,7 @@ const CATALOGO = {
         type: "number",
       },
       { key: "fuente", label: "Fuente", type: "text" },
-      { key: "id", label: "ID", type: "number" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "id", label: "ID", type: "number" }
     ],
   },
   localidad: {
@@ -262,9 +250,7 @@ const CATALOGO = {
       { key: "municipio_id", label: "ID Municipio", type: "number" },
       { key: "comunidad_id", label: "ID Comunidad", type: "number" },
       { key: "fuente", label: "Fuente", type: "text" },
-      { key: "id", label: "ID", type: "number" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "id", label: "ID", type: "number" }
     ],
   },
   colonia: {
@@ -276,9 +262,105 @@ const CATALOGO = {
       { key: "latitud", label: "Latitud", type: "number" },
       { key: "longitud", label: "Longitud", type: "number" },
       { key: "localidad_id", label: "ID Localidad", type: "number" },
-      { key: "id", label: "ID", type: "number" },
-      { key: "created_at", label: "Creado el", type: "text" },
-      { key: "updated_at", label: "Actualizado el", type: "text" },
+      { key: "id", label: "ID", type: "number" }
+    ],
+  },
+  fuente_captura: {
+    nombre: "Fuentes de captura",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  fuente_informacion: {
+    nombre: "Fuentes de información",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  mecanismo_transmision: {
+    nombre: "Mecanismos de transmisión",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  metodo_almacenamiento: {
+    nombre: "Métodos de almacenamiento",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  ocasion: {
+    nombre: "Ocasiones",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  origen_semilla: {
+    nombre: "Origen de semilla",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  sistema_cultivo: {
+    nombre: "Sistemas de cultivo",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_amenaza: {
+    nombre: "Tipos de amenaza",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_capa_sig: {
+    nombre: "Tipos de capa SIG",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_fenotipo: {
+    nombre: "Tipos de fenotipo",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_narrativa_oral: {
+    nombre: "Tipos de narrativa oral",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_producto_dron: {
+    nombre: "Tipos de producto dron",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  tipo_ritual_agricola: {
+    nombre: "Tipos de ritual agrícola",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
+    ],
+  },
+  vinculo_maiz: {
+    nombre: "Vínculos del maíz",
+    campos: [
+      { key: "nombre", label: "Nombre", type: "text", required: true },
+      { key: "descripcion", label: "Descripción", type: "textarea" }
     ],
   },
 };

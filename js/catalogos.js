@@ -2,9 +2,7 @@
 // CONFIGURACIÓN
 // ═══════════════════════════════════════════════════════
 // Cambia el puerto si tu backend expone otro diferente a 8000
-// Usar URL relativa para que el frontend use el mismo host/IP
-// Usar el mismo host pero siempre el puerto 8080
-const API_CATALOGO = 'https://agromaiz.mx/api';
+const API_CATALOGO = 'http://agromaiz.mx/api';
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

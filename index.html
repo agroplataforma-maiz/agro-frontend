@@ -13,6 +13,11 @@
 
 <body>
 
+  <!-- BOTÓN HAMBURGUESA PARA MÓVIL -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú" onclick="document.getElementById('sidebar').classList.toggle('open')">
+    ☰
+  </button>
+
   <!-- ── SIDEBAR ── -->
   <aside class="sidebar" id="sidebar">
     <div class="sidebar-logo">
@@ -219,6 +224,30 @@
   <div class="toast-wrap" id="toast-wrap"></div>
 
   <script src="js/catalogos.js"></script>
+<script>
+// Mostrar/ocultar sidebar en móvil
+window.addEventListener('DOMContentLoaded', function() {
+  cargarCatalogo('raza_maiz');
+  // Cerrar sidebar al hacer clic fuera en móvil
+  document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    if (window.innerWidth <= 680 && sidebar.classList.contains('open')) {
+      if (!sidebar.contains(e.target) && e.target !== toggle) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+  // Cerrar sidebar al seleccionar un catálogo en móvil
+  document.querySelectorAll('.sidebar-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      if (window.innerWidth <= 680) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    });
+  });
+});
+</script>
 </body>
 <script>
 // Cargar el catálogo inicial automáticamente al cargar la página

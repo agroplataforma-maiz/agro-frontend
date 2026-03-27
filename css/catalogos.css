@@ -1,3 +1,36 @@
+/* ── BOTÓN HAMBURGUESA ── */
+.sidebar-toggle {
+  display: none;
+  position: fixed;
+  top: 18px;
+  left: 18px;
+  z-index: 201;
+  background: var(--tierra);
+  color: var(--maiz-cl);
+  border: none;
+  font-size: 28px;
+  border-radius: 8px;
+  padding: 6px 14px 8px 14px;
+  box-shadow: 0 2px 8px rgba(61,34,8,0.08);
+  cursor: pointer;
+}
+
+@media (max-width: 680px) {
+  .sidebar-toggle {
+    display: block;
+  }
+  .sidebar {
+    transform: translateX(-100%);
+    transition: transform 0.25s;
+  }
+  .sidebar.open {
+    transform: translateX(0);
+  }
+  .main {
+    margin-left: 0;
+    padding: 16px;
+  }
+}
 /* ── DETALLE MODAL ── */
 .detalle-titulo {
   font-family: 'Fraunces', serif;

@@ -339,7 +339,7 @@ async function cargarCatalogo(cat) {
 
   // Actualizar topbar
   document.getElementById("cat-titulo").textContent = def.nombre;
-  document.getElementById("cat-endpoint").textContent = `/catalogo/${cat}/`;
+  document.getElementById("cat-endpoint").textContent = `/catalogo/${cat}`;
   document.getElementById("buscador").value = "";
 
   mostrarCargando();

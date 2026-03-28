@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════
-const API = 'http://localhost:8000';
+const API = 'https://agromaiz.mx';
 const TOKEN_KEY = 'agro_token';
 const USER_KEY  = 'agro_user';
 

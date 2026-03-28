@@ -1,4 +1,4 @@
-const API_CATALOGO = 'https://agromaiz.mx/api';
+const API_CATALOGO = 'https://agromaiz.mx';
 
 // ── DEFINICIÓN DE CATÁLOGOS ──────────────────────────
 // campos: array de { key, label, type, required, opciones[] }

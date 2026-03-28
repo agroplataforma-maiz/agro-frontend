@@ -1,3 +1,47 @@
+/* ── PAGINACIÓN ── */
+.pag-wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 20px;
+  border-top: 1px solid var(--borde);
+  flex-wrap: wrap;
+  gap: 8px;
+}
+.pag-info {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--gris);
+}
+.pag-btns {
+  display: flex;
+  gap: 4px;
+}
+.pag-btn {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px solid var(--borde);
+  background: var(--blanco);
+  color: var(--cafe);
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.pag-btn:hover {
+  background: var(--verde-pal);
+  border-color: var(--verde-cl);
+}
+.pag-btn.active {
+  background: var(--verde);
+  color: #fff;
+  border-color: var(--verde);
+}
+.pag-btn:disabled {
+  opacity: 0.35;
+  cursor: not-allowed;
+}
+
 /* ── BOTÓN HAMBURGUESA ── */
 .sidebar-toggle {
   display: none;

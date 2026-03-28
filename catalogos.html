@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Catálogos · Agroplataforma Maíz Nativo</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap"
+    rel="stylesheet">
+  <link rel="stylesheet" href="css/catalogos.css">
+</head>
+
+<body>
+
+  <!-- BOTÓN HAMBURGUESA PARA MÓVIL -->
+  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú" onclick="document.getElementById('sidebar').classList.toggle('open')">
+    ☰
+  </button>
+
+  <!-- ── SIDEBAR ── -->
+  <aside class="sidebar" id="sidebar">
+    <div class="sidebar-logo">
+      <h1>🌽 Agroplataforma</h1>
+      <p>Gestión de catálogos</p>
+    </div>
+
+    <div class="sidebar-group-label">Maíz y germoplasma</div>
+    <div class="sidebar-item active" onclick="cargarCatalogo('raza_maiz')" data-cat="raza_maiz">
+      <div class="si-dot"></div><span class="si-nombre">Razas del maíz</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('color_grano')" data-cat="color_grano">
+      <div class="si-dot"></div><span class="si-nombre">Colores de grano</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('uso_maiz')" data-cat="uso_maiz">
+      <div class="si-dot"></div><span class="si-nombre">Uso del maíz</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('estado_conservacion')" data-cat="estado_conservacion">
+      <div class="si-dot"></div><span class="si-nombre">Estado conservación</span>
+    </div>
+   
+
+    <div class="sidebar-group-label">Agronómico y fenotipo</div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_practica')" data-cat="tipo_practica">
+      <div class="si-dot"></div><span class="si-nombre">Tipo práctica</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('practica_agricola')" data-cat="practica_agricola">
+      <div class="si-dot"></div><span class="si-nombre">Prácticas agrícolas</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('sistema_manejo')" data-cat="sistema_manejo">
+      <div class="si-dot"></div><span class="si-nombre">Sistema de manejo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('sistema_cultivo')" data-cat="sistema_cultivo">
+      <div class="si-dot"></div><span class="si-nombre">Sistemas de cultivo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('metodo_almacenamiento')" data-cat="metodo_almacenamiento">
+      <div class="si-dot"></div><span class="si-nombre">Métodos de almacenamiento</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_fenotipo')" data-cat="tipo_fenotipo">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de fenotipo</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('etapa_fenologica')" data-cat="etapa_fenologica">
+      <div class="si-dot"></div><span class="si-nombre">Etapas fenológicas</span>
+    </div>
+
+    <div class="sidebar-group-label">Territorio</div>
+    <div class="sidebar-item" onclick="cargarCatalogo('estado')" data-cat="estado">
+      <div class="si-dot"></div><span class="si-nombre">Estados</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('municipio')" data-cat="municipio">
+      <div class="si-dot"></div><span class="si-nombre">Municipios</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('comunidad')" data-cat="comunidad">
+      <div class="si-dot"></div><span class="si-nombre">Comunidades</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('localidad')" data-cat="localidad">
+      <div class="si-dot"></div><span class="si-nombre">Localidades</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('colonia')" data-cat="colonia">
+      <div class="si-dot"></div><span class="si-nombre">Colonias</span>
+    </div>
+      
+
+    <div class="sidebar-group-label">Ambiental</div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_evento_climatico')" data-cat="tipo_evento_climatico">
+      <div class="si-dot"></div><span class="si-nombre">Eventos climáticos</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('variable_ambiental')" data-cat="variable_ambiental">
+      <div class="si-dot"></div><span class="si-nombre">Variables ambientales</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_amenaza')" data-cat="tipo_amenaza">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de amenaza</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('clase_uso_suelo')" data-cat="clase_uso_suelo">
+    <div class="si-dot"></div><span class="si-nombre">Clases uso de suelo</span>
+    </div>
+    
+
+    <div class="sidebar-group-label">Social y cultural</div>
+
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_productor')" data-cat="tipo_productor">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de productor</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('lengua')" data-cat="lengua">
+      <div class="si-dot"></div><span class="si-nombre">Lenguas</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('pueblo_originario')" data-cat="pueblo_originario">
+      <div class="si-dot"></div><span class="si-nombre">Pueblos originarios</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_ritual_agricola')" data-cat="tipo_ritual_agricola">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de ritual agrícola</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_narrativa_oral')" data-cat="tipo_narrativa_oral">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de narrativa oral</span>
+    </div>
+     
+    <div class="sidebar-item" onclick="cargarCatalogo('categoria_saber_agricola')" data-cat="categoria_saber_agricola">
+      <div class="si-dot"></div><span class="si-nombre">Categorías saber agrícola</span>
+    </div> 
+    <div class="sidebar-item" onclick="cargarCatalogo('ocasion')" data-cat="ocasion">
+      <div class="si-dot"></div><span class="si-nombre">Ocasiones</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('mecanismo_transmision')" data-cat="mecanismo_transmision">
+      <div class="si-dot"></div><span class="si-nombre">Mecanismos de transmisión</span>
+    </div>
+     <div class="sidebar-item" onclick="cargarCatalogo('vinculo_maiz')" data-cat="vinculo_maiz">
+      <div class="si-dot"></div><span class="si-nombre">Vínculos del maíz</span>
+    </div>
+    
+    <div class="sidebar-group-label">Trazabilidad</div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_producto_dron')" data-cat="tipo_producto_dron">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de producto dron</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('formato_archivo')" data-cat="formato_archivo">
+      <div class="si-dot"></div><span class="si-nombre">Formatos de archivo</span>
+    </div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('tipo_capa_sig')" data-cat="tipo_capa_sig">
+      <div class="si-dot"></div><span class="si-nombre">Tipos de capa SIG</span>
+    </div>
+
+    <div class="sidebar-item" onclick="cargarCatalogo('fuente_captura')" data-cat="fuente_captura">
+      <div class="si-dot"></div><span class="si-nombre">Fuentes de captura</span>
+    </div>
+    <div class="sidebar-item" onclick="cargarCatalogo('fuente_informacion')" data-cat="fuente_informacion">
+      <div class="si-dot"></div><span class="si-nombre">Fuentes de información</span>
+    </div>
+    
+    <div class="sidebar-item" onclick="cargarCatalogo('origen_muestra')" data-cat="origen_muestra">
+      <div class="si-dot"></div><span class="si-nombre">Origen de muestra</span>
+    </div>
+    
+    <div class="sidebar-item" onclick="cargarCatalogo('origen_semilla')" data-cat="origen_semilla">
+      <div class="si-dot"></div><span class="si-nombre">Origen de semilla</span>
+    </div>
+   
+  </aside>
+
+  <!-- ── MAIN ── -->
+  <main class="main">
+    <div class="topbar">
+      <div class="topbar-left">
+        <h2 id="cat-titulo">Razas del maíz</h2>
+        <span class="endpoint-badge" id="cat-endpoint">/catalogos/raza_maiz/</span>
+      </div>
+      <div class="topbar-right">
+        <div class="search-wrap">
+          <span class="search-ico">🔍</span>
+          <input type="text" id="buscador" placeholder="Buscar..." oninput="filtrarTabla()" />
+        </div>
+        <button class="btn btn-primary" onclick="abrirModalNuevo()">
+          ＋ Agregar
+        </button>
+      </div>
+    </div>
+
+    <div class="table-wrap">
+      <div class="table-info">
+        <span class="table-count" id="table-count">— registros</span>
+        <button class="btn btn-ghost btn-sm" onclick="recargar()">↺ Recargar</button>
+      </div>
+      <div id="tabla-contenido">
+        <div class="estado-centro">
+          <div class="spinner"></div>
+          <div class="estado-txt">Cargando...</div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- ── MODAL CRUD ── -->
+  <div class="modal-overlay" id="modal-overlay" onclick="cerrarModalSiOverlay(event)">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h3 id="modal-titulo">Agregar registro</h3>
+        <button class="modal-close" onclick="cerrarModal()">✕</button>
+      </div>
+      <div class="modal-body" id="modal-body"></div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
+        <button class="btn btn-primary" id="btn-guardar" onclick="guardar()">Guardar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── MODAL CONFIRMAR ELIMINAR ── -->
+  <div class="modal-overlay" id="confirm-overlay" onclick="cerrarConfirmSiOverlay(event)">
+    <div class="modal confirm-modal">
+      <div class="modal-body" style="padding:28px 24px">
+        <div class="confirm-ico">🗑️</div>
+        <div class="confirm-msg" id="confirm-msg">¿Eliminar este registro?</div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-ghost" onclick="cerrarConfirm()">Cancelar</button>
+        <button class="btn btn-danger" id="btn-confirmar-eliminar">Eliminar</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── TOASTS ── -->
+  <div class="toast-wrap" id="toast-wrap"></div>
+
+  <script src="js/catalogos.js"></script>
+<script>
+// Mostrar/ocultar sidebar en móvil
+window.addEventListener('DOMContentLoaded', function() {
+  cargarCatalogo('raza_maiz');
+  // Cerrar sidebar al hacer clic fuera en móvil
+  document.addEventListener('click', function(e) {
+    const sidebar = document.getElementById('sidebar');
+    const toggle = document.getElementById('sidebar-toggle');
+    if (window.innerWidth <= 680 && sidebar.classList.contains('open')) {
+      if (!sidebar.contains(e.target) && e.target !== toggle) {
+        sidebar.classList.remove('open');
+      }
+    }
+  });
+  // Cerrar sidebar al seleccionar un catálogo en móvil
+  document.querySelectorAll('.sidebar-item').forEach(function(item) {
+    item.addEventListener('click', function() {
+      if (window.innerWidth <= 680) {
+        document.getElementById('sidebar').classList.remove('open');
+      }
+    });
+  });
+});
+</script>
+</body>
+<script>
+// Cargar el catálogo inicial automáticamente al cargar la página
+window.addEventListener('DOMContentLoaded', function() {
+  cargarCatalogo('raza_maiz');
+});
+</script>
+</body>
+
+</html>

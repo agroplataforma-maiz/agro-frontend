@@ -390,8 +390,15 @@ async function apiFetch(path, opciones = {}) {
   return res.json();
 }
 
+const GERMOPLASMA = ["raza_maiz", "color_grano", "estado_conservacion", "uso_maiz"];
+const AGRO = ["practica_agricola", "sistema_manejo", "tipo_practica", "sistema_cultivo", "metodo_almacenamiento"];
+const FENOTIPO = ["tipo_fenotipo", "etapa_fenologica"];
+const GEO = ["estado", "municipio", "comunidad", "localidad", "colonia"];
+const AMBIENTAL = ["tipo_evento_climatico", "variable_ambiental", "tipo_amenaza", "clase_uso_suelo"];
+const SOCIAL = ["tipo_productor", "lengua", "pueblo_originario"];
+const CULTURAL = ["categoria_saber_agricola", "tipo_narrativa_oral", "tipo_ritual_agricola", "vinculo_maiz", "ocasion", "mecanismo_transmision"];
 
-const getPrefix = (cat) => "catalogo";
+const getPrefix = (cat) => GERMOPLASMA.includes(cat) ? "agro" : (AGRO.includes(cat) ? "agro" : (FENOTIPO.includes(cat) ? "fenotipo" : (GEO.includes(cat) ? "geo" : (AMBIENTAL.includes(cat) ? "amb" : (SOCIAL.includes(cat) ? "social" : (CULTURAL.includes(cat) ? "cultural" : "trazabilidad"))))));
 const listar = (cat) => apiFetch(`/${getPrefix(cat)}/${cat}`);
 const obtener = (cat, id) => apiFetch(`/${getPrefix(cat)}/${cat}/${id}`);
 const crear = (cat, d) =>
@@ -444,7 +451,58 @@ function recargar() {
 // ═══════════════════════════════════════════════════════
 // RENDERIZAR TABLA
 // ═══════════════════════════════════════════════════════
+// ═══════════════════════════════════════════════════════
+// PAGINACIÓN
+// ═══════════════════════════════════════════════════════
+const CAT_PAG_TAMANO = 10;
+let catPagActual = 1;
+let catListaTmp = [];
+
+function catPaginar(datos) {
+  const total = datos.length;
+  const totalPags = Math.ceil(total / CAT_PAG_TAMANO);
+  catPagActual = Math.min(catPagActual, totalPags || 1);
+  const inicio = (catPagActual - 1) * CAT_PAG_TAMANO;
+  return {
+    slice: datos.slice(inicio, inicio + CAT_PAG_TAMANO),
+    total,
+    totalPags,
+    inicio,
+  };
+}
+
+function catRenderPaginacion(total, totalPags, inicio) {
+  const fin = Math.min(inicio + CAT_PAG_TAMANO, total);
+  let btns = "";
+  const rango = 2;
+  for (let i = 1; i <= totalPags; i++) {
+    if (
+      i === 1 ||
+      i === totalPags ||
+      (i >= catPagActual - rango && i <= catPagActual + rango)
+    ) {
+      btns += `<button class="pag-btn${i === catPagActual ? " active" : ""}" onclick="catIrPagina(${i})">${i}</button>`;
+    } else if (i === catPagActual - rango - 1 || i === catPagActual + rango + 1) {
+      btns += `<span style="padding:5px 4px;color:var(--gris);font-size:11px">…</span>`;
+    }
+  }
+  return `<div class="pag-wrap">
+    <span class="pag-info">Mostrando ${inicio + 1}–${fin} de ${total}</span>
+    <div class="pag-btns">
+      <button class="pag-btn" onclick="catIrPagina(${catPagActual - 1})" ${catPagActual <= 1 ? "disabled" : ""}>←</button>
+      ${btns}
+      <button class="pag-btn" onclick="catIrPagina(${catPagActual + 1})" ${catPagActual >= totalPags ? "disabled" : ""}>→</button>
+    </div>
+  </div>`;
+}
+
+function catIrPagina(n) {
+  catPagActual = n;
+  renderTabla(catListaTmp);
+}
+
 function renderTabla(datos) {
+  catListaTmp = datos;
   const def = CATALOGO[catActual];
   document.getElementById("table-count").textContent =
     `${datos.length} registro${datos.length !== 1 ? "s" : ""}`;
@@ -465,8 +523,6 @@ function renderTabla(datos) {
   // Si es comunidad, obtener el mapeo de municipios
   let municipioMap = {};
   if (catActual === "comunidad") {
-    // Obtener municipios y mapear id -> nombre
-    // NOTA: Esto es asíncrono, pero para la tabla rápida usamos cache si ya se cargó antes
     if (!window._municipiosCache) {
       listar("municipio").then((muns) => {
         window._municipiosCache = {};
@@ -481,17 +537,18 @@ function renderTabla(datos) {
     municipioMap = window._municipiosCache || {};
   }
 
+  const { slice, total, totalPags, inicio } = catPaginar(datos);
+
   const thead = `<thead><tr>
     <th>#</th>
     ${camposVis.map((c) => `<th>${c.label}</th>`).join("")}
     <th>Acciones</th>
   </tr></thead>`;
 
-  const filas = datos
+  const filas = slice
     .map((row) => {
       const celdas = camposVis
         .map((c) => {
-          // Si es comunidad y el campo es municipio_id, mostrar el nombre
           if (catActual === "comunidad" && c.key === "municipio_id") {
             const nombreMun = municipioMap[row[c.key]] || row[c.key] || "—";
             return `<td>${nombreMun}</td>`;
@@ -510,7 +567,6 @@ function renderTabla(datos) {
         })
         .join("");
 
-      // Fila clickeable para mostrar detalle
       return `<tr class="fila-detalle" onclick="mostrarDetalleRegistro(${row.id})">
       <td>${row.id || "—"}</td>
       ${celdas}
@@ -521,9 +577,7 @@ function renderTabla(datos) {
     </tr>`;
     })
     .join("");
-  // ═══════════════════════════════════════════════════════
-  // MODAL DETALLE
-  // ═══════════════════════════════════════════════════════
+
   function mostrarDetalleRegistro(id) {
     const registro = datosActuales.find((r) => r.id === id);
     if (!registro) return;
@@ -545,10 +599,8 @@ function renderTabla(datos) {
     document.getElementById("modal-overlay").classList.add("open");
   }
 
-  // Hacer accesible la función para el HTML
   window.mostrarDetalleRegistro = mostrarDetalleRegistro;
 
-  // Al cerrar el modal, volver a mostrar el botón guardar si corresponde
   const modalOverlay = document.getElementById("modal-overlay");
   if (modalOverlay) {
     modalOverlay.addEventListener("click", function (e) {
@@ -559,7 +611,8 @@ function renderTabla(datos) {
   }
 
   document.getElementById("tabla-contenido").innerHTML =
-    `<table>${thead}<tbody>${filas}</tbody></table>`;
+    `<table>${thead}<tbody>${filas}</tbody></table>` +
+    catRenderPaginacion(total, totalPags, inicio);
 }
 
 // ═══════════════════════════════════════════════════════

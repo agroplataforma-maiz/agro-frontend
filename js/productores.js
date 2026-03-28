@@ -1,8 +1,8 @@
 // ═══════════════════════════════════════════════════════
 // CONFIG
 // ═══════════════════════════════════════════════════════
-const API_SOCIAL = "http://localhost:8002";
-const API_CATALOGO = "http://localhost:8001";
+const API_SOCIAL = "https://agromaiz.mx/api/social";
+const API_CATALOGO = "https://agromaiz.mx/api";
 
 // ── ESTADO ──────────────────────────────────────────────
 let productores = [];

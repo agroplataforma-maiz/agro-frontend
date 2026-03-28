@@ -1,260 +1,523 @@
 <!DOCTYPE html>
 <html lang="es">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Catálogos · Agroplataforma Maíz Nativo</title>
-  <link
-    href="https://fonts.googleapis.com/css2?family=Fraunces:wght@700;900&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap"
-    rel="stylesheet">
-  <link rel="stylesheet" href="css/catalogos.css">
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agroplataforma · Maíz Nativo · Huasteca Potosina</title>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,700&family=Nunito:wght@400;600;700;800&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="css/index.css">
 </head>
-
 <body>
 
-  <!-- BOTÓN HAMBURGUESA PARA MÓVIL -->
-  <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Abrir menú" onclick="document.getElementById('sidebar').classList.toggle('open')">
-    ☰
+<!-- ══ NAVBAR ══ -->
+<nav class="nav" id="nav">
+  <a class="nav-logo" href="#">
+    <span class="nav-logo-ico">🌽</span>
+    <div>
+      <div class="nav-logo-txt">Agroplataforma</div>
+      <span class="nav-logo-sub">Maíz Nativo · Huasteca Potosina</span>
+    </div>
+  </a>
+
+  <div class="nav-links">
+    <a class="nav-link" href="#modulos">Módulos</a>
+    <a class="nav-link" href="#avances">Avances</a>
+    <a class="nav-link" href="#mapa">Cobertura</a>
+    <a class="nav-link" href="#equipo">Equipo</a>
+    <a class="nav-link" href="divulgacion.html">Comunidades</a>
+    <div class="nav-usuario" id="nav-usuario">
+      <div class="nav-user-info">
+        <div class="nav-user-nombre" id="nav-nombre">—</div>
+        <div class="nav-user-rol" id="nav-rol">—</div>
+      </div>
+      <div class="nav-avatar" id="nav-avatar">?</div>
+      <button class="nav-btn-salir" onclick="cerrarSesion()">✕</button>
+    </div>
+    <a class="nav-btn-login" href="login.html" id="nav-login-btn">🔐 Iniciar sesión</a>
+  </div>
+
+  <button class="hamburger" onclick="toggleMenu()">
+    <span></span><span></span><span></span>
   </button>
+</nav>
 
-  <!-- ── SIDEBAR ── -->
-  <aside class="sidebar" id="sidebar">
-    <div class="sidebar-logo">
-      <h1>🌽 Agroplataforma</h1>
-      <p>Gestión de catálogos</p>
-    </div>
+<!-- ══════════════════════════════════════
+     DASHBOARD (si hay sesión activa)
+══════════════════════════════════════ -->
+<div class="dashboard" id="dashboard">
+  <div class="dash-header">
+    <div class="dash-bienvenida">Panel de trabajo</div>
+    <div class="dash-titulo" id="dash-titulo">Bienvenido/a 🌽</div>
+    <div class="dash-sub">Agroplataforma Digital · PEE-2025-G-369 · Etapa 1 en curso</div>
+  </div>
 
-    <div class="sidebar-group-label">Maíz y germoplasma</div>
-    <div class="sidebar-item active" onclick="cargarCatalogo('raza_maiz')" data-cat="raza_maiz">
-      <div class="si-dot"></div><span class="si-nombre">Razas del maíz</span>
+  <!-- Stats rápidas -->
+  <div class="dash-stats">
+    <div class="dash-stat" style="animation-delay:.15s">
+      <div class="dash-stat-n" id="ds-productores">—</div>
+      <div class="dash-stat-l">Productores registrados</div>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('color_grano')" data-cat="color_grano">
-      <div class="si-dot"></div><span class="si-nombre">Colores de grano</span>
+    <div class="dash-stat" style="animation-delay:.22s">
+      <div class="dash-stat-n" id="ds-comunidades">15+</div>
+      <div class="dash-stat-l">Comunidades objetivo</div>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('uso_maiz')" data-cat="uso_maiz">
-      <div class="si-dot"></div><span class="si-nombre">Uso del maíz</span>
+    <div class="dash-stat" style="animation-delay:.29s">
+      <div class="dash-stat-n" id="ds-saberes">—</div>
+      <div class="dash-stat-l">Saberes registrados</div>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('estado_conservacion')" data-cat="estado_conservacion">
-      <div class="si-dot"></div><span class="si-nombre">Estado conservación</span>
+    <div class="dash-stat" style="animation-delay:.36s">
+      <div class="dash-stat-n" id="ds-variedades">—</div>
+      <div class="dash-stat-l">Variedades documentadas</div>
     </div>
-   
+    <div class="dash-stat" style="animation-delay:.43s">
+      <div class="dash-stat-n">38%</div>
+      <div class="dash-stat-l">Avance Etapa 1</div>
+    </div>
+  </div>
 
-    <div class="sidebar-group-label">Agronómico y fenotipo</div>
+  <!-- Módulos de acceso rápido -->
+  <div class="modulos-grid">
+    <a class="modulo-card" href="productores.html" style="animation-delay:.2s">
+      <span class="modulo-ico">🧑‍🌾</span>
+      <div class="modulo-nombre">Productores</div>
+      <div class="modulo-desc">Registro y perfil completo: datos personales, socioeconómicos, cultural y consentimiento</div>
+      <span class="modulo-badge">/social/productores/</span>
+    </a>
+    <a class="modulo-card" href="productores.html#social-cultural" style="animation-delay:.27s">
+      <span class="modulo-ico">🎭</span>
+      <div class="modulo-nombre">Social y Cultural</div>
+      <div class="modulo-desc">ELCSA, vulnerabilidad climática, red de semillas, saberes, rituales, gastronomía y narrativas</div>
+      <span class="modulo-badge">/social/ · /cultural/</span>
+    </a>
+    <a class="modulo-card" href="catalogos.html" style="animation-delay:.34s">
+      <span class="modulo-ico">📋</span>
+      <div class="modulo-nombre">Catálogos</div>
+      <div class="modulo-desc">Razas de maíz, municipios, comunidades, lenguas, pueblos originarios y más</div>
+      <span class="modulo-badge">/catalogos/</span>
+    </a>
+    <a class="modulo-card" href="#" style="animation-delay:.41s;opacity:.5;cursor:default" title="Próximamente">
+      <span class="modulo-ico">🗺️</span>
+      <div class="modulo-nombre">Mapas y SIG</div>
+      <div class="modulo-desc">Visualización geoespacial de parcelas, hotspots y zonas prioritarias de conservación</div>
+      <span class="modulo-badge" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.06)">Próximamente</span>
+    </a>
+    <a class="modulo-card" href="#" style="animation-delay:.48s;opacity:.5;cursor:default" title="Próximamente">
+      <span class="modulo-ico">🔬</span>
+      <div class="modulo-nombre">Fenotípico</div>
+      <div class="modulo-desc">Evaluaciones morfológicas, análisis nutrimentales y evidencias fotográficas de variedades</div>
+      <span class="modulo-badge" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.06)">Próximamente</span>
+    </a>
+    <a class="modulo-card" href="#" style="animation-delay:.55s;opacity:.5;cursor:default" title="Próximamente">
+      <span class="modulo-ico">🌱</span>
+      <div class="modulo-nombre">Agronómico</div>
+      <div class="modulo-desc">Germoplasma, ciclos agrícolas, cultivos y economía del cultivo de maíz nativo</div>
+      <span class="modulo-badge" style="background:rgba(255,255,255,.08);color:rgba(255,255,255,.3);border-color:rgba(255,255,255,.06)">Próximamente</span>
+    </a>
+  </div>
 
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_practica')" data-cat="tipo_practica">
-      <div class="si-dot"></div><span class="si-nombre">Tipo práctica</span>
+  <!-- Actividad reciente -->
+  <div class="dash-actividad">
+    <div class="dash-actividad-header">
+      <span class="dash-actividad-titulo">Actividad reciente</span>
+      <span style="font-family:'DM Mono',monospace;font-size:10px;color:rgba(255,255,255,.2)">Etapa 1 · 2025</span>
     </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('practica_agricola')" data-cat="practica_agricola">
-      <div class="si-dot"></div><span class="si-nombre">Prácticas agrícolas</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('sistema_manejo')" data-cat="sistema_manejo">
-      <div class="si-dot"></div><span class="si-nombre">Sistema de manejo</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('sistema_cultivo')" data-cat="sistema_cultivo">
-      <div class="si-dot"></div><span class="si-nombre">Sistemas de cultivo</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('metodo_almacenamiento')" data-cat="metodo_almacenamiento">
-      <div class="si-dot"></div><span class="si-nombre">Métodos de almacenamiento</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_fenotipo')" data-cat="tipo_fenotipo">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de fenotipo</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('etapa_fenologica')" data-cat="etapa_fenologica">
-      <div class="si-dot"></div><span class="si-nombre">Etapas fenológicas</span>
-    </div>
+    <div class="act-item"><span class="act-ico">🌽</span><span class="act-txt">Base de datos geoespacial construida con 7 esquemas temáticos</span><span class="act-tiempo">Mar 2025</span></div>
+    <div class="act-item"><span class="act-ico">📋</span><span class="act-txt">Catálogos territoriales cargados: estados, municipios, comunidades</span><span class="act-tiempo">Mar 2025</span></div>
+    <div class="act-item"><span class="act-ico">🧑‍🌾</span><span class="act-txt">Módulo de productores con perfil social y cultural completo</span><span class="act-tiempo">Mar 2025</span></div>
+    <div class="act-item"><span class="act-ico">🔐</span><span class="act-txt">Sistema de autenticación JWT con 5 roles implementado</span><span class="act-tiempo">Mar 2025</span></div>
+    <div class="act-item"><span class="act-ico">🗺️</span><span class="act-txt">Inicio de visitas de campo en comunidades de la Huasteca</span><span class="act-tiempo">En curso</span></div>
+  </div>
+</div>
 
-    <div class="sidebar-group-label">Territorio</div>
-    <div class="sidebar-item" onclick="cargarCatalogo('estado')" data-cat="estado">
-      <div class="si-dot"></div><span class="si-nombre">Estados</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('municipio')" data-cat="municipio">
-      <div class="si-dot"></div><span class="si-nombre">Municipios</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('comunidad')" data-cat="comunidad">
-      <div class="si-dot"></div><span class="si-nombre">Comunidades</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('localidad')" data-cat="localidad">
-      <div class="si-dot"></div><span class="si-nombre">Localidades</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('colonia')" data-cat="colonia">
-      <div class="si-dot"></div><span class="si-nombre">Colonias</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('clase_uso_suelo')" data-cat="clase_uso_suelo">
-    <div class="si-dot"></div><span class="si-nombre">Clases uso de suelo</span>
-    </div>
-        
+<!-- ══════════════════════════════════════
+     LANDING PÚBLICA
+══════════════════════════════════════ -->
+<div id="landing">
 
-    <div class="sidebar-group-label">Ambiental</div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_evento_climatico')" data-cat="tipo_evento_climatico">
-      <div class="si-dot"></div><span class="si-nombre">Eventos climáticos</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('variable_ambiental')" data-cat="variable_ambiental">
-      <div class="si-dot"></div><span class="si-nombre">Variables ambientales</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_amenaza')" data-cat="tipo_amenaza">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de amenaza</span>
-    </div>
-    
+  <!-- ── HERO ── -->
+  <section class="hero">
+    <div class="hero-bg"></div>
+    <div class="hero-grain"></div>
+    <div class="hero-lines"></div>
 
-    <div class="sidebar-group-label">Social y cultural</div>
+    <!-- Mazorca decorativa -->
+    <svg class="hero-maiz-deco" viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg">
+      <path d="M60 180 Q20 140 10 90 Q40 110 60 150 Z" fill="#4A8C64"/>
+      <path d="M60 180 Q100 140 110 90 Q80 110 60 150 Z" fill="#2A5C3F"/>
+      <path d="M60 160 Q15 120 8 60 Q45 90 60 140 Z" fill="#5AAD78" opacity=".6"/>
+      <path d="M60 160 Q105 120 112 60 Q75 90 60 140 Z" fill="#3A7050" opacity=".6"/>
+      <rect x="56" y="155" width="8" height="40" rx="3" fill="#3A7050"/>
+      <ellipse cx="60" cy="95" rx="22" ry="55" fill="#D4922A"/>
+      <ellipse cx="48" cy="60" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="56" cy="58" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="64" cy="58" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="72" cy="60" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="46" cy="72" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="54" cy="70" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="62" cy="70" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="70" cy="70" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="78" cy="72" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="44" cy="84" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="52" cy="82" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="60" cy="82" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="68" cy="82" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="76" cy="84" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="44" cy="96" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="52" cy="94" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="60" cy="94" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="68" cy="94" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="76" cy="96" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="46" cy="108" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="54" cy="106" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="62" cy="106" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="70" cy="106" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="78" cy="108" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="48" cy="120" rx="4" ry="5" fill="#F0B429"/>
+      <ellipse cx="56" cy="118" rx="4" ry="5" fill="#E8A020"/>
+      <ellipse cx="64" cy="118" rx="4" ry="5" fill="#F2C040"/>
+      <ellipse cx="72" cy="120" rx="4" ry="5" fill="#F0B429"/>
+      <path d="M38 52 Q30 30 36 10" stroke="#F2C040" stroke-width="1.2" fill="none" opacity=".6"/>
+      <path d="M48 50 Q44 26 52 6" stroke="#F0B429" stroke-width="1.2" fill="none" opacity=".6"/>
+      <path d="M60 48 Q62 22 68 4" stroke="#F2C040" stroke-width="1.2" fill="none" opacity=".6"/>
+      <path d="M72 50 Q80 26 78 8" stroke="#F0B429" stroke-width="1.2" fill="none" opacity=".6"/>
+    </svg>
 
-
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_productor')" data-cat="tipo_productor">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de productor</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('lengua')" data-cat="lengua">
-      <div class="si-dot"></div><span class="si-nombre">Lenguas</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('pueblo_originario')" data-cat="pueblo_originario">
-      <div class="si-dot"></div><span class="si-nombre">Pueblos originarios</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_ritual_agricola')" data-cat="tipo_ritual_agricola">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de ritual agrícola</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_narrativa_oral')" data-cat="tipo_narrativa_oral">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de narrativa oral</span>
-    </div>
-     
-    <div class="sidebar-item" onclick="cargarCatalogo('categoria_saber_agricola')" data-cat="categoria_saber_agricola">
-      <div class="si-dot"></div><span class="si-nombre">Categorías saber agrícola</span>
-    </div> 
-    <div class="sidebar-item" onclick="cargarCatalogo('ocasion')" data-cat="ocasion">
-      <div class="si-dot"></div><span class="si-nombre">Ocasiones</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('mecanismo_transmision')" data-cat="mecanismo_transmision">
-      <div class="si-dot"></div><span class="si-nombre">Mecanismos de transmisión</span>
-    </div>
-     <div class="sidebar-item" onclick="cargarCatalogo('vinculo_maiz')" data-cat="vinculo_maiz">
-      <div class="si-dot"></div><span class="si-nombre">Vínculos del maíz</span>
-    </div>
-    
-    <div class="sidebar-group-label">Trazabilidad</div>
-
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_producto_dron')" data-cat="tipo_producto_dron">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de producto dron</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('formato_archivo')" data-cat="formato_archivo">
-      <div class="si-dot"></div><span class="si-nombre">Formatos de archivo</span>
-    </div>
-
-    <div class="sidebar-item" onclick="cargarCatalogo('tipo_capa_sig')" data-cat="tipo_capa_sig">
-      <div class="si-dot"></div><span class="si-nombre">Tipos de capa SIG</span>
-    </div>
-
-    <div class="sidebar-item" onclick="cargarCatalogo('fuente_captura')" data-cat="fuente_captura">
-      <div class="si-dot"></div><span class="si-nombre">Fuentes de captura</span>
-    </div>
-    <div class="sidebar-item" onclick="cargarCatalogo('fuente_informacion')" data-cat="fuente_informacion">
-      <div class="si-dot"></div><span class="si-nombre">Fuentes de información</span>
-    </div>
-    
-    <div class="sidebar-item" onclick="cargarCatalogo('origen_muestra')" data-cat="origen_muestra">
-      <div class="si-dot"></div><span class="si-nombre">Origen de muestra</span>
-    </div>
-    
-    <div class="sidebar-item" onclick="cargarCatalogo('origen_semilla')" data-cat="origen_semilla">
-      <div class="si-dot"></div><span class="si-nombre">Origen de semilla</span>
-    </div>
-   
-  </aside>
-
-  <!-- ── MAIN ── -->
-  <main class="main">
-    <div class="topbar">
-      <div class="topbar-left">
-        <h2 id="cat-titulo">Razas del maíz</h2>
-        <span class="endpoint-badge" id="cat-endpoint">/catalogos/raza_maiz/</span>
-      </div>
-      <div class="topbar-right">
-        <div class="search-wrap">
-          <span class="search-ico">🔍</span>
-          <input type="text" id="buscador" placeholder="Buscar..." oninput="filtrarTabla()" />
-        </div>
-        <button class="btn btn-primary" onclick="abrirModalNuevo()">
-          ＋ Agregar
-        </button>
+    <div class="hero-contenido">
+      <div class="hero-kicker">PEE-2025-G-369 · Secihti 2025</div>
+      <h1 class="hero-h1">Conservando el<br>maíz <em>nativo</em><br>de la Huasteca</h1>
+      <p class="hero-desc">Una agroplataforma digital que combina inteligencia geoespacial, saberes comunitarios y ciencia de datos para proteger la biodiversidad del maíz nativo en la Huasteca Potosina.</p>
+      <div class="hero-acciones">
+        <a class="btn-hero-primary" href="login.html">🔐 Acceder a la plataforma</a>
+        <a class="btn-hero-ghost" href="divulgacion.html">🌽 Para comunidades</a>
       </div>
     </div>
 
-    <div class="table-wrap">
-      <div class="table-info">
-        <span class="table-count" id="table-count">— registros</span>
-        <button class="btn btn-ghost btn-sm" onclick="recargar()">↺ Recargar</button>
-      </div>
-      <div id="tabla-contenido">
-        <div class="estado-centro">
-          <div class="spinner"></div>
-          <div class="estado-txt">Cargando...</div>
-        </div>
-      </div>
+    <div class="hero-stats">
+      <div class="hero-stat"><div class="hero-stat-n">15+</div><div class="hero-stat-l">Comunidades</div></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><div class="hero-stat-n">11</div><div class="hero-stat-l">Investigadores</div></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><div class="hero-stat-n">30+</div><div class="hero-stat-l">Muestras</div></div>
+      <div class="hero-sep"></div>
+      <div class="hero-stat"><div class="hero-stat-n">16</div><div class="hero-stat-l">Meses</div></div>
     </div>
-  </main>
+  </section>
 
-  <!-- ── MODAL CRUD ── -->
-  <div class="modal-overlay" id="modal-overlay" onclick="cerrarModalSiOverlay(event)">
-    <div class="modal" id="modal">
-      <div class="modal-header">
-        <h3 id="modal-titulo">Agregar registro</h3>
-        <button class="modal-close" onclick="cerrarModal()">✕</button>
+  <!-- ── NÚMEROS ── -->
+  <div class="numeros-wrap">
+    <div class="numeros-inner reveal">
+      <div class="sec-kicker" style="color:var(--maiz-cl)">
+        <span style="display:block;width:24px;height:1px;background:var(--maiz-cl)"></span>
+        El proyecto en cifras
       </div>
-      <div class="modal-body" id="modal-body"></div>
-      <div class="modal-footer">
-        <button class="btn btn-ghost" onclick="cerrarModal()">Cancelar</button>
-        <button class="btn btn-primary" id="btn-guardar" onclick="guardar()">Guardar</button>
+      <div class="sec-titulo" style="color:#fff;margin-bottom:0">
+        Un proyecto de <em style="color:var(--maiz-cl)">escala regional</em>
+      </div>
+      <div class="numeros-grid">
+        <div class="num-card"><div class="num-n">15+</div><div class="num-l">Localidades visitadas en la Huasteca</div></div>
+        <div class="num-card"><div class="num-n">11</div><div class="num-l">Investigadores e investigadoras</div></div>
+        <div class="num-card"><div class="num-n">30+</div><div class="num-l">Muestras nutrimentales</div></div>
+        <div class="num-card"><div class="num-n">5</div><div class="num-l">Talleres comunitarios</div></div>
+        <div class="num-card"><div class="num-n">100</div><div class="num-l">Jóvenes capacitados</div></div>
       </div>
     </div>
   </div>
 
-  <!-- ── MODAL CONFIRMAR ELIMINAR ── -->
-  <div class="modal-overlay" id="confirm-overlay" onclick="cerrarConfirmSiOverlay(event)">
-    <div class="modal confirm-modal">
-      <div class="modal-body" style="padding:28px 24px">
-        <div class="confirm-ico">🗑️</div>
-        <div class="confirm-msg" id="confirm-msg">¿Eliminar este registro?</div>
+  <!-- ── MÓDULOS ── -->
+  <section class="sec reveal" id="modulos">
+    <div class="sec-kicker">Plataforma digital</div>
+    <h2 class="sec-titulo">Módulos del <em>sistema</em></h2>
+    <p class="sec-desc">La agroplataforma integra datos geoespaciales, socioeconómicos, culturales y agronómicos en un sistema accesible para investigadores, técnicos y comunidades.</p>
+
+    <div class="modulos-landing">
+      <div class="ml-card">
+        <div class="ml-ico">🧑‍🌾</div>
+        <div class="ml-nombre">Productores</div>
+        <p class="ml-desc">Registro completo de custodios del maíz nativo: perfil personal, socioeconómico, seguridad alimentaria, vulnerabilidad climática, identidad cultural y consentimiento informado.</p>
+        <a class="ml-link" href="login.html">Acceder →</a>
       </div>
-      <div class="modal-footer">
-        <button class="btn btn-ghost" onclick="cerrarConfirm()">Cancelar</button>
-        <button class="btn btn-danger" id="btn-confirmar-eliminar">Eliminar</button>
+      <div class="ml-card">
+        <div class="ml-ico">🎭</div>
+        <div class="ml-nombre">Social y Cultural</div>
+        <p class="ml-desc">Saberes tradicionales, rituales agrícolas, narrativas orales, gastronomía, transmisión del conocimiento y nombres en lenguas originarias — el patrimonio biocultural del maíz.</p>
+        <a class="ml-link" href="login.html">Acceder →</a>
+      </div>
+      <div class="ml-card">
+        <div class="ml-ico">📋</div>
+        <div class="ml-nombre">Catálogos</div>
+        <p class="ml-desc">Razas de maíz, colores de grano, uso del maíz, municipios, comunidades, lenguas, pueblos originarios y más de 15 catálogos del sistema con CRUD completo.</p>
+        <a class="ml-link" href="login.html">Acceder →</a>
+      </div>
+      <div class="ml-card" style="opacity:.65">
+        <div class="ml-ico">🗺️</div>
+        <div class="ml-nombre">Mapas y SIG</div>
+        <p class="ml-desc">Visualización interactiva de parcelas georeferenciadas, hotspots de diversidad genética, zonas prioritarias de conservación y cambios de uso de suelo. <em>Próximamente.</em></p>
+      </div>
+      <div class="ml-card" style="opacity:.65">
+        <div class="ml-ico">🔬</div>
+        <div class="ml-nombre">Fenotípico</div>
+        <p class="ml-desc">Evaluaciones morfológicas, análisis nutrimentales de 30+ variedades, fenología y evidencia fotográfica de mazorca, planta y grano. <em>Próximamente.</em></p>
+      </div>
+      <div class="ml-card" style="opacity:.65">
+        <div class="ml-ico">🌱</div>
+        <div class="ml-nombre">Agronómico</div>
+        <p class="ml-desc">Germoplasma nativo, ciclos agrícolas, sistemas de semilla, economía del cultivo y análisis de riesgo de pérdida de variedades. <em>Próximamente.</em></p>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep-full"></div>
+
+  <!-- ── MAPA DE COBERTURA ── -->
+  <div class="mapa-wrap" id="mapa">
+    <div class="mapa-inner">
+      <div class="mapa-txt reveal">
+        <div class="sec-kicker">Cobertura geográfica</div>
+        <h2 class="sec-titulo">Huasteca <em>Potosina</em></h2>
+        <p class="sec-desc">El proyecto concentra su trabajo en la región Huasteca de San Luis Potosí, una de las zonas con mayor diversidad de maíces nativos en México y con alta presencia de comunidades indígenas custodias de estas semillas.</p>
+        <div class="comunidades-chips" style="margin-top:24px">
+          <span class="chip activo">Ciudad Valles</span>
+          <span class="chip activo">Ébano</span>
+          <span class="chip activo">Tamuín</span>
+          <span class="chip activo">Tancanhuitz</span>
+          <span class="chip activo">Aquismón</span>
+          <span class="chip">Xilitla</span>
+          <span class="chip">Huehuetlán</span>
+          <span class="chip">Tanlajás</span>
+          <span class="chip">San Antonio</span>
+          <span class="chip">Coxcatlán</span>
+          <span class="chip">+5 más</span>
+        </div>
+      </div>
+      <div class="mapa-svg-wrap reveal">
+        <!-- Mapa SVG esquemático de la Huasteca Potosina -->
+        <svg viewBox="0 0 340 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;display:block">
+          <!-- Fondo región -->
+          <path d="M40 60 Q80 30 140 40 Q200 50 260 80 Q300 100 310 160 Q320 220 280 260 Q240 290 180 285 Q120 280 80 250 Q40 220 30 170 Q20 120 40 60Z"
+                fill="rgba(42,92,63,.25)" stroke="rgba(42,92,63,.4)" stroke-width="1.5"/>
+          <!-- Ríos esquemáticos -->
+          <path d="M60 100 Q120 130 180 120 Q230 110 280 150" stroke="rgba(74,140,100,.35)" stroke-width="2" fill="none" stroke-dasharray="4 3"/>
+          <path d="M100 200 Q150 180 200 190 Q240 200 270 220" stroke="rgba(74,140,100,.25)" stroke-width="1.5" fill="none" stroke-dasharray="3 3"/>
+          <!-- Puntos de comunidades activas -->
+          <g>
+            <circle cx="160" cy="150" r="8" fill="rgba(200,130,10,.3)" stroke="var(--maiz-cl)" stroke-width="1.5"/>
+            <circle cx="160" cy="150" r="14" fill="rgba(200,130,10,.08)" stroke="var(--maiz-cl)" stroke-width=".5"/>
+            <text x="160" y="154" text-anchor="middle" font-family="DM Mono" font-size="7" fill="var(--maiz-cl)">CV</text>
+          </g>
+          <g>
+            <circle cx="220" cy="130" r="6" fill="rgba(200,130,10,.2)" stroke="rgba(240,180,41,.6)" stroke-width="1"/>
+            <text x="220" y="133" text-anchor="middle" font-family="DM Mono" font-size="6" fill="rgba(240,180,41,.7)">EB</text>
+          </g>
+          <g>
+            <circle cx="100" cy="170" r="6" fill="rgba(200,130,10,.2)" stroke="rgba(240,180,41,.6)" stroke-width="1"/>
+            <text x="100" y="173" text-anchor="middle" font-family="DM Mono" font-size="6" fill="rgba(240,180,41,.7)">AQ</text>
+          </g>
+          <g>
+            <circle cx="140" cy="200" r="5" fill="rgba(200,130,10,.15)" stroke="rgba(240,180,41,.4)" stroke-width="1"/>
+            <text x="140" y="203" text-anchor="middle" font-family="DM Mono" font-size="6" fill="rgba(240,180,41,.5)">TC</text>
+          </g>
+          <g>
+            <circle cx="200" cy="190" r="5" fill="rgba(200,130,10,.15)" stroke="rgba(240,180,41,.4)" stroke-width="1"/>
+            <text x="200" y="193" text-anchor="middle" font-family="DM Mono" font-size="6" fill="rgba(240,180,41,.5)">TM</text>
+          </g>
+          <g>
+            <circle cx="80" cy="130" r="4" fill="rgba(200,130,10,.1)" stroke="rgba(240,180,41,.3)" stroke-width=".8"/>
+          </g>
+          <g>
+            <circle cx="240" cy="200" r="4" fill="rgba(200,130,10,.1)" stroke="rgba(240,180,41,.3)" stroke-width=".8"/>
+          </g>
+          <!-- Leyenda -->
+          <circle cx="20" cy="275" r="5" fill="rgba(200,130,10,.3)" stroke="var(--maiz-cl)" stroke-width="1"/>
+          <text x="30" y="279" font-family="DM Mono" font-size="7" fill="rgba(255,255,255,.4)">En campo</text>
+          <circle cx="100" cy="275" r="4" fill="rgba(200,130,10,.1)" stroke="rgba(240,180,41,.3)" stroke-width=".8"/>
+          <text x="110" y="279" font-family="DM Mono" font-size="7" fill="rgba(255,255,255,.4)">Programada</text>
+          <!-- Título -->
+          <text x="10" y="20" font-family="DM Mono" font-size="9" fill="rgba(255,255,255,.25)" letter-spacing="1">HUASTECA POTOSINA · SLP</text>
+        </svg>
       </div>
     </div>
   </div>
 
-  <!-- ── TOASTS ── -->
-  <div class="toast-wrap" id="toast-wrap"></div>
+  <!-- ── AVANCES ── -->
+  <section class="sec" id="avances">
+    <div class="sec-kicker reveal">Estado del proyecto</div>
+    <h2 class="sec-titulo reveal">Avances y <em>próximos pasos</em></h2>
 
-  <script src="js/catalogos.js"></script>
-<script>
-// Mostrar/ocultar sidebar en móvil
-window.addEventListener('DOMContentLoaded', function() {
-  cargarCatalogo('raza_maiz');
-  // Cerrar sidebar al hacer clic fuera en móvil
-  document.addEventListener('click', function(e) {
-    const sidebar = document.getElementById('sidebar');
-    const toggle = document.getElementById('sidebar-toggle');
-    if (window.innerWidth <= 680 && sidebar.classList.contains('open')) {
-      if (!sidebar.contains(e.target) && e.target !== toggle) {
-        sidebar.classList.remove('open');
-      }
-    }
-  });
-  // Cerrar sidebar al seleccionar un catálogo en móvil
-  document.querySelectorAll('.sidebar-item').forEach(function(item) {
-    item.addEventListener('click', function() {
-      if (window.innerWidth <= 680) {
-        document.getElementById('sidebar').classList.remove('open');
-      }
-    });
-  });
-});
-</script>
-</body>
-<script>
-// Cargar el catálogo inicial automáticamente al cargar la página
-window.addEventListener('DOMContentLoaded', function() {
-  cargarCatalogo('raza_maiz');
-});
-</script>
-</body>
+    <div class="avances-grid">
+      <div class="reveal">
+        <div class="avance-item">
+          <div class="avance-fecha">MES 1</div>
+          <div>
+            <div class="avance-titulo">Diseño de la base de datos</div>
+            <div class="avance-desc">Arquitectura PostgreSQL/PostGIS con 7 esquemas y 40+ tablas.</div>
+            <span class="avance-badge badge-completado">Completado</span>
+          </div>
+        </div>
+        <div class="avance-item">
+          <div class="avance-fecha">MES 2</div>
+          <div>
+            <div class="avance-titulo">Catálogos territoriales</div>
+            <div class="avance-desc">Estados, municipios, comunidades, localidades y lenguas originarias cargados.</div>
+            <span class="avance-badge badge-completado">Completado</span>
+          </div>
+        </div>
+        <div class="avance-item">
+          <div class="avance-fecha">MES 3</div>
+          <div>
+            <div class="avance-titulo">Módulos de captura</div>
+            <div class="avance-desc">Frontend completo para productores, catálogos y módulos social y cultural.</div>
+            <span class="avance-badge badge-en-curso">En curso</span>
+          </div>
+        </div>
+        <div class="avance-item">
+          <div class="avance-fecha">MES 4</div>
+          <div>
+            <div class="avance-titulo">Visitas de campo</div>
+            <div class="avance-desc">Levantamiento en 15+ comunidades con GPS y dron Mavic 3.</div>
+            <span class="avance-badge badge-en-curso">En curso</span>
+          </div>
+        </div>
+        <div class="avance-item">
+          <div class="avance-fecha">MES 5</div>
+          <div>
+            <div class="avance-titulo">Informe de diagnóstico</div>
+            <div class="avance-desc">Reporte socioterritorial y análisis preliminar de resultados de campo.</div>
+            <span class="avance-badge badge-proximo">Próximo</span>
+          </div>
+        </div>
+      </div>
 
+      <div class="etapa-vis reveal">
+        <div class="etapa-header">
+          <div class="etapa-nombre">Etapa 1 · Diagnóstico</div>
+          <span class="etapa-estado badge-en-curso">En curso</span>
+        </div>
+        <div class="etapa-body">
+          <div class="etapa-dur">Duración: 5 meses · 2025</div>
+          <div class="etapa-item"><span class="etapa-item-ico">✅</span> Base de datos PostgreSQL/PostGIS construida</div>
+          <div class="etapa-item"><span class="etapa-item-ico">✅</span> Módulos de captura frontend listos</div>
+          <div class="etapa-item"><span class="etapa-item-ico">✅</span> Sistema de autenticación JWT implementado</div>
+          <div class="etapa-item"><span class="etapa-item-ico">🔄</span> Visitas de campo en 15+ comunidades</div>
+          <div class="etapa-item"><span class="etapa-item-ico">🔄</span> Entrevistas y registro GPS</div>
+          <div class="etapa-item"><span class="etapa-item-ico">⏳</span> Vuelos de dron DJI Mavic 3 Multispectral</div>
+          <div class="etapa-item"><span class="etapa-item-ico">⏳</span> Análisis satelital Sentinel-2 / GEE</div>
+          <div class="etapa-item"><span class="etapa-item-ico">⏳</span> Informe de diagnóstico socioterritorial</div>
+          <div class="prog-wrap">
+            <div class="prog-track"><div class="prog-fill" style="width:38%"></div></div>
+            <div class="prog-lbl">▸ 38% completado</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="sep-full"></div>
+
+  <!-- ── EQUIPO ── -->
+  <div class="equipo-wrap" id="equipo">
+    <div class="equipo-inner">
+      <div class="sec-kicker reveal">Grupo de investigación</div>
+      <h2 class="sec-titulo reveal">El equipo <em>detrás</em> del proyecto</h2>
+      <p class="sec-desc reveal">Once investigadoras e investigadores del Instituto Tecnológico de Ciudad Valles con especialidades en computación, agroecología, nutrición, fitopatología y ciencias ambientales.</p>
+      <div class="equipo-grid">
+        <div class="eq-card reveal" style="animation-delay:.05s; border-color:rgba(74,140,100,.3);background:var(--verde-pal)">
+          <div class="eq-inicial" style="background:var(--verde-cl)">AB</div>
+          <div class="eq-nombre">Alfredo Barrón Rodríguez</div>
+          <div class="eq-esp" style="color:var(--verde-cl)">Responsable técnico</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.1s">
+          <div class="eq-inicial">SR</div>
+          <div class="eq-nombre">Sofía del Rosario Romero Ramos</div>
+          <div class="eq-esp">Industrias alimentarias</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.15s">
+          <div class="eq-inicial">HL</div>
+          <div class="eq-nombre">Hugo René Larraga Altamirano</div>
+          <div class="eq-esp">Sistemas computacionales</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.2s">
+          <div class="eq-inicial">DP</div>
+          <div class="eq-nombre">Daniel Perales Rosas</div>
+          <div class="eq-esp">Parasitología agrícola</div>
+          <span class="eq-sni">SNI Nivel I</span>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.25s">
+          <div class="eq-inicial">DH</div>
+          <div class="eq-nombre">Dalia Rosario Hernández López</div>
+          <div class="eq-esp">Sistemas computacionales</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.3s">
+          <div class="eq-inicial">OE</div>
+          <div class="eq-nombre">Omar Espinosa Guerra</div>
+          <div class="eq-esp">Electrónica y software</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.35s">
+          <div class="eq-inicial">RJ</div>
+          <div class="eq-nombre">Rosa María Jiménez Maldonado</div>
+          <div class="eq-esp">Emprendimiento comunitario</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.4s">
+          <div class="eq-inicial">CG</div>
+          <div class="eq-nombre">Carlos Cecilio Góngora Canul</div>
+          <div class="eq-esp">Fitopatología</div>
+          <span class="eq-sni">SNI Nivel I</span>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.45s">
+          <div class="eq-inicial">HM</div>
+          <div class="eq-nombre">Habacuc Lorenzo Márquez</div>
+          <div class="eq-esp">SIG y análisis estadístico</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.5s">
+          <div class="eq-inicial">DA</div>
+          <div class="eq-nombre">Dulce Carolina Acosta Pintor</div>
+          <div class="eq-esp">Desarrollo sustentable</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.55s">
+          <div class="eq-inicial">AP</div>
+          <div class="eq-nombre">Ana María Piedad Rubio</div>
+          <div class="eq-esp">Sistemas computacionales</div>
+        </div>
+        <div class="eq-card reveal" style="animation-delay:.6s;">
+          <div class="eq-inicial">CW</div>
+          <div class="eq-nombre">Cynthia Wong Arguelles</div>
+          <div class="eq-esp">Ciencias ambientales</div>
+          <span class="eq-sni">SNI Nivel I</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── CTA ── -->
+  <div class="cta-wrap">
+    <div class="cta-inner reveal">
+      <h2 class="cta-titulo">¿Formas parte<br>del <em>equipo</em>?</h2>
+      <p class="cta-desc">Accede a la plataforma para registrar productores, capturar datos de campo, consultar catálogos y visualizar el avance del proyecto en tiempo real.</p>
+      <div class="cta-btns">
+        <a class="btn-hero-primary" href="login.html">🔐 Iniciar sesión</a>
+        <a class="btn-hero-ghost" href="login.html#registro">✉ Crear cuenta</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <div>
+      <div class="foot-logo">🌽 Agroplataforma · Maíz Nativo</div>
+      <div class="foot-sub">
+        Proyecto PEE-2025-G-369 · Secihti 2025<br>
+        Instituto Tecnológico de Ciudad Valles · TecNM<br>
+        San Luis Potosí · México
+      </div>
+    </div>
+    <div class="foot-der">
+      <div>Eje 2 · Mejoramiento de Cultivos de Maíz y Frijol</div>
+      <div>Etapa 1 en curso · 2025–2026</div>
+      <div style="margin-top:6px;opacity:.5">alfredo.barron@tecvalles.mx · 481 391 8309</div>
+    </div>
+  </footer>
+
+</div><!-- /landing -->
+
+<script src="js/index.js"></script>
+</body>
 </html>

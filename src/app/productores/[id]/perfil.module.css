@@ -1,0 +1,130 @@
+.main {
+  max-width: 700px;
+  margin: 0 auto;
+  padding: 32px 16px 64px;
+}
+
+.btnVolver {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--verde);
+  text-decoration: none;
+  margin-bottom: 28px;
+  transition: opacity .15s;
+}
+.btnVolver:hover { opacity: .75; }
+
+/* ── Header del perfil ── */
+.header {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  background: var(--tierra);
+  border-radius: var(--radio);
+  padding: 32px 36px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  position: relative;
+  overflow: hidden;
+}
+.header::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at 90% 50%, rgba(200,130,10,.15) 0%, transparent 55%);
+  pointer-events: none;
+}
+
+.avatarGrande {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--maiz);
+  color: var(--tierra);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 900;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  border: 3px solid rgba(255,255,255,.2);
+}
+
+.headerInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  position: relative;
+  z-index: 1;
+}
+
+.nombre {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(20px, 3vw, 28px);
+  font-weight: 900;
+  color: #fff;
+  margin: 0;
+  line-height: 1.2;
+}
+
+.meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 13px;
+  color: rgba(255,255,255,.65);
+}
+
+.badge {
+  display: inline-flex;
+  padding: 3px 10px;
+  border-radius: 100px;
+  background: rgba(255,255,255,.15);
+  color: var(--maiz-cl);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: .04em;
+}
+
+/* ── Datos ── */
+.datos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.dato {
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 14px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.datoLabel {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  color: var(--gris-cl);
+}
+
+.datoValor {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tierra);
+}
+
+/* ── Dark mode ── */
+:global(html.dark) .header {
+  background: #1A2B22;
+}

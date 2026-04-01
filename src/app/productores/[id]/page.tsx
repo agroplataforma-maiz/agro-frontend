@@ -21,9 +21,10 @@ async function getProductor(id: string): Promise<Productor | null> {
 
 // SEO dinámico por productor — cada perfil tiene su propio título y descripción
 export async function generateMetadata(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ): Promise<Metadata> {
-  const p = await getProductor(params.id)
+  const { id } = await params
+  const p = await getProductor(id)
   if (!p) return { title: 'Productor no encontrado' }
 
   const nombre = nombreCompleto(p.nombres, p.apellido_paterno, p.apellido_materno)
@@ -40,9 +41,10 @@ export async function generateMetadata(
 }
 
 export default async function PerfilPublicoPage(
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
-  const p = await getProductor(params.id)
+  const { id } = await params
+  const p = await getProductor(id)
   if (!p) notFound()
 
   const nombre = nombreCompleto(p.nombres, p.apellido_paterno, p.apellido_materno)

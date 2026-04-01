@@ -1,0 +1,25 @@
+# Dependencias
+node_modules
+
+# Archivos de Next.js build (se genera dentro del contenedor)
+.next
+
+# Git
+.git
+.gitignore
+
+# Variables locales (en producción se inyectan como env vars)
+.env.local
+.env*.local
+
+# Herramientas de desarrollo
+.eslintcache
+*.log
+npm-debug.log*
+
+# macOS
+.DS_Store
+
+# Editor
+.vscode
+.idea

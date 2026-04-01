@@ -1,5 +1,12 @@
-FROM nginx:alpine
+### Etapa 1: Build
+FROM node:20-alpine
+WORKDIR /app
 
-COPY . /usr/share/nginx/html
+COPY package*.json ./
+RUN npm install --frozen-lockfile
+COPY . .
+RUN npm run build
 
-EXPOSE 80
+ENV NODE_ENV=production
+EXPOSE 3000
+CMD ["npm", "start"]

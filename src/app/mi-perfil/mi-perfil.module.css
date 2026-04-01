@@ -1,0 +1,431 @@
+/* ═══════════════════════════════════════
+   MI PERFIL — Estilos
+═══════════════════════════════════════ */
+.page { width: 100%; }
+
+/* ── Hero banner ─────────────────────────── */
+.hero {
+  background: linear-gradient(135deg, var(--tierra) 0%, var(--verde-deep) 100%);
+  border-radius: 20px;
+  padding: 40px 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 32px;
+  margin-bottom: 32px;
+  color: #fff;
+  box-shadow: var(--sombra-lg);
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '🌽';
+  position: absolute;
+  right: -20px;
+  bottom: -30px;
+  font-size: 160px;
+  opacity: 0.06;
+  pointer-events: none;
+  line-height: 1;
+}
+
+/* Lado izquierdo */
+.heroLeft { display: flex; align-items: center; gap: 28px; }
+
+.avatar {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 2.4rem;
+  font-weight: 700;
+  color: #fff;
+  border: 4px solid rgba(255,255,255,0.25);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.25);
+  flex-shrink: 0;
+  letter-spacing: -1px;
+}
+
+.heroInfo { display: flex; flex-direction: column; gap: 8px; }
+.heroLabel {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.55);
+  margin: 0;
+}
+.heroNombre {
+  font-family: 'Fraunces', serif;
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0;
+  line-height: 1.1;
+  color: #fff;
+}
+.heroNombre em { color: var(--maiz-cl); font-style: normal; }
+.heroBadges { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px; }
+
+.badgeRol {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.2);
+  color: #fff;
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  padding: 4px 12px;
+  border-radius: 20px;
+  backdrop-filter: blur(4px);
+}
+.badgeEstado {
+  font-size: 11px;
+  font-family: 'DM Mono', monospace;
+  padding: 4px 12px;
+  border-radius: 20px;
+}
+.activo  { background: rgba(42,92,63,0.4);  border: 1px solid rgba(74,140,100,0.5); color: #a8f0c0; }
+.inactivo{ background: rgba(168,50,32,0.35); border: 1px solid rgba(168,50,32,0.5);  color: #fca5a5; }
+
+/* Lado derecho — stat cards */
+.heroStats {
+  display: flex;
+  gap: 12px;
+  flex-shrink: 0;
+}
+.heroStat {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 14px;
+  padding: 16px 20px;
+  text-align: center;
+  min-width: 110px;
+  backdrop-filter: blur(6px);
+}
+.heroStatVal {
+  font-family: 'Fraunces', serif;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--maiz-cl);
+  line-height: 1;
+  display: block;
+}
+.heroStatLbl {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,0.5);
+  margin-top: 6px;
+  display: block;
+}
+
+/* ── Tabs ────────────────────────────────── */
+.tabs {
+  display: flex;
+  gap: 4px;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 14px;
+  padding: 6px;
+  margin-bottom: 24px;
+  box-shadow: var(--sombra-sm);
+  width: fit-content;
+}
+.tab {
+  padding: 10px 24px;
+  border-radius: 10px;
+  border: none;
+  background: transparent;
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--gris);
+  cursor: pointer;
+  transition: var(--trans);
+  white-space: nowrap;
+}
+.tab:hover { background: var(--crema); color: var(--tierra); }
+.tabActive {
+  background: var(--tierra);
+  color: #fff;
+  box-shadow: 0 2px 8px rgba(61,34,8,0.25);
+}
+
+/* ── Tarjeta ─────────────────────────────── */
+.card {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 16px;
+  box-shadow: var(--sombra);
+  overflow: hidden;
+  margin-bottom: 24px;
+}
+.cardHeader {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 24px 28px 20px;
+  border-bottom: 1px solid var(--borde);
+  background: var(--crema);
+}
+.cardTitulo {
+  font-family: 'Fraunces', serif;
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--tierra);
+  margin: 0 0 2px;
+}
+.cardSub {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--gris);
+  text-transform: uppercase;
+  margin: 0;
+}
+.cardBody { padding: 28px; }
+
+/* ── Info grid vista lectura ─────────────── */
+.infoGrid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+}
+.infoItem {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 20px 24px;
+  border-bottom: 1px solid var(--borde);
+  border-right: 1px solid var(--borde);
+  transition: background 0.15s;
+}
+.infoItem:nth-child(2n) { border-right: none; }
+.infoItem:nth-last-child(-n+2) { border-bottom: none; }
+.infoItem:hover { background: var(--crema); }
+
+.infoLabel {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gris-cl);
+}
+.infoValor {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tierra);
+}
+.mono { font-family: 'DM Mono', monospace; font-size: 13px; }
+
+/* ── Formulario ──────────────────────────── */
+.form { display: flex; flex-direction: column; gap: 20px; padding: 28px; }
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.formActions {
+  display: flex;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 8px;
+  border-top: 1px solid var(--borde);
+  margin-top: 4px;
+}
+
+/* ── Aviso ───────────────────────────────── */
+.aviso {
+  background: var(--maiz-pal);
+  border: 1px solid rgba(200,130,10,0.25);
+  border-radius: 10px;
+  padding: 14px 18px;
+  font-size: 13px;
+  color: var(--tierra);
+  margin: 0 28px 20px;
+}
+.passError {
+  background: var(--rojo-pal);
+  border: 1px solid rgba(168,50,32,0.2);
+  border-radius: 10px;
+  padding: 12px 16px;
+  font-size: 13px;
+  color: var(--rojo);
+}
+
+/* ── Acciones peligrosas ─────────────────── */
+.dangerZone {
+  background: var(--blanco);
+  border: 1.5px solid rgba(168,50,32,0.2);
+  border-radius: 16px;
+  overflow: hidden;
+}
+.dangerHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 18px 28px;
+  background: var(--rojo-pal);
+  border-bottom: 1px solid rgba(168,50,32,0.15);
+}
+.dangerTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--rojo);
+  margin: 0;
+}
+.dangerBody { padding: 20px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+.dangerDesc { font-size: 13px; color: var(--gris); line-height: 1.5; }
+
+/* Hero */
+.hero {
+  background: linear-gradient(135deg, var(--tierra) 0%, color-mix(in srgb, var(--tierra) 80%, #000) 100%);
+  border-radius: 16px;
+  padding: 40px;
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  margin-bottom: 32px;
+  color: #fff;
+}
+.avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: var(--font-fraunces);
+  font-size: 2rem;
+  font-weight: 700;
+  color: #fff;
+  border: 3px solid rgba(255,255,255,0.3);
+  flex-shrink: 0;
+}
+.hero-info { flex: 1; }
+.hero-nombre {
+  font-family: var(--font-fraunces);
+  font-size: 2rem;
+  font-weight: 700;
+  margin: 0 0 8px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.hero-nombre em { color: var(--maiz); font-style: normal; }
+.hero-badges { display: flex; gap: 8px; flex-wrap: wrap; }
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  font-family: var(--font-dm-mono);
+}
+.b-admin    { background: #7c3aed22; color: #7c3aed; border: 1px solid #7c3aed44; }
+.b-investigador { background: #0891b222; color: #0891b2; border: 1px solid #0891b244; }
+.b-tecnico  { background: #15803d22; color: #15803d; border: 1px solid #15803d44; }
+.b-visualizador { background: #92400e22; color: #92400e; border: 1px solid #92400e44; }
+.b-productor { background: #b45309; color: #fff; border: none; }
+.b-activo   { background: #dcfce7; color: #15803d; border: 1px solid #bbf7d0; }
+.b-inactivo { background: #fee2e2; color: #dc2626; border: 1px solid #fecaca; }
+
+/* Tabs */
+.tabs {
+  display: flex;
+  gap: 4px;
+  border-bottom: 2px solid var(--borde);
+  margin-bottom: 24px;
+}
+.tab {
+  padding: 10px 20px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: var(--texto-suave);
+  border-bottom: 2px solid transparent;
+  margin-bottom: -2px;
+  transition: all 0.15s;
+  border-radius: 8px 8px 0 0;
+}
+.tab:hover { background: var(--fondo-hover); color: var(--verde); }
+.tab-active { color: var(--verde); border-bottom-color: var(--verde); font-weight: 600; }
+
+/* Info grid */
+.info-card {
+  background: var(--fondo-card);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 24px;
+}
+.info-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.info-header h3 {
+  font-family: var(--font-fraunces);
+  font-size: 1.1rem;
+  margin: 0;
+  color: var(--texto);
+}
+.info-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 20px;
+}
+.info-item label {
+  display: block;
+  font-family: var(--font-dm-mono);
+  font-size: 0.72rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--texto-suave);
+  margin-bottom: 4px;
+}
+.info-item span {
+  font-size: 0.95rem;
+  color: var(--texto);
+  font-weight: 500;
+}
+
+/* Form */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px;
+}
+.form-actions {
+  display: flex;
+  gap: 8px;
+  justify-content: flex-end;
+  margin-top: 16px;
+}
+
+/* Password */
+.pw-aviso {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  border-radius: 8px;
+  padding: 12px 16px;
+  font-size: 0.9rem;
+  color: #92400e;
+  margin-bottom: 20px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.pw-form { display: flex; flex-direction: column; gap: 16px; }
+
+/* ── Dark mode ── */
+:global(html.dark) .hero {
+  background: linear-gradient(135deg, #2A3D2E 0%, #1A2B22 100%);
+}

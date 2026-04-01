@@ -1,0 +1,345 @@
+.ayuda-root {
+  max-width: 860px;
+  margin: 0 auto;
+  padding: 0 0 60px;
+}
+
+/* ── Hero ── */
+.ayuda-hero {
+  background: var(--tierra);
+  border-radius: var(--radio);
+  padding: 40px 44px;
+  margin-bottom: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.ayuda-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(ellipse at 90% 50%, rgba(200,130,10,.16) 0%, transparent 55%),
+    radial-gradient(ellipse at 5%  80%, rgba(42,92,63,.22) 0%, transparent 50%);
+  pointer-events: none;
+}
+.ayuda-hero-txt { position: relative; z-index: 1; }
+.ayuda-hero-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--maiz-cl);
+  margin-bottom: 8px;
+}
+.ayuda-hero-titulo {
+  font-family: 'Fraunces', serif;
+  font-size: clamp(22px, 3vw, 32px);
+  font-weight: 900;
+  color: #fff;
+  line-height: 1.2;
+  margin-bottom: 10px;
+}
+.ayuda-hero-desc {
+  font-size: 14px;
+  color: rgba(255,255,255,.55);
+  max-width: 520px;
+  line-height: 1.65;
+}
+.ayuda-hero-ico {
+  font-size: 72px;
+  opacity: .25;
+  flex-shrink: 0;
+  position: relative;
+  z-index: 1;
+  filter: drop-shadow(0 4px 16px rgba(240,180,41,.3));
+}
+
+/* ── Índice rápido ── */
+.ayuda-indice {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 28px;
+}
+.ayuda-indice-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: 100px;
+  background: var(--blanco);
+  font-family: 'Nunito', sans-serif;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--tierra);
+  cursor: pointer;
+  transition: var(--trans);
+}
+.ayuda-indice-btn:hover {
+  background: var(--verde-pal);
+  border-color: var(--verde-cl);
+  color: var(--verde);
+}
+
+/* ── Acordeón ── */
+.ayuda-acordeon {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.ayuda-seccion {
+  background: var(--blanco);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+  scroll-margin-top: 80px;
+  transition: border-color .2s;
+}
+.ayuda-seccion.abierta {
+  border-color: var(--verde-cl);
+}
+.ayuda-seccion-btn {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  width: 100%;
+  padding: 18px 22px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  text-align: left;
+  transition: background .15s;
+}
+.ayuda-seccion-btn:hover { background: var(--crema); }
+.ayuda-seccion.abierta .ayuda-seccion-btn { background: var(--verde-pal); }
+.ayuda-seccion-ico {
+  font-size: 22px;
+  flex-shrink: 0;
+  width: 32px;
+  text-align: center;
+}
+.ayuda-seccion-titulo {
+  font-family: 'Fraunces', serif;
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tierra);
+  flex: 1;
+}
+.ayuda-seccion.abierta .ayuda-seccion-titulo { color: var(--verde); }
+.ayuda-seccion-chevron {
+  font-size: 12px;
+  color: var(--gris);
+  flex-shrink: 0;
+}
+
+.ayuda-seccion-body {
+  padding: 0 24px 24px 24px;
+  font-size: 14px;
+  color: var(--tierra);
+  line-height: 1.7;
+}
+.ayuda-seccion-body p { margin-bottom: 12px; }
+.ayuda-seccion-body p:last-child { margin-bottom: 0; }
+
+/* ── Highlight block ── */
+.ayuda-highlight {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  background: var(--verde-pal);
+  border: 1.5px solid rgba(74,140,100,.2);
+  border-radius: var(--radio-sm);
+  padding: 14px 16px;
+  font-size: 13px;
+  color: var(--tierra);
+  line-height: 1.6;
+}
+.ayuda-highlight-ico { font-size: 20px; flex-shrink: 0; margin-top: 1px; }
+
+/* ── Roles ── */
+.roles-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.rol-card {
+  background: var(--crema);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+.rol-ico { font-size: 28px; }
+.rol-card strong { font-size: 13px; font-weight: 800; color: var(--tierra); }
+.rol-card p { font-size: 12px; color: var(--gris); margin: 0; line-height: 1.5; }
+
+/* ── Módulos ── */
+.modulos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  margin-top: 14px;
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  overflow: hidden;
+}
+.modulo-fila {
+  display: flex;
+  align-items: flex-start;
+  gap: 14px;
+  padding: 13px 16px;
+  border-bottom: 1px solid var(--borde);
+  transition: background .15s;
+}
+.modulo-fila:last-child { border-bottom: none; }
+.modulo-fila:hover { background: var(--crema); }
+.modulo-ico { font-size: 20px; flex-shrink: 0; margin-top: 2px; width: 28px; text-align: center; }
+.modulo-nombre { font-size: 13px; font-weight: 800; color: var(--tierra); display: block; margin-bottom: 2px; }
+.modulo-desc { font-size: 12px; color: var(--gris); margin: 0; line-height: 1.5; }
+
+/* ── Pasos ── */
+.pasos-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+.paso-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 16px;
+}
+.paso-num {
+  width: 32px; height: 32px;
+  border-radius: 50%;
+  background: var(--verde);
+  color: #fff;
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 900;
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+.paso-titulo { font-size: 13px; font-weight: 800; color: var(--tierra); display: block; margin-bottom: 3px; }
+.paso-desc { font-size: 13px; color: var(--gris); margin: 0; line-height: 1.55; }
+
+/* ── Privacidad ── */
+.privacidad-lista {
+  list-style: none;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.privacidad-lista li {
+  font-size: 13px;
+  line-height: 1.55;
+  padding: 10px 14px;
+  background: var(--crema);
+  border-radius: var(--radio-sm);
+  border: 1px solid var(--borde);
+}
+
+/* ── Accesibilidad ── */
+.acc-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.acc-card {
+  background: var(--crema);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+.acc-ico { font-size: 24px; }
+.acc-titulo { font-size: 13px; font-weight: 800; color: var(--tierra); }
+.acc-desc { font-size: 12px; color: var(--gris); margin: 0; line-height: 1.5; }
+
+/* ── FAQ ── */
+.faq-lista {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.faq-item {
+  background: var(--crema);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 14px 16px;
+}
+.faq-pregunta {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--tierra);
+  margin-bottom: 6px;
+}
+.faq-respuesta {
+  font-size: 13px;
+  color: var(--gris);
+  line-height: 1.55;
+}
+
+/* ── Contacto ── */
+.contacto-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  margin-top: 16px;
+}
+.contacto-card {
+  background: var(--crema);
+  border: 1.5px solid var(--borde);
+  border-radius: var(--radio-sm);
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.contacto-ico { font-size: 26px; margin-bottom: 4px; }
+.contacto-card strong { font-size: 13px; font-weight: 800; color: var(--tierra); }
+.contacto-card span { font-size: 12px; color: var(--gris); }
+
+/* ── Dark mode ── */
+:global(html.dark) .ayuda-hero {
+  background: #1A2B22;
+}
+:global(html.dark) .ayuda-seccion-btn:hover { background: rgba(255,255,255,.05); }
+:global(html.dark) .ayuda-seccion.abierta .ayuda-seccion-btn { background: rgba(77,160,107,.12); }
+:global(html.dark) .ayuda-seccion.abierta .ayuda-seccion-titulo { color: var(--verde-cl); }
+:global(html.dark) .rol-card,
+:global(html.dark) .acc-card,
+:global(html.dark) .faq-item,
+:global(html.dark) .modulo-fila:hover,
+:global(html.dark) .contacto-card,
+:global(html.dark) .privacidad-lista li {
+  background: rgba(255,255,255,.05);
+  border-color: rgba(255,255,255,.10);
+}
+:global(html.dark) .modulos-lista { border-color: rgba(255,255,255,.10); }
+:global(html.dark) .modulo-fila { border-bottom-color: rgba(255,255,255,.07); }
+
+/* ── Responsive ── */
+@media (max-width: 600px) {
+  .ayuda-hero { padding: 28px 20px; }
+  .ayuda-hero-ico { display: none; }
+  .ayuda-seccion-btn { padding: 14px 16px; gap: 10px; }
+  .ayuda-seccion-body { padding: 0 16px 20px; }
+  .roles-grid, .acc-grid, .contacto-cards { grid-template-columns: 1fr; }
+}

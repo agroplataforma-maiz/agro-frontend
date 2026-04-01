@@ -17,7 +17,7 @@ jobs:
 
       - name: Set version
         id: version
-        run: echo "VERSION=v1.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
+        run: echo "VERSION=v2.0.${{ github.run_number }}" >> $GITHUB_OUTPUT
 
       - name: Login GHCR
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin

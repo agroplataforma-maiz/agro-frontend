@@ -1,0 +1,81 @@
+/* src/app/comunidades/comunidades.module.css */
+
+.page {
+  padding: 28px 32px 48px;
+  min-height: 100%;
+}
+
+/* ── Encabezado ── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+  margin-bottom: 8px;
+}
+
+.titulo {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--tierra);
+  margin: 0 0 4px;
+}
+
+.subtitulo {
+  font-size: 13px;
+  color: var(--gris);
+  margin: 0;
+}
+
+/* ── KPI band ── */
+.kpiBand {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+  margin-bottom: 4px;
+}
+
+.kpiItem {
+  background: var(--blanco);
+  border: 1px solid rgba(61, 34, 8, 0.09);
+  border-radius: 12px;
+  padding: 18px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.kpiNum {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 32px;
+  font-weight: 900;
+  color: var(--maiz);
+  line-height: 1;
+}
+
+.kpiLbl {
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--cafe);
+  line-height: 1.35;
+}
+
+/* ── Acciones tabla ── */
+.acciones {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .page {
+    padding: 16px;
+  }
+
+  .header {
+    flex-direction: column;
+  }
+}

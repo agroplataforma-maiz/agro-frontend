@@ -1,0 +1,367 @@
+.sb-hide { display: none !important; }
+.sidebar.collapsed .sb-collapse-btn {
+  display: flex !important;
+}
+/* ═══════════════════════════════════════════════════════
+   SIDEBAR
+═══════════════════════════════════════════════════════ */
+.sidebar {
+  width: var(--sidebar-w);
+  min-width: var(--sidebar-w);
+  max-width: var(--sidebar-w);
+  background: var(--tierra);
+  position: fixed;
+  top: 0; left: 0; bottom: 0;
+  z-index: 300;
+  display: flex;
+  flex-direction: column;
+  transition: transform .28s cubic-bezier(.4,0,.2,1), width .28s ease;
+  overflow-y: auto;
+  overflow-x: visible;
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255,255,255,.08) transparent;
+  box-shadow: 2px 0 8px 0 rgba(0,0,0,.07);
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(255,255,255,.08); border-radius: 2px; }
+
+.sidebar.collapsed { 
+  width: 64px !important;
+  min-width: 64px !important;
+  max-width: 64px !important;; }
+.sidebar.mobile-hidden { transform: translateX(-100%); }
+
+/* Logo sidebar */
+.sb-logo {
+  padding: 18px 18px 14px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  text-decoration: none;
+  min-height: 68px;
+  flex-shrink: 0;
+}
+
+.sb-logo-ico {
+  font-size: 26px;
+  flex-shrink: 0;
+  filter: drop-shadow(0 2px 6px rgba(240,180,41,.35));
+  width: 32px;
+  text-align: center;
+}
+
+.sb-logo-txt { overflow: hidden; }
+.sb-logo-nombre {
+  font-family: 'Fraunces', serif;
+  font-size: 15px;
+  font-weight: 900;
+  color: var(--maiz-cl);
+  white-space: nowrap;
+  line-height: 1.2;
+}
+.sb-logo-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: rgba(255,255,255,.28);
+  letter-spacing: .1em;
+  white-space: nowrap;
+  display: block;
+  margin-top: 2px;
+}
+
+.sidebar.collapsed .sb-logo-txt { display: none !important; }
+
+/* Perfil usuario en sidebar */
+.sb-perfil {
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(255,255,255,.06);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  position: relative;
+  min-height: 48px;
+}
+
+.sb-avatar {
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  background: var(--verde);
+  display: flex; 
+  align-items: center; 
+  justify-content: center;
+  font-family: 'Fraunces', serif;
+  font-size: 14px; 
+  font-weight: 900;
+  color: var(--maiz-cl);
+  flex-shrink: 0;
+  border: 2px solid rgba(240,180,41,.3);
+}
+
+.sb-perfil-info { overflow: hidden; flex: 1; }
+
+.sb-perfil .sb-collapse-btn {
+  margin-left: auto;
+  margin-bottom: 0;
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+}
+.sb-perfil-nombre {
+  font-size: 13px;
+  font-weight: 800;
+  color: #fff;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  line-height: 1.3;
+}
+.sb-perfil-rol {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  color: var(--maiz-cl);
+  letter-spacing: .06em;
+  white-space: nowrap;
+}
+
+
+
+.sidebar.collapsed .sb-perfil-info { display: none; }
+
+/* Forzar visibilidad del botón de colapso/expandir SIEMPRE */
+.sb-perfil .sb-collapse-btn {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  z-index: 10;
+  background: rgba(255,255,255,.10);
+  border: 1px solid rgba(255,255,255,.18);
+}
+
+.sidebar.collapsed .sb-perfil .sb-collapse-btn {
+  display: flex !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+/* Asegura que el botón de colapso siempre sea visible */
+.sb-perfil .sb-collapse-btn {
+  margin-left: auto;
+  margin-bottom: 0;
+  align-self: center;
+  width: 32px;
+  height: 32px;
+  font-size: 18px;
+  display: flex !important;
+  position: relative;
+  z-index: 2;
+}
+
+.sidebar.collapsed .sb-perfil .sb-collapse-btn {
+  display: flex !important;
+  justify-content: center;
+  align-items: center;
+  margin-left: 0;
+}
+
+/* Grupo de nav */
+.sb-group-label {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.25);
+  padding: 14px 24px 5px;
+  white-space: normal;
+  overflow: visible;
+}
+.sidebar.collapsed .sb-group-label { opacity: 0 !important; height: 0 !important; padding: 0 !important; overflow: hidden !important; }
+
+/* Nav item */
+.sb-item {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  padding: 10px 16px;
+  cursor: pointer;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+  text-decoration: none;
+  border-left: 3px solid transparent;
+  transition: var(--trans);
+  position: relative;
+  border-radius: 0;
+  min-height: 44px; /* accesibilidad: área mínima de toque */
+}
+
+.sb-item:hover { background: rgba(255,255,255,.06); }
+.sb-item.active {
+  background: rgba(200,130,10,.15);
+  border-left-color: var(--maiz-cl);
+}
+.sb-item.active .sb-item-ico,
+.sb-item.active .sb-item-txt { color: var(--maiz-cl); }
+.sb-item.disabled { opacity: .4; cursor: not-allowed; }
+
+.sb-item-ico {
+  font-size: 18px;
+  flex-shrink: 0;
+  width: 28px;
+  text-align: center;
+  color: rgba(255,255,255,.5);
+  transition: color .2s;
+}
+
+.sb-item-txt {
+  font-size: 14px;
+  font-weight: 700;
+  color: rgba(255,255,255,.85);
+  white-space: normal;
+  overflow: visible;
+  transition: color .2s;
+  flex: 1;
+}
+
+.sb-item-badge {
+  font-family: 'DM Mono', monospace;
+  font-size: 9px;
+  padding: 2px 7px;
+  border-radius: 100px;
+  flex-shrink: 0;
+}
+.badge-pronto { background: rgba(255,255,255,.08); color: rgba(255,255,255,.3); }
+.badge-nuevo  { background: rgba(200,130,10,.25); color: var(--maiz-cl); }
+.badge-beta   { background: rgba(100,160,220,.22); color: #7ec8f7; }
+
+.sidebar.collapsed .sb-item-txt,
+.sidebar.collapsed .sb-item-badge { display: none !important; }
+
+/* Tooltip en collapsed */
+.sidebar.collapsed .sb-item:hover::after {
+  content: attr(data-tooltip);
+  position: absolute;
+  left: 72px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: var(--tierra-cl);
+  color: #fff;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+  z-index: 200;
+  box-shadow: var(--sombra);
+  pointer-events: none;
+}
+
+/* Footer sidebar */
+.sb-footer {
+  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid rgba(255,255,255,.06);
+  flex-shrink: 0;
+}
+
+.sb-footer-btns { display: flex; gap: 6px; }
+.sb-footer-btn {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px;
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: var(--radio-sm);
+  background: transparent;
+  color: rgba(255,255,255,.45);
+  font-family: 'Nunito', sans-serif;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: var(--trans);
+  min-height: 36px;
+}
+.sb-footer-btn:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.75); }
+.sb-footer-btn.danger:hover { background: rgba(168,50,32,.2); color: #F09595; border-color: rgba(168,50,32,.3); }
+
+.sidebar.collapsed .sb-footer-btn-txt { display: none !important; }
+
+/* Collapse toggle */
+.sb-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px; height: 28px;
+  border-radius: 50%;
+  background: rgba(255,255,255,.07);
+  border: 1px solid rgba(255,255,255,.1);
+  color: rgba(255,255,255,.45);
+  cursor: pointer;
+  font-size: 14px;
+  transition: var(--trans);
+  flex-shrink: 0;
+}
+.sb-collapse-btn:hover { background: rgba(255,255,255,.12); color: #fff; }
+
+/* ═══════════════════════════════════════════════════════
+   OVERLAY MÓVIL
+═══════════════════════════════════════════════════════ */
+.overlay {
+  display: none;
+  position: fixed;
+  inset: 0;
+  background: rgba(61,34,8,.5);
+  z-index: 70;
+  backdrop-filter: blur(2px);
+}
+.overlay.visible { display: block; }
+
+/* ═══════════════════════════════════════════════════════
+   MODO OSCURO — sidebar
+   El sidebar usa --tierra como fondo oscuro / texto blanco.
+   En dark mode --tierra se vuelve crema claro → se invierte.
+   Fijamos un fondo verde-oscuro neutro independiente del tema.
+═══════════════════════════════════════════════════════ */
+:global(html.dark) .sidebar {
+  background: #111A15;
+  box-shadow: 2px 0 12px rgba(0,0,0,.45);
+}
+
+/* Separadores internos: adaptar al nuevo fondo */
+:global(html.dark) .sb-logo {
+  border-bottom-color: rgba(255,255,255,.08);
+}
+:global(html.dark) .sb-perfil {
+  border-bottom-color: rgba(255,255,255,.08);
+}
+:global(html.dark) .sb-footer {
+  border-top-color: rgba(255,255,255,.08);
+}
+
+/* Tooltip colapsado: --tierra-cl también se invierte en dark */
+:global(html.dark) .sidebar.collapsed .sb-item:hover::after {
+  background: #2A4035;
+  color: #E0D0B0;
+  box-shadow: 0 4px 16px rgba(0,0,0,.5);
+}
+
+/* .sidebar.collapsed ~ .main-area {
+  margin-left: 64px;
+}
+*/
+
+body.sidebar-collapsed .main-area {
+  margin-left: var(--sidebar-collapsed);
+}
+
+body.sidebar-collapsed .topbar {
+  left: var(--sidebar-collapsed);
+}

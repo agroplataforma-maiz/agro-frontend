@@ -1,0 +1,82 @@
+/* Paginacion.module.css */
+
+.wrap {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 20px 0 8px;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.info {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--gris);
+  letter-spacing: 0.05em;
+  background: var(--verde-pal);
+  border: 1px solid var(--borde-dark);
+  border-radius: 20px;
+  padding: 4px 12px;
+}
+
+.controles {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.btn {
+  min-width: 36px;
+  height: 36px;
+  padding: 0 10px;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 10px;
+  background: var(--blanco);
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--tierra);
+  cursor: pointer;
+  transition: all 0.18s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+  letter-spacing: 0.01em;
+}
+
+.btn:hover:not(:disabled):not(.activo) {
+  border-color: var(--verde);
+  color: var(--verde);
+  background: var(--verde-pal);
+  box-shadow: 0 2px 8px rgba(106,153,78,0.15);
+  transform: translateY(-1px);
+}
+
+.btn:active:not(:disabled):not(.activo) {
+  transform: translateY(0);
+  box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+}
+
+.btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.activo {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--blanco);
+  cursor: default;
+  box-shadow: 0 2px 8px rgba(106,153,78,0.35);
+}
+
+.elipsis {
+  font-size: 14px;
+  color: var(--gris-cl);
+  padding: 0 6px;
+  user-select: none;
+  letter-spacing: 0.1em;
+}

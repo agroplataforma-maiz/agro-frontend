@@ -1,0 +1,502 @@
+/* ─── Fenotipo module ──────────────────────────────────────────────── */
+
+.page {
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* ── Layout 2 columnas: formulario + panel resumen ───────────────────── */
+.layout {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 1fr 320px;
+  gap: 20px;
+  align-items: start;
+}
+
+.formPanel {
+  min-width: 0;
+}
+
+.summaryPanel {
+  position: sticky;
+  top: calc(var(--topbar-h) + 16px);
+  max-height: calc(100vh - var(--topbar-h) - 32px);
+  overflow-y: auto;
+  scrollbar-width: thin;
+}
+
+@media (max-width: 900px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
+  .summaryPanel {
+    position: static;
+    max-height: none;
+  }
+}
+
+/* ── Encabezado ─────────────────────────────────────────────────────── */
+.header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--tierra);
+  margin: 0 0 6px;
+  line-height: 1.2;
+}
+
+.subtitle {
+  font-size: 0.875rem;
+  color: var(--gris);
+  margin: 0;
+}
+
+/* ── Stepper ────────────────────────────────────────────────────────── */
+.stepper {
+  display: flex;
+  align-items: flex-start;
+  margin-bottom: 28px;
+}
+
+.stepItem {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  cursor: pointer;
+}
+
+.stepConnector {
+  flex: 1;
+  height: 2px;
+  background: var(--borde-dark);
+  margin-top: 14px;
+  transition: background 0.3s;
+}
+
+.stepConnector.done {
+  background: var(--verde);
+}
+
+.stepCircle {
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.72rem;
+  font-weight: 700;
+  font-family: 'DM Mono', monospace;
+  border: 2px solid var(--borde-dark);
+  background: var(--blanco);
+  color: var(--gris-cl);
+  transition: var(--trans);
+  user-select: none;
+}
+
+.stepItem.done .stepCircle {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--blanco);
+}
+
+.stepItem.active .stepCircle {
+  background: var(--maiz);
+  border-color: var(--maiz);
+  color: var(--blanco);
+  box-shadow: 0 0 0 4px rgba(200, 130, 10, 0.18);
+}
+
+.stepLabel {
+  font-size: 0.62rem;
+  color: var(--gris-cl);
+  margin-top: 5px;
+  text-align: center;
+  text-transform: capitalize;
+  line-height: 1.3;
+  max-width: 72px;
+  font-family: 'DM Mono', monospace;
+}
+
+.stepItem.done .stepLabel,
+.stepItem.active .stepLabel {
+  color: var(--tierra);
+  font-weight: 600;
+}
+
+/* ── Barra de progreso ──────────────────────────────────────────────── */
+.progress {
+  margin-bottom: 20px;
+}
+
+.progressMeta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 0.78rem;
+  color: var(--gris);
+  margin-bottom: 6px;
+  font-family: 'DM Mono', monospace;
+}
+
+.progressTrack {
+  height: 6px;
+  background: var(--crema-dark);
+  border-radius: 99px;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+}
+
+.progressBar {
+  height: 100%;
+  background: linear-gradient(90deg, var(--maiz) 0%, var(--maiz-cl) 100%);
+  border-radius: 99px;
+  transition: width 0.4s ease;
+}
+
+/* ── Tarjeta principal ──────────────────────────────────────────────── */
+.card {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+
+.cardHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 28px;
+  border-bottom: 1px solid var(--borde);
+  background: var(--crema);
+}
+
+.cardHeadTitle {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tierra);
+  text-transform: capitalize;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Nunito', sans-serif;
+}
+
+.cardHeadPill {
+  font-size: 0.72rem;
+  font-family: 'DM Mono', monospace;
+  color: var(--gris);
+  background: var(--crema-dark);
+  border: 1px solid var(--borde-dark);
+  padding: 2px 10px;
+  border-radius: 99px;
+}
+
+.cardBody {
+  padding: 28px;
+}
+
+.cardFoot {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 28px;
+  border-top: 1px solid var(--borde);
+  background: var(--crema);
+}
+
+/* ── Sección de reporte ─────────────────────────────────────────────── */
+.report {
+  margin-top: 28px;
+}
+
+/* ── Botón limpiar ──────────────────────────────────────────────────── */
+.clearBtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: var(--rojo);
+  background: var(--rojo-pal);
+  border: 1px solid rgba(168, 50, 32, 0.2);
+  border-radius: 8px;
+  cursor: pointer;
+  transition: var(--trans);
+  white-space: nowrap;
+  align-self: flex-start;
+}
+.clearBtn:hover {
+  background: rgba(168, 50, 32, 0.12);
+  border-color: var(--rojo);
+}
+
+/* ── Grid de Datos Generales ────────────────────────────────────────── */
+.dgGrid {
+  display: flex;
+  flex-direction: column;
+  gap: 28px;
+}
+
+.dgSection {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.dgSectionTitle {
+  font-family: 'Fraunces', serif;
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--verde);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--verde-pal);
+  padding-bottom: 6px;
+  margin-bottom: 2px;
+}
+
+.dgRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+/* ── Envoltura de campo individual ─────────────────────────────────── */
+.dgFieldWrap {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.dgLabel {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  font-weight: 700;
+  color: var(--verde);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dgUnit {
+  font-weight: 400;
+  color: var(--gris-cl);
+  text-transform: none;
+  font-size: 0.68rem;
+}
+
+.dgSpinner {
+  display: inline-block;
+  animation: spin 0.8s linear infinite;
+  margin-left: 4px;
+  color: var(--maiz);
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+
+/* ── Inputs grandes para campo ──────────────────────────────────────── */
+.dgInput {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--tierra);
+  background: var(--blanco);
+  outline: none;
+  transition: border-color 0.2s, box-shadow 0.2s;
+  -webkit-appearance: none;
+}
+
+.dgInput:focus {
+  border-color: var(--verde-cl);
+  box-shadow: 0 0 0 3px rgba(74, 140, 100, 0.12);
+}
+
+.dgInput::placeholder {
+  color: var(--gris-cl);
+  font-weight: 400;
+}
+
+/* ── Select grande (reutiliza form-group pero sobrescribe padding) ── */
+.dgSelectLg :global(.form-group) {
+  margin-bottom: 0;
+}
+
+.dgSelectLg :global(select) {
+  padding: 12px 14px;
+  font-size: 15px;
+  font-weight: 600;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 10px;
+}
+
+.dgSelectLg :global(label) {
+  display: none; /* label propio .dgLabel lo reemplaza */
+}
+
+/* ── Textarea ────────────────────────────────────────────────────────── */
+.dgTextarea {
+  width: 100%;
+  padding: 12px 14px;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  color: var(--tierra);
+  background: var(--blanco);
+  outline: none;
+  resize: vertical;
+  min-height: 80px;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+
+.dgTextarea:focus {
+  border-color: var(--verde-cl);
+  box-shadow: 0 0 0 3px rgba(74, 140, 100, 0.12);
+}
+
+.dgTextarea::placeholder {
+  color: var(--gris-cl);
+}
+
+/* ── Pills / radio visual para Tipo y Temporada ─────────────────────── */
+.dgPills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.dgPill {
+  padding: 9px 18px;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 99px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--gris);
+  background: var(--blanco);
+  cursor: pointer;
+  transition: var(--trans);
+  user-select: none;
+  white-space: nowrap;
+}
+
+.dgPill:hover {
+  border-color: var(--verde-cl);
+  color: var(--verde);
+  background: var(--verde-pal);
+}
+
+.dgPillActive {
+  background: var(--verde);
+  border-color: var(--verde);
+  color: var(--blanco);
+  box-shadow: 0 2px 8px rgba(42, 92, 63, 0.22);
+}
+
+.dgPillActive:hover {
+  background: var(--verde-cl);
+  border-color: var(--verde-cl);
+  color: var(--blanco);
+}
+
+/* ── Contador +/- para plantas y reps ───────────────────────────────── */
+.dgCounter {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border: 1.5px solid var(--borde-dark);
+  border-radius: 10px;
+  overflow: hidden;
+  background: var(--blanco);
+}
+
+.dgCountBtn {
+  width: 36px;
+  height: 40px;
+  flex-shrink: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--verde);
+  background: var(--crema);
+  border: none;
+  cursor: pointer;
+  transition: background 0.15s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+
+.dgCountBtn:hover {
+  background: var(--verde-pal);
+}
+
+.dgCountBtn:active {
+  background: var(--verde);
+  color: var(--blanco);
+}
+
+.dgCountInput {
+  flex: 1;
+  min-width: 0;
+  border: none;
+  outline: none;
+  text-align: center;
+  font-family: 'Fraunces', serif;
+  font-size: 1.1rem;
+  font-weight: 900;
+  color: var(--tierra);
+  background: transparent;
+  padding: 4px 0;
+  -moz-appearance: textfield;
+  max-width: 56px;
+}
+
+.dgCountInput::-webkit-inner-spin-button,
+.dgCountInput::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+}
+
+/* ── Sección de reporte ─────────────────────────────────────────────── */
+.report {
+  margin-top: 0;
+}
+
+/* ── Responsive ─────────────────────────────────────────────────────── */
+@media (max-width: 600px) {
+  .dgRow {
+    grid-template-columns: 1fr;
+  }
+
+  .dgPill {
+    padding: 10px 16px;
+    font-size: 0.95rem;
+  }
+
+  .dgCountBtn {
+    width: 40px;
+    height: 44px;
+  }
+}
+

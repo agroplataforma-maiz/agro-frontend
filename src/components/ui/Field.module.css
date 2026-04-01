@@ -1,0 +1,53 @@
+.form-group {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 16px;
+}
+
+.form-group label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--cafe, #3D2208);
+  margin-bottom: 4px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+  padding: 8px 12px;
+  border: 1px solid var(--borde, #e5e7eb);
+  border-radius: 6px;
+  font-size: 15px;
+  color: var(--cafe, #3D2208);
+  background: var(--blanco, #fff);
+  outline: none;
+  transition: border 0.2s;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+  border-color: var(--verde, #2A5C3F);
+}
+
+.form-group input[disabled],
+.form-group select[disabled],
+.form-group textarea[disabled] {
+  background: #f3f4f6;
+  color: #b0b0b0;
+  cursor: not-allowed;
+}
+
+.form-group .error {
+  color: #dc2626;
+  font-size: 12px;
+  margin-top: 2px;
+}
+
+/* ── Dark mode ── */
+:global(html.dark) .form-group input[disabled],
+:global(html.dark) .form-group select[disabled],
+:global(html.dark) .form-group textarea[disabled] {
+  background: rgba(255,255,255,.06);
+  color: rgba(255,255,255,.3);
+}

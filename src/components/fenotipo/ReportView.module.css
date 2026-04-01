@@ -1,0 +1,135 @@
+/* ─── ReportView module ──────────────────────────────────────────────── */
+
+.wrap {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  overflow: hidden;
+  box-shadow: var(--sombra-sm);
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 18px 28px;
+  background: var(--crema);
+  border-bottom: 1px solid var(--borde);
+}
+
+.title {
+  font-family: 'Nunito', sans-serif;
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--tierra);
+  margin: 0 0 2px;
+}
+
+.subtitle {
+  font-size: 0.78rem;
+  color: var(--gris);
+  margin: 0;
+  font-family: 'DM Mono', monospace;
+}
+
+.counter {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.72rem;
+  background: var(--maiz-pal);
+  color: var(--maiz);
+  border: 1px solid rgba(200,130,10,0.2);
+  padding: 3px 11px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.body {
+  padding: 20px 28px;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.grupo {
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  overflow: hidden;
+}
+
+.grupoHead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 14px;
+  background: var(--crema);
+  border-bottom: 1px solid var(--borde);
+}
+
+.grupoCount {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.68rem;
+  color: var(--gris);
+}
+
+.grupoBody {
+  padding: 4px 0;
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px 14px;
+  font-size: 0.84rem;
+  border-bottom: 1px solid var(--borde);
+}
+
+.row:last-child {
+  border-bottom: none;
+}
+
+.rowLabel {
+  color: var(--gris);
+}
+
+.rowValue {
+  font-weight: 600;
+  color: var(--tierra);
+  font-family: 'DM Mono', monospace;
+  font-size: 0.8rem;
+}
+
+/* ── Resumen datos generales ──────────────────────────────────────── */
+.dgSummary {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 10px;
+  padding: 18px 28px;
+  background: var(--verde-pal);
+  border-bottom: 1px solid rgba(42, 92, 63, 0.15);
+}
+
+.dgSummaryItem {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.dgSummaryFull {
+  grid-column: 1 / -1;
+}
+
+.dgSummaryLabel {
+  font-family: 'DM Mono', monospace;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: var(--verde-cl);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+.dgSummaryValue {
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--verde-deep);
+}

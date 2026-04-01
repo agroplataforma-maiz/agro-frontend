@@ -1,0 +1,121 @@
+/* Boton.module.css */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: none;
+  border-radius: 10px;
+  font-family: 'Nunito', sans-serif;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.16s;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+.btn:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+/* ── Tamaños ── */
+.sm  { font-size: 12px; padding: 6px  14px; border-radius: 8px; }
+.md  { font-size: 13px; padding: 9px  18px; }
+.lg  { font-size: 15px; padding: 12px 24px; border-radius: 12px; }
+
+/* ── Variantes ── */
+.primario {
+  background: var(--verde);
+  color: var(--blanco);
+}
+.primario:hover:not(:disabled) { background: var(--verde-deep); transform: translateY(-1px); }
+
+.secundario {
+  background: transparent;
+  color: var(--tierra);
+  border: 1.5px solid var(--borde-dark);
+}
+.secundario:hover:not(:disabled) { background: var(--crema-dark); }
+
+.peligro {
+  background: var(--rojo-pal);
+  color: var(--rojo);
+  border: 1px solid rgba(168,50,32,.2);
+}
+.peligro:hover:not(:disabled) { background: var(--rojo); color: var(--blanco); }
+
+.ghost {
+  background: transparent;
+  color: var(--gris);
+}
+.ghost:hover:not(:disabled) { background: var(--crema-dark); color: var(--tierra); }
+
+/* ── Spinner ── */
+.spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255,255,255,.3);
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+}
+
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.icono { font-size: 14px; }
+
+/* ── Compatibilidad legacy ── */
+.btn-primary {
+  background: var(--verde);
+  color: #fff;
+}
+.btn-primary:hover {
+  background: var(--verde-cl);
+}
+.btn-danger {
+  background: var(--rojo-pal);
+  color: var(--rojo);
+}
+.btn-danger:hover {
+  background: #fcc;
+}
+.btn-edit {
+  background: var(--maiz-pal);
+  color: var(--maiz);
+}
+.btn-edit:hover {
+  background: #ffe0a0;
+}
+.btn-ghost {
+  background: transparent;
+  border: 1px solid var(--borde);
+  color: var(--gris);
+}
+.btn-ghost:hover {
+  background: var(--blanco);
+}
+.btn-back {
+  background: var(--crema);
+  border: 1px solid var(--borde);
+  color: var(--cafe);
+}
+.btn-back:hover {
+  background: #ede8e0;
+}
+.btn-sm {
+  padding: 5px 10px;
+  font-size: 12px;
+  border-radius: 6px;
+}
+.btn-xs {
+  padding: 3px 8px;
+  font-size: 11px;
+  border-radius: 5px;
+}
+
+/* ── Dark mode (legacy classes) ── */
+:global(html.dark) .btn-danger:hover  { background: rgba(220,38,38,.25); }
+:global(html.dark) .btn-edit:hover    { background: rgba(200,130,10,.25); }
+:global(html.dark) .btn-back:hover    { background: rgba(255,255,255,.08); }

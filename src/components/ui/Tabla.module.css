@@ -1,0 +1,120 @@
+/* src/components/ui/Tabla.module.css */
+
+
+
+.tableWrap {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: var(--sombra);
+  overflow-x: auto;
+}
+.tableInfo {
+  padding: 12px 20px;
+  border-bottom: 1px solid var(--borde);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.tableCount {
+  font-family: "DM Mono", monospace;
+  font-size: 11px;
+  color: var(--gris);
+}
+.tabla {
+  width: 100%;
+  border-collapse: collapse;
+}
+.theadTr {
+  background: var(--verde-pal);
+}
+.th {
+  text-align: left;
+  padding: 11px 16px;
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--verde);
+  font-weight: 500;
+  border-bottom: 1px solid rgba(42, 92, 63, 0.15);
+  white-space: nowrap;
+  user-select: none;
+  transition: background 0.15s;
+}
+.thSortable {
+  cursor: pointer;
+}
+.thSortable:hover {
+  background: rgba(42, 92, 63, 0.1);
+}
+.thSorted {
+  background: rgba(42, 92, 63, 0.07);
+}
+.sortIcon {
+  opacity: 0.4;
+  font-size: 10px;
+}
+.thSorted .sortIcon {
+  opacity: 1;
+  color: var(--verde);
+}
+.sortInfo {
+  font-family: "DM Mono", monospace;
+  font-size: 10px;
+  color: var(--gris);
+}
+.th-rol {
+  white-space: nowrap !important;
+  max-width: 120px !important;
+  word-break: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.th-estado {
+  white-space: nowrap !important;
+  max-width: 100px !important;
+  word-break: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tbodyTr {
+  border-bottom: 1px solid var(--borde);
+  transition: background 0.15s;
+  cursor: pointer;
+}
+.tbodyTr:last-child {
+  border-bottom: none;
+}
+.tbodyTr:hover {
+  background: var(--crema);
+}
+.td {
+  padding: 10px 16px;
+  font-size: 13px;
+  color: var(--cafe);
+  vertical-align: middle;
+  white-space: normal;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+  max-width: 1px;
+  padding-left: 24px;
+  padding-right: 24px;
+}
+
+/* Ajuste para celdas de rol y estado: ancho fijo y sin saltos de línea */
+.td-rol,
+.td-estado {
+  white-space: nowrap !important;
+  max-width: 120px !important;
+  word-break: normal !important;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.tdAcciones {
+  display: flex;
+  gap: 5px;
+  pointer-events: auto;
+}

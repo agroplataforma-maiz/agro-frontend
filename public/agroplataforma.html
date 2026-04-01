@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agroplataforma Digital · Maíz Nativo · Huasteca Potosina</title>
+<meta name="description" content="Plataforma digital de monitoreo para la conservación del maíz nativo en la Huasteca Potosina. IT Ciudad Valles · TecNM · Secihti 2025.">
+<link rel="icon" type="image/svg+xml" href="favicon.svg">
+<link rel="alternate icon" href="favicon.ico">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700&family=Source+Serif+4:ital,opsz,wght@0,8..60,300;0,8..60,400;0,8..60,600;1,8..60,300;1,8..60,400&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --maiz:       #D4922A;
+  --maiz-cl:    #F2C96E;
+  --maiz-osc:   #8B5E1A;
+  --tierra:     #3D2B1F;
+  --tierra-med: #6B4226;
+  --hoja:       #4A7C59;
+  --hoja-cl:    #8DBF8A;
+  --hoja-pal:   #EAF3DE;
+  --cielo:      #C8DDE8;
+  --crema:      #F7F1E8;
+  --blanco:     #FDFAF5;
+  --gris-txt:   #4A3F35;
+  --rojo:       #B84B2F;
+  --borde:      rgba(61,43,31,0.11);
+}
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--crema);
+  color: var(--tierra);
+  font-family: 'Source Serif 4', Georgia, serif;
+  font-size: 17px;
+  line-height: 1.75;
+  overflow-x: hidden;
+}
+
+/* ── BARRA INSTITUCIONAL ── */
+.barra-inst {
+  background: #fff;
+  padding: 14px 6vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 36px;
+  flex-wrap: wrap;
+  border-bottom: 1px solid rgba(61,43,31,0.08);
+  position: sticky; top: 0; z-index: 200;
+}
+.barra-sep { width: 1px; height: 44px; background: rgba(61,43,31,0.12); flex-shrink: 0; }
+@media(max-width:600px) {
+  .barra-inst { gap: 20px; padding: 10px 5vw; }
+  .barra-sep { display: none; }
+}
+
+/* ── NAV ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(61,43,31,0.97);
+  backdrop-filter: blur(8px);
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6vw;
+  border-bottom: 1px solid rgba(212,146,42,0.18);
+}
+.nav-logo {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: var(--maiz-cl);
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+.nav-links { display: flex; gap: 24px; list-style: none; }
+.nav-links a {
+  font-size: 11px;
+  color: rgba(253,250,245,0.5);
+  text-decoration: none;
+  letter-spacing: 0.08em;
+  transition: color 0.2s;
+  font-family: 'Space Mono', monospace;
+  white-space: nowrap;
+}
+.nav-links a:hover { color: var(--maiz-cl); }
+@media(max-width:860px) { .nav-links { display: none; } }
+
+/* ── HERO ── */
+.hero {
+  min-height: 100vh;
+  background: var(--tierra);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  padding: 80px 8vw 80px;
+  position: relative;
+  overflow: hidden;
+}
+.hero::before {
+  content: '';
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse at 80% 50%, rgba(212,146,42,0.1), transparent 60%),
+    radial-gradient(ellipse at 5% 85%, rgba(74,124,89,0.12), transparent 55%),
+    url("data:image/svg+xml,%3Csvg width='52' height='52' viewBox='0 0 52 52' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='%23D4922A' fill-opacity='0.035'%3E%3Cpath d='M26 0l2 8h8l-6.5 4.7 2.5 7.7L26 16l-6 4.4 2.5-7.7L16 8h8z'/%3E%3C/g%3E%3C/svg%3E");
+  pointer-events: none;
+}
+.hero-eyebrow {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--maiz-cl);
+  margin-bottom: 18px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.2s;
+}
+.hero h1 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(34px, 5.4vw, 72px);
+  font-weight: 900;
+  line-height: 1.06;
+  color: var(--blanco);
+  max-width: 820px;
+  margin-bottom: 28px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.4s;
+}
+.hero h1 em { color: var(--maiz); font-style: italic; }
+
+/* Logos institucionales en el hero */
+.hero-logos {
+  display: inline-flex;
+  align-items: center;
+  gap: 20px;
+  flex-wrap: wrap;
+  margin-bottom: 32px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.6s;
+  background: #fff;
+  padding: 8px 22px;
+  border-radius: 100px;
+}
+.hero-logo-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.hero-logo-item img {
+  height: 36px;
+  object-fit: contain;
+  opacity: 1;
+}
+.hero-logo-item span {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  color: rgba(61,34,8,0.6);
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+}
+.hero-logo-sep {
+  width: 1px; height: 36px;
+  background: rgba(61,34,8,0.12);
+}
+
+.hero-desc {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(253,250,245,0.68);
+  max-width: 560px;
+  line-height: 1.65;
+  margin-bottom: 36px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.7s;
+}
+.hero-badges {
+  display: flex; flex-wrap: wrap; gap: 8px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 0.9s;
+}
+.badge {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.09em;
+  padding: 5px 13px;
+  border: 1px solid rgba(212,146,42,0.3);
+  color: rgba(212,146,42,0.8);
+  border-radius: 2px;
+}
+.hero-cta {
+  margin-top: 36px;
+  opacity: 0;
+  animation: fadeUp 0.8s ease forwards 1.1s;
+}
+.btn-primary {
+  display: inline-block;
+  background: var(--maiz); color: var(--tierra);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; font-weight: 700;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 13px 26px; border-radius: 3px;
+  text-decoration: none;
+  transition: background 0.2s, transform 0.2s;
+  margin-right: 12px; margin-bottom: 10px;
+}
+.btn-primary:hover { background: var(--maiz-cl); transform: translateY(-2px); }
+.btn-sec {
+  display: inline-block;
+  border: 1px solid rgba(212,146,42,0.4);
+  color: rgba(253,250,245,0.7);
+  font-family: 'Space Mono', monospace;
+  font-size: 11px; letter-spacing: 0.1em; text-transform: uppercase;
+  padding: 12px 24px; border-radius: 3px;
+  text-decoration: none;
+  transition: all 0.2s;
+  margin-bottom: 10px;
+}
+.btn-sec:hover { border-color: var(--maiz-cl); color: var(--maiz-cl); }
+.scroll-hint {
+  position: absolute;
+  bottom: 28px; left: 8vw;
+  font-family: 'Space Mono', monospace;
+  font-size: 9px; letter-spacing: 0.2em;
+  color: rgba(253,250,245,0.22); text-transform: uppercase;
+}
+
+/* ── LAYOUT BASE ── */
+.sec { padding: 92px 8vw; max-width: 1260px; margin: 0 auto; }
+.sec-label {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.24em; text-transform: uppercase;
+  color: var(--maiz-osc); margin-bottom: 14px;
+}
+h2 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: clamp(28px, 4vw, 50px);
+  font-weight: 700; line-height: 1.14;
+  color: var(--tierra); margin-bottom: 26px;
+}
+h2 em { color: var(--maiz-osc); font-style: italic; }
+h3 {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 20px; font-weight: 700;
+  color: var(--tierra); margin-bottom: 10px;
+}
+p { color: var(--gris-txt); margin-bottom: 17px; font-size: 16px; }
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, var(--maiz), var(--hoja-cl) 50%, transparent);
+  opacity: 0.22;
+}
+
+/* ── GRID 2 COL ── */
+.g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 56px; align-items: start; }
+@media(max-width:820px) { .g2 { grid-template-columns: 1fr; } }
+
+/* ── CITA ── */
+.cita {
+  border-left: 4px solid var(--maiz);
+  padding: 18px 26px;
+  background: rgba(212,146,42,0.07);
+  border-radius: 0 8px 8px 0;
+  margin: 26px 0;
+}
+.cita p {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 19px; font-style: italic;
+  color: var(--tierra); margin: 0; line-height: 1.5;
+}
+
+/* ── STATS ── */
+.stat { background: var(--tierra); padding: 26px 30px; border-radius: 4px; margin-bottom: 12px; }
+.stat-n {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 50px; font-weight: 900;
+  color: var(--maiz); line-height: 1;
+}
+.stat-l {
+  font-family: 'Space Mono', monospace;
+  font-size: 10px; letter-spacing: 0.12em;
+  color: rgba(253,250,245,0.5); text-transform: uppercase; margin-top: 6px;
+}
+.stat.verde { background: var(--hoja); }
+.stat.mid   { background: var(--tierra-med); }
+
+/* ── OBJETIVO GENERAL ── */
+.obj-gen {
+  background: var(--hoja); padding: 30px 34px; border-radius: 4px; margin-bottom: 38px;
+}
+.obj-gen-label {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.18em; color: rgba(253,250,245,0.55);
+  text-transform: uppercase; margin-bottom: 10px;
+}
+.obj-gen p { color: rgba(253,250,245,0.88); font-size: 16px; line-height: 1.7; margin: 0; }
+.obj-list { counter-reset: obj; list-style: none; margin-top: 30px; }
+.obj-list li {
+  counter-increment: obj;
+  display: grid; grid-template-columns: 50px 1fr; gap: 20px;
+  padding: 20px 0; border-bottom: 1px solid var(--borde); align-items: start;
+}
+.obj-num {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 38px; font-weight: 900;
+  color: var(--maiz-cl); opacity: 0.45; line-height: 1;
+}
+.obj-texto strong {
+  display: block;
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 18px; color: var(--tierra); margin-bottom: 6px;
+}
+.obj-texto p { margin: 0; font-size: 14px; }
+
+/* ── SECCIÓN DARK (Arquitectura) ── */
+.arq-dark { background: var(--tierra); padding: 92px 0; width: 100%; }
+.arq-inner { max-width: 1260px; margin: 0 auto; padding: 0 8vw; }
+.arq-dark .sec-label { color: rgba(242,201,110,0.55); }
+.arq-dark h2 { color: var(--blanco); }
+.arq-dark p  { color: rgba(253,250,245,0.65); }
+.arq-intro   { max-width: 720px; margin-bottom: 50px; }
+
+/* Stack */
+.stack { display: flex; flex-direction: column; gap: 3px; margin-bottom: 46px; }
+.stack-layer {
+  display: flex; align-items: stretch;
+  border-radius: 4px; overflow: hidden; min-height: 62px;
+}
+.stack-label {
+  background: rgba(212,146,42,0.18);
+  border: 1px solid rgba(212,146,42,0.25);
+  color: var(--maiz-cl);
+  font-family: 'Space Mono', monospace; font-size: 10px;
+  letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 0 16px;
+  display: flex; align-items: center;
+  min-width: 125px; white-space: nowrap;
+}
+.stack-content {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07); border-left: none;
+  flex: 1; padding: 13px 18px;
+  display: flex; flex-wrap: wrap; gap: 7px; align-items: center;
+}
+.chip {
+  font-size: 12px; color: rgba(253,250,245,0.7);
+  background: rgba(255,255,255,0.07);
+  padding: 4px 11px; border-radius: 2px;
+  border: 1px solid rgba(255,255,255,0.1);
+  font-family: 'Space Mono', monospace; white-space: nowrap;
+}
+.chip.verde { background: rgba(74,124,89,0.25); border-color: rgba(74,124,89,0.35); color: var(--hoja-cl); }
+.chip.maiz  { background: rgba(212,146,42,0.2);  border-color: rgba(212,146,42,0.35); color: var(--maiz-cl); }
+
+/* Esquemas */
+.esq-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 2px; border: 1px solid rgba(212,146,42,0.15);
+  border-radius: 6px; overflow: hidden;
+}
+@media(max-width:860px) { .esq-grid { grid-template-columns: 1fr 1fr; } }
+@media(max-width:540px) { .esq-grid { grid-template-columns: 1fr; } }
+.esq-card {
+  padding: 22px;
+  background: rgba(255,255,255,0.03);
+  border-right: 1px solid rgba(255,255,255,0.04);
+  border-bottom: 1px solid rgba(255,255,255,0.04);
+  transition: background 0.22s;
+  position: relative; overflow: hidden;
+}
+.esq-card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: var(--color-acento, var(--maiz));
+  transform: scaleX(0); transform-origin: left; transition: transform 0.3s;
+}
+.esq-card:hover { background: rgba(255,255,255,0.07); }
+.esq-card:hover::before { transform: scaleX(1); }
+.esq-nombre {
+  font-family: 'Space Mono', monospace; font-size: 12px; font-weight: 700;
+  color: var(--color-acento, var(--maiz)); margin-bottom: 8px; letter-spacing: 0.04em;
+}
+.esq-desc { font-size: 13px; color: rgba(253,250,245,0.6); line-height: 1.55; margin: 0; }
+.esq-tablas {
+  margin-top: 10px; font-family: 'Space Mono', monospace;
+  font-size: 10px; color: rgba(253,250,245,0.3);
+}
+.esq-wide { grid-column: 1 / -1; }
+
+/* Vistas BD */
+.vistas-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 32px;
+}
+@media(max-width:680px) { .vistas-grid { grid-template-columns: 1fr; } }
+.vista-item {
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(255,255,255,0.07);
+  border-radius: 4px; padding: 16px 18px;
+}
+.vista-name { font-family: 'Space Mono', monospace; font-size: 11px; color: var(--maiz-cl); margin-bottom: 4px; }
+.vista-desc { font-size: 12px; color: rgba(253,250,245,0.55); margin: 0; line-height: 1.5; }
+
+/* ── METODOLOGÍA ── */
+.meto-grid {
+  display: grid; grid-template-columns: repeat(2, 1fr);
+  gap: 3px; margin-top: 38px;
+}
+@media(max-width:700px) { .meto-grid { grid-template-columns: 1fr; } }
+.meto-card {
+  padding: 28px; background: var(--blanco);
+  border: 1px solid var(--borde);
+  transition: box-shadow 0.2s;
+}
+.meto-card:hover { box-shadow: 0 8px 32px rgba(61,43,31,0.08); }
+.meto-etapa {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.18em; color: var(--maiz); text-transform: uppercase; margin-bottom: 8px;
+}
+.meto-card h3 { font-size: 18px; margin-bottom: 10px; }
+.meto-card p  { font-size: 14px; margin: 0; }
+.activa { border-top: 3px solid var(--maiz); }
+
+/* ── AMENAZAS ── */
+.amenazas-dark { background: var(--rojo); padding: 80px 8vw; width: 100%; }
+.amenazas-inner { max-width: 1260px; margin: 0 auto; }
+.amenazas-dark .sec-label { color: rgba(255,255,255,0.5); }
+.amenazas-dark h2 { color: #fff; }
+.amenazas-dark p { color: rgba(255,255,255,0.72); max-width: 620px; }
+.chip-list { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 26px; }
+.chip-am {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.22);
+  color: #fff; padding: 7px 15px;
+  border-radius: 100px; font-size: 13px;
+}
+
+/* ── CRONOGRAMA ── */
+.crono-grid { margin-top: 34px; display: flex; flex-direction: column; gap: 18px; }
+.etapa-card { border: 1px solid var(--borde); border-radius: 4px; overflow: hidden; }
+.etapa-head {
+  background: var(--tierra); padding: 20px 26px;
+  display: flex; align-items: center; justify-content: space-between;
+  flex-wrap: wrap; gap: 10px;
+}
+.etapa-head h3 { color: var(--blanco); font-size: 18px; margin: 0; }
+.etapa-badge {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.1em; padding: 4px 11px;
+  background: var(--maiz); color: var(--tierra);
+  border-radius: 2px; font-weight: 700; margin-left: 12px;
+}
+.etapa-dur {
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  color: var(--maiz-cl); background: rgba(212,146,42,0.18);
+  padding: 4px 12px; border-radius: 2px;
+}
+.etapa-body { padding: 24px 26px; background: var(--blanco); }
+.etapa-body p { font-size: 14px; margin: 0 0 16px; }
+.etapa-chips { display: flex; flex-wrap: wrap; gap: 7px; }
+.ech {
+  font-size: 11px; background: var(--crema);
+  border: 1px solid var(--borde); color: var(--gris-txt);
+  padding: 4px 11px; border-radius: 2px;
+  font-family: 'Space Mono', monospace;
+}
+.prog { height: 5px; background: var(--borde); border-radius: 3px; margin-top: 16px; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, var(--maiz), var(--maiz-cl)); }
+.prog-lbl { font-family: 'Space Mono', monospace; font-size: 9px; color: var(--maiz); margin-top: 5px; letter-spacing: 0.08em; }
+
+/* ── EQUIPO ── */
+.resp {
+  background: var(--tierra); padding: 22px 26px; border-radius: 4px;
+  margin-bottom: 14px;
+}
+.resp-lbl {
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  letter-spacing: 0.15em; text-transform: uppercase;
+  color: var(--maiz-cl); opacity: 0.65; margin-bottom: 8px;
+}
+.resp-nombre { font-family: 'Playfair Display', Georgia, serif; font-size: 17px; color: var(--blanco); margin-bottom: 4px; }
+.resp-contacto { font-size: 11px; color: rgba(253,250,245,0.45); font-family: 'Space Mono', monospace; }
+.inv-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; }
+.inv-card {
+  padding: 20px 22px; background: var(--blanco);
+  border: 1px solid var(--borde); border-radius: 4px;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.inv-card:hover { transform: translateY(-3px); box-shadow: 0 10px 32px rgba(61,43,31,0.09); }
+.inv-rol { font-family: 'Space Mono', monospace; font-size: 9px; letter-spacing: 0.14em; text-transform: uppercase; color: var(--maiz); margin-bottom: 7px; }
+.inv-nombre { font-family: 'Playfair Display', Georgia, serif; font-size: 15px; font-weight: 700; color: var(--tierra); margin-bottom: 5px; }
+.inv-esp { font-size: 12px; color: var(--gris-txt); margin: 0; }
+.inv-sni {
+  display: inline-block; margin-top: 8px;
+  font-family: 'Space Mono', monospace; font-size: 9px;
+  padding: 2px 9px; background: rgba(74,124,89,0.1);
+  color: var(--hoja); border-radius: 2px;
+}
+
+/* ── COLABORAR ── */
+.colab-section { background: var(--hoja); padding: 92px 0; width: 100%; }
+.colab-inner { max-width: 1260px; margin: 0 auto; padding: 0 8vw; }
+.colab-section .sec-label { color: rgba(253,250,245,0.5); }
+.colab-section h2 { color: var(--blanco); }
+.colab-section p  { color: rgba(253,250,245,0.8); }
+.colab-grid {
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 14px; margin-top: 38px;
+}
+@media(max-width:860px) { .colab-grid { grid-template-columns: 1fr; } }
+.colab-card {
+  background: rgba(255,255,255,0.1);
+  border: 1px solid rgba(255,255,255,0.15);
+  border-radius: 4px; padding: 26px;
+  transition: background 0.2s;
+}
+.colab-card:hover { background: rgba(255,255,255,0.17); }
+.colab-ico { font-size: 26px; margin-bottom: 12px; }
+.colab-card h3 { font-size: 17px; color: var(--blanco); margin-bottom: 8px; }
+.colab-card p  { font-size: 13px; color: rgba(253,250,245,0.72); margin: 0; line-height: 1.6; }
+.colab-cta { margin-top: 44px; display: flex; align-items: center; gap: 18px; flex-wrap: wrap; }
+.btn-colab {
+  display: inline-block; background: var(--maiz); color: var(--tierra);
+  font-family: 'Space Mono', monospace; font-size: 11px;
+  font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase;
+  padding: 13px 28px; border-radius: 3px; text-decoration: none;
+  transition: background 0.2s;
+}
+.btn-colab:hover { background: var(--maiz-cl); }
+.colab-mail { font-family: 'Space Mono', monospace; font-size: 12px; color: rgba(253,250,245,0.6); }
+
+/* ── REFERENCIAS ── */
+.ref-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px, 1fr)); gap: 10px; margin-top: 30px; }
+.ref-item {
+  padding: 14px 17px; background: var(--blanco);
+  border: 1px solid var(--borde); border-radius: 3px;
+  font-size: 13px; color: var(--gris-txt); line-height: 1.55;
+}
+.ref-item strong { display: block; color: var(--tierra); margin-bottom: 3px; }
+.kw-list { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 26px; }
+.kw {
+  background: rgba(212,146,42,0.1);
+  border: 1px solid rgba(212,146,42,0.22);
+  color: var(--tierra-med); padding: 5px 13px;
+  border-radius: 100px; font-size: 13px;
+}
+
+/* ── FOOTER ── */
+footer {
+  background: var(--tierra); padding: 56px 8vw;
+  display: flex; justify-content: space-between; align-items: flex-end;
+  flex-wrap: wrap; gap: 28px;
+}
+.foot-logos {
+  display: inline-flex; align-items: center; gap: 20px; flex-wrap: wrap;
+  margin-bottom: 14px;
+  background: #fff;
+  padding: 8px 22px;
+  border-radius: 100px;
+}
+.foot-logos img { height: 38px; object-fit: contain; opacity: 1; }
+.foot-logo {
+  font-family: 'Playfair Display', Georgia, serif;
+  font-size: 22px; font-weight: 900; color: var(--maiz);
+}
+.foot-logo span {
+  display: block; font-family: 'Space Mono', monospace; font-size: 10px;
+  font-weight: 400; color: rgba(253,250,245,0.35);
+  letter-spacing: 0.14em; text-transform: uppercase; margin-top: 5px;
+}
+.foot-right {
+  font-family: 'Space Mono', monospace; font-size: 10px;
+  color: rgba(253,250,245,0.3); letter-spacing: 0.07em;
+  text-align: right; line-height: 2.2;
+}
+
+/* ── ANIMACIONES / REVEAL ── */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(22px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.reveal {
+  opacity: 0; transform: translateY(30px);
+  transition: opacity 0.65s ease, transform 0.65s ease;
+}
+.reveal.on { opacity: 1; transform: translateY(0); }
+
+@media(max-width:700px) {
+  .sec { padding: 64px 5vw; }
+  .arq-dark { padding: 64px 0; }
+  .arq-inner { padding: 0 5vw; }
+  .amenazas-dark { padding: 60px 5vw; }
+  .colab-inner { padding: 0 5vw; }
+  footer { padding: 44px 5vw; }
+}
+
+@media print {
+  .barra-inst, nav { position: static; }
+  .hero { min-height: auto; padding: 40px 8vw; page-break-after: always; }
+  .reveal { opacity: 1 !important; transform: none !important; }
+  body { font-size: 14px; }
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════ NAV ═══════════ -->
+<nav>
+  <div class="nav-logo">Agroplataforma · Maíz Nativo · IT Ciudad Valles</div>
+  <ul class="nav-links">
+    <li><a href="#contexto">Contexto</a></li>
+    <li><a href="#objetivos">Objetivos</a></li>
+    <li><a href="#arquitectura">Arquitectura</a></li>
+    <li><a href="#metodologia">Metodología</a></li>
+    <li><a href="#equipo">Equipo</a></li>
+    <li><a href="#colaborar">Colaborar</a></li>
+    <li><a href="#referencias">Referencias</a></li>
+  </ul>
+</nav>
+
+<!-- ═══════════ HERO ═══════════ -->
+<section class="hero">
+  <p class="hero-eyebrow">PEE-2025-G-369 · Secihti 2025 · IT Ciudad Valles · Huasteca Potosina</p>
+  <div class="hero-logos">
+    <div class="hero-logo-item">
+      <img src="img/LOGOTECNM.png" alt="TecNM">
+      <span>Tecnológico Nacional<br>de México</span>
+    </div>
+    <div class="hero-logo-sep"></div>
+    <div class="hero-logo-item">
+      <img src="img/secihti.png" alt="Secihti">
+      <span>Secihti<br>2025</span>
+    </div>
+    <div class="hero-logo-sep"></div>
+    <div class="hero-logo-item">
+      <img src="img/logotec.png" alt="IT Ciudad Valles">
+      <span>IT Ciudad Valles<br>San Luis Potosí</span>
+    </div>
+  </div>
+  <h1>Agroplataforma digital de monitoreo para la conservación del <em>maíz nativo</em> en la Huasteca Potosina</h1>
+
+  <p class="hero-desc">Una herramienta tecnológica que integra datos geoespaciales, ambientales, culturales y agronómicos para identificar, monitorear y conservar las variedades de maíz nativo cultivadas por comunidades indígenas y campesinas de la región.</p>
+  <div class="hero-badges">
+    <span class="badge">Grupo de investigación</span>
+    <span class="badge">Eje 2 · Mejoramiento de Maíz y Frijol</span>
+    <span class="badge">Ciencias computacionales + Agroecología</span>
+    <span class="badge">PostGIS · Django · IA geoespacial</span>
+    <span class="badge">15+ comunidades · 11 investigadores</span>
+  </div>
+  <div class="hero-cta">
+    <a href="#colaborar" class="btn-primary">Quiero colaborar</a>
+    <a href="#arquitectura" class="btn-sec">Ver arquitectura técnica</a>
+  </div>
+  <p class="scroll-hint">↓ Desplazar para conocer el proyecto</p>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ 01 · CONTEXTO ═══════════ -->
+<section class="sec" id="contexto">
+  <div class="g2 reveal">
+    <div>
+      <p class="sec-label">01 · Contexto</p>
+      <h2>El <em>maíz nativo</em> como patrimonio vivo</h2>
+      <p>La Huasteca Potosina es una región de gran riqueza biocultural donde comunidades indígenas y campesinas continúan cultivando variedades de maíz adaptadas al entorno local, transmitidas de generación en generación. Estas semillas poseen un alto valor por su diversidad genética, resiliencia ecológica y profunda vinculación con los saberes ancestrales.</p>
+      <p>No obstante, la agricultura industrial, el cambio climático, la migración y la expansión de semillas transgénicas amenazan seriamente este patrimonio biocultural. Pese a esfuerzos académicos y sociales, las iniciativas para preservarlo han sido dispersas y poco articuladas, sin aprovechar tecnologías emergentes.</p>
+      <div class="cita">
+        <p>"Se carece de herramientas que integren datos georreferenciados, ambientales, sociales y culturales que orienten decisiones estratégicas de conservación."</p>
+      </div>
+      <p>Ante este panorama, la agroplataforma propone una respuesta tecnológica enraizada en el territorio, respetuosa de los saberes comunitarios y basada en evidencia científica.</p>
+      <div class="kw-list">
+        <span class="kw">Conservación biocultural</span>
+        <span class="kw">Maíz nativo</span>
+        <span class="kw">Georreferenciación</span>
+        <span class="kw">Soberanía alimentaria</span>
+        <span class="kw">Agroplataforma digital</span>
+      </div>
+    </div>
+    <div>
+      <div class="stat">
+        <div class="stat-n">15+</div>
+        <div class="stat-l">Localidades productoras a visitar</div>
+      </div>
+      <div class="stat verde">
+        <div class="stat-n">11</div>
+        <div class="stat-l">Investigadores en el equipo</div>
+      </div>
+      <div class="stat mid">
+        <div class="stat-n">30+</div>
+        <div class="stat-l">Muestras nutrimentales a analizar</div>
+      </div>
+      <div class="stat" style="background:var(--rojo)">
+        <div class="stat-n">5</div>
+        <div class="stat-l">Talleres comunitarios</div>
+      </div>
+      <div class="stat" style="background:var(--hoja)">
+        <div class="stat-n">22+</div>
+        <div class="stat-l">Variedades nativas documentadas</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ 02 · OBJETIVOS ═══════════ -->
+<section class="sec reveal" id="objetivos">
+  <p class="sec-label">02 · Objetivos</p>
+  <h2>¿Qué busca <em>lograr</em> el proyecto?</h2>
+  <div class="obj-gen">
+    <div class="obj-gen-label">Objetivo general</div>
+    <p>Desarrollar e implementar una agroplataforma digital basada en información científica, geoespacial y sociocultural, orientada a identificar, mapear y monitorear áreas estratégicas para la conservación del maíz nativo en la Huasteca Potosina, resguardando su diversidad genética, documentando sus atributos agronómicos y alimentarios, reconociendo amenazas socioambientales y fortaleciendo la toma de decisiones informadas para su manejo sostenible y culturalmente pertinente.</p>
+  </div>
+  <ol class="obj-list">
+    <li>
+      <span class="obj-num">01</span>
+      <div class="obj-texto">
+        <strong>Recolectar y sistematizar información geoespacial</strong>
+        <p>Levantamiento en al menos 15 comunidades mediante entrevistas, GPS, imágenes satelitales y vuelos de dron, organizados en una base de datos georreferenciada.</p>
+      </div>
+    </li>
+    <li>
+      <span class="obj-num">02</span>
+      <div class="obj-texto">
+        <strong>Caracterización fenotípica de variedades nativas</strong>
+        <p>Documentación morfológica, agronómica y adaptativa de las variedades para evidenciar su diversidad y potencial para la conservación y el mejoramiento genético.</p>
+      </div>
+    </li>
+    <li>
+      <span class="obj-num">03</span>
+      <div class="obj-texto">
+        <strong>Diseñar e implementar la agroplataforma digital</strong>
+        <p>Plataforma web interactiva con software libre (Django, Leaflet, PostGIS, QGIS) para consultar, visualizar y analizar información sobre el cultivo y sus amenazas.</p>
+      </div>
+    </li>
+    <li>
+      <span class="obj-num">04</span>
+      <div class="obj-texto">
+        <strong>Identificar zonas prioritarias de conservación</strong>
+        <p>Modelos de análisis espacial e IA para priorizar áreas según riqueza genética, presión humana, riesgo de desaparición y valor nutrimental.</p>
+      </div>
+    </li>
+    <li>
+      <span class="obj-num">05</span>
+      <div class="obj-texto">
+        <strong>Formular recomendaciones de política pública</strong>
+        <p>Generación de insumos técnicos y mapas temáticos para instancias gubernamentales, organizaciones civiles e investigadores.</p>
+      </div>
+    </li>
+    <li>
+      <span class="obj-num">06</span>
+      <div class="obj-texto">
+        <strong>Capacitar y fortalecer capacidades locales</strong>
+        <p>Talleres en comunidades piloto para apropiación tecnológica, interpretación de mapas y recolección participativa de datos georreferenciados.</p>
+      </div>
+    </li>
+  </ol>
+</section>
+
+<!-- ═══════════ 03 · ARQUITECTURA TÉCNICA ═══════════ -->
+<div class="arq-dark" id="arquitectura">
+  <div class="arq-inner">
+    <p class="sec-label reveal">03 · Arquitectura técnica</p>
+    <h2 class="reveal">Una base de datos <em style="color:var(--maiz);font-style:italic">geoespacial</em> integral</h2>
+    <div class="arq-intro reveal">
+      <p>El corazón del proyecto es una base de datos PostgreSQL 15 con extensiones PostGIS, uuid-ossp y pg_trgm, organizada en 7 esquemas temáticos y ~40 tablas. Cada esquema captura una dimensión distinta del agroecosistema: desde las coordenadas GPS de una parcela hasta los rituales agrícolas asociados a una variedad o el valor nutrimental de un grano.</p>
+      <p>Sobre esta base se construye una plataforma web con <strong>Next.js 15</strong> en el frontend y <strong>FastAPI</strong> en el backend, comunicados a través de una API RESTful con Axios y TanStack Query. Leaflet gestiona la visualización cartográfica, Python con Rasterio y scikit-learn alimenta los modelos de análisis geoespacial, y el sistema se despliega en contenedores <strong>Docker</strong> con Nginx.</p>
+    </div>
+
+    <!-- Stack -->
+    <h3 style="color:var(--blanco);margin-bottom:14px;font-size:14px;font-family:'Space Mono',monospace;letter-spacing:0.10em;font-weight:400;opacity:0.6;text-transform:uppercase">Stack tecnológico</h3>
+    <div class="stack reveal">
+      <div class="stack-layer">
+        <div class="stack-label">Frontend</div>
+        <div class="stack-content">
+          <span class="chip maiz">Next.js 15 (App Router)</span>
+          <span class="chip maiz">React 18 · TypeScript 5</span>
+          <span class="chip maiz">Zustand · TanStack Query</span>
+          <span class="chip maiz">Leaflet.js</span>
+          <span class="chip">CSS Modules</span>
+          <span class="chip">Phosphor Icons</span>
+          <span class="chip">Mapas interactivos</span>
+          <span class="chip">Filtros geoespaciales</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">Backend / API</div>
+        <div class="stack-content">
+          <span class="chip maiz">FastAPI</span>
+          <span class="chip maiz">Python 3</span>
+          <span class="chip">Axios</span>
+          <span class="chip">API RESTful</span>
+          <span class="chip">Autenticación JWT + roles</span>
+          <span class="chip">Carga/descarga de datos</span>
+          <span class="chip">Reportes automáticos</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">Análisis IA</div>
+        <div class="stack-content">
+          <span class="chip verde">Python · scikit-learn</span>
+          <span class="chip verde">Pandas · NumPy</span>
+          <span class="chip verde">Rasterio · GDAL</span>
+          <span class="chip verde">Modelos predictivos geoespaciales</span>
+          <span class="chip verde">Clasificación de cobertura vegetal</span>
+          <span class="chip verde">Detección de amenazas</span>
+          <span class="chip verde">Zonas prioritarias de conservación</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">Base de datos</div>
+        <div class="stack-content">
+          <span class="chip maiz">PostgreSQL 15</span>
+          <span class="chip maiz">PostGIS</span>
+          <span class="chip">uuid-ossp</span>
+          <span class="chip">pg_trgm</span>
+          <span class="chip">7 esquemas · ~40 tablas · 20+ vistas</span>
+          <span class="chip">Índices GIST espaciales</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">Despliegue</div>
+        <div class="stack-content">
+          <span class="chip maiz">Docker</span>
+          <span class="chip">Nginx</span>
+          <span class="chip">GitHub</span>
+          <span class="chip">Variables de entorno seguras</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">Teledetección</div>
+        <div class="stack-content">
+          <span class="chip verde">Sentinel-2 / Landsat</span>
+          <span class="chip verde">Google Earth Engine</span>
+          <span class="chip verde">DJI Mavic 3 Multispectral</span>
+          <span class="chip verde">NDVI · NDWI · GNDVI · EVI</span>
+          <span class="chip verde">Pix4D Fields</span>
+          <span class="chip verde">Ortomosaicos · DEM · DSM</span>
+        </div>
+      </div>
+      <div class="stack-layer">
+        <div class="stack-label">SIG escritorio</div>
+        <div class="stack-content">
+          <span class="chip">QGIS</span>
+          <span class="chip">ArcGIS</span>
+          <span class="chip">Capas temáticas</span>
+          <span class="chip">Mapas de uso de suelo</span>
+          <span class="chip">Cambio de cobertura</span>
+          <span class="chip">GPS D-RTK 2 alta precisión</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Esquemas BD -->
+    <h3 style="color:var(--blanco);margin:44px 0 14px;font-size:14px;font-family:'Space Mono',monospace;letter-spacing:0.10em;font-weight:400;opacity:0.6;text-transform:uppercase">7 esquemas de la base de datos</h3>
+    <div class="esq-grid reveal">
+      <div class="esq-card" style="--color-acento:#4A7C59">
+        <div class="esq-nombre">🌍 geografico</div>
+        <p class="esq-desc">Ubicaciones GPS con geometría PostGIS, parcelas como polígonos, vuelos de dron, imágenes satelitales, capas SIG y zonas prioritarias de conservación.</p>
+        <div class="esq-tablas">parcela · ubicacion · vuelo_dron · imagen_satelital · zona_prioritaria · cambio_uso_suelo</div>
+      </div>
+      <div class="esq-card" style="--color-acento:#D4922A">
+        <div class="esq-nombre">🌽 agronomico</div>
+        <p class="esq-desc">Germoplasma de variedades nativas con código de accesión, ciclos agrícolas, registros de cultivo, sistemas de semilla y economía del cultivo.</p>
+        <div class="esq-tablas">germoplasma · cultivo · ciclo_agricola · sistema_semilla · uso_maiz · economia_cultivo</div>
+      </div>
+      <div class="esq-card" style="--color-acento:#3B8BD4">
+        <div class="esq-nombre">🌦 ambiental</div>
+        <p class="esq-desc">Mediciones meteorológicas de estaciones físicas, satelitales y de API; índices de vegetación (NDVI, NDWI, EVI, LAI); condiciones edáficas y amenazas activas georreferenciadas.</p>
+        <div class="esq-tablas">medicion_ambiental · indice_vegetacion · serie_ndvi · condicion_edafica · amenaza · estacion_meteorologica</div>
+      </div>
+      <div class="esq-card" style="--color-acento:#9B59B6">
+        <div class="esq-nombre">👥 social</div>
+        <p class="esq-desc">Perfil de productores con datos de género y experiencia, seguridad alimentaria (ELCSA), vulnerabilidad climática, redes de intercambio de semilla y consentimientos informados.</p>
+        <div class="esq-tablas">productor · comunidad · seguridad_alimentaria · vulnerabilidad_climatica · red_intercambio · perfil_socioeconomico</div>
+      </div>
+      <div class="esq-card" style="--color-acento:#E87D3E">
+        <div class="esq-nombre">🫘 fenotipico</div>
+        <p class="esq-desc">Evaluaciones morfológicas completas: dimensiones de mazorca y grano, altura de planta, fenología, presencia de plagas. Análisis nutrimentales (proteína, zinc, antocianinas, carotenoides).</p>
+        <div class="esq-tablas">evaluacion_fenotipica · muestra_nutrimental · resultado_nutrimental · evidencia</div>
+      </div>
+      <div class="esq-card" style="--color-acento:#E84393">
+        <div class="esq-nombre">🎭 cultural</div>
+        <p class="esq-desc">Rituales agrícolas georreferenciados, saberes tradicionales por categoría, gastronomía con vínculo ritual, narrativa oral, nombres en lenguas originarias e identidad cultural del productor.</p>
+        <div class="esq-tablas">ritual_agricola · saber_tradicional · gastronomia · narrativa_oral · nombre_lengua_originaria</div>
+      </div>
+      <div class="esq-card esq-wide" style="--color-acento:#8BA888">
+        <div class="esq-nombre">📚 catalogo</div>
+        <p class="esq-desc">Catálogos territoriales completos de la Huasteca Potosina con claves INEGI, coordenadas centroide, grado de marginación, presencia indígena y pueblos originarios con sus lenguas.</p>
+        <div class="esq-tablas">estado · municipio · comunidad · localidad · lengua · pueblo_originario · clase_uso_suelo</div>
+      </div>
+    </div>
+
+    <!-- Vistas principales -->
+    <h3 style="color:var(--blanco);margin:44px 0 14px;font-size:14px;font-family:'Space Mono',monospace;letter-spacing:0.10em;font-weight:400;opacity:0.6;text-transform:uppercase">Vistas y módulos de la plataforma</h3>
+    <div class="vistas-grid reveal">
+      <div class="vista-item">
+        <div class="vista-name">🗺️ Mapa interactivo</div>
+        <p class="vista-desc">Mapa Leaflet con capas dinámicas: parcelas, zonas prioritarias, amenazas activas, índices NDVI y cambio de uso de suelo. Filtros por municipio, lengua y temporada agrícola.</p>
+      </div>
+      <div class="vista-item">
+        <div class="vista-name">🌽 Catálogo de variedades</div>
+        <p class="vista-desc">Ficha técnica por variedad: morfología, fenología, saberes asociados, nombre en lengua originaria, valor nutrimental y distribución geográfica.</p>
+      </div>
+      <div class="vista-item">
+        <div class="vista-name">🧑‍🌾 Perfil de productor</div>
+        <p class="vista-desc">Historial del productor: parcelas registradas, variedades cultivadas, eventos climáticos registrados y participación en redes de intercambio de semilla.</p>
+      </div>
+      <div class="vista-item">
+        <div class="vista-name">📊 Panel de análisis</div>
+        <p class="vista-desc">Tablero con estadísticas de diversidad genética, índices de amenaza por zona, avance de muestreo nutrimental y comparativas entre comunidades.</p>
+      </div>
+      <div class="vista-item">
+        <div class="vista-name">📡 Monitor ambiental</div>
+        <p class="vista-desc">Series temporales de NDVI, NDWI y datos meteorológicos por parcela. Alertas automáticas de sequía, helada y presión de plagas.</p>
+      </div>
+      <div class="vista-item">
+        <div class="vista-name">📥 Módulo de captura</div>
+        <p class="vista-desc">Formulario responsivo de campo con sincronización offline, captura GPS integrada y carga de imágenes multiespectrales. Accessible en dispositivos de bajo costo.</p>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 04 · METODOLOGÍA ═══════════ -->
+<section class="sec" id="metodologia">
+  <div class="reveal">
+    <p class="sec-label">04 · Metodología</p>
+    <h2>Cuatro etapas <em>integradas</em> de trabajo</h2>
+    <p style="max-width:680px">La metodología combina métodos cualitativos y cuantitativos, tecnologías geoespaciales, inteligencia artificial y participación comunitaria bajo un enfoque transdisciplinario.</p>
+    <div class="meto-grid">
+      <div class="meto-card activa">
+        <div class="meto-etapa">Etapa 1 · 5 meses · En curso ✦</div>
+        <h3>Diagnóstico y levantamiento</h3>
+        <p>Entrevistas semiestructuradas y observación etnográfica en al menos 15 comunidades seleccionadas por muestreo intencional. Captura GPS con estación D-RTK 2, imágenes satelitales multiespectrales y vuelos de dron. Construcción inicial de la base de datos georreferenciada.</p>
+      </div>
+      <div class="meto-card">
+        <div class="meto-etapa">Etapa 2 · 11 meses</div>
+        <h3>Desarrollo de la plataforma</h3>
+        <p>Desarrollo ágil (SCRUM/Kanban) de la aplicación web con backend Django, API RESTful, mapas Leaflet y capas dinámicas. Integración de imágenes satelitales y capturas de dron. Análisis nutrimental de 30+ muestras (proteína, fibra, micronutrientes, antocianinas).</p>
+      </div>
+      <div class="meto-card">
+        <div class="meto-etapa">Análisis transversal</div>
+        <h3>Documentación y análisis IA</h3>
+        <p>Modelos de aprendizaje automático para clasificar regiones por valor ecológico, cultural y nivel de amenaza. Análisis espacial avanzado con QGIS y ArcGIS. Mapas temáticos de diversidad, vulnerabilidad climática y zonas prioritarias.</p>
+      </div>
+      <div class="meto-card">
+        <div class="meto-etapa">Cierre y transferencia</div>
+        <h3>Validación comunitaria</h3>
+        <p>Cinco talleres presenciales en comunidades piloto con 20 personas por taller. Investigación-acción participativa para apropiación tecnológica. Producción de manuales impresos, videotutoriales y materiales en lenguas originarias. Publicación académica y congreso nacional.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 05 · AMENAZAS MONITOREADAS ═══════════ -->
+<div class="amenazas-dark">
+  <div class="amenazas-inner reveal">
+    <p class="sec-label">05 · Amenazas monitoreadas</p>
+    <h2>Presiones sobre el <em style="font-style:italic;color:rgba(255,255,255,0.75)">maíz nativo</em> en la región</h2>
+    <p>El sistema registra y clasifica 11 tipos de amenazas por nivel de riesgo (bajo, medio, alto, crítico), detectadas mediante imágenes satelitales, entrevistas de campo, vuelos de dron y modelos de machine learning. Cada amenaza se almacena con polígono georreferenciado, área afectada y fuente de detección.</p>
+    <div class="chip-list">
+      <span class="chip-am">Expansión agrícola industrial</span>
+      <span class="chip-am">Ganadería extensiva</span>
+      <span class="chip-am">Deforestación</span>
+      <span class="chip-am">Presencia de transgénicos</span>
+      <span class="chip-am">Contaminación química</span>
+      <span class="chip-am">Sequía prolongada</span>
+      <span class="chip-am">Helada atípica</span>
+      <span class="chip-am">Plaga emergente</span>
+      <span class="chip-am">Abandono del campo</span>
+      <span class="chip-am">Migración de productores</span>
+      <span class="chip-am">Inundación</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 06 · CRONOGRAMA ═══════════ -->
+<section class="sec reveal">
+  <p class="sec-label">06 · Cronograma</p>
+  <h2>Plan de trabajo en <em>2 etapas</em></h2>
+  <p>16 meses de ejecución organizados en dos etapas. Actualmente el proyecto se encuentra en la <strong>Etapa 1</strong>.</p>
+  <div class="crono-grid">
+    <div class="etapa-card">
+      <div class="etapa-head">
+        <h3>Etapa 1 · Diagnóstico y levantamiento <span class="etapa-badge">En curso</span></h3>
+        <span class="etapa-dur">5 meses</span>
+      </div>
+      <div class="etapa-body">
+        <p>Diseño del protocolo de campo, selección de localidades, aplicación de entrevistas y encuestas, captura GPS y vuelos de dron, análisis preliminar de imágenes satelitales. Construcción de la base de datos estructurada y georreferenciada. Formación de 2 estudiantes en residencias profesionales.</p>
+        <div class="etapa-chips">
+          <span class="ech">📡 DJI Mavic 3 Multispectral</span>
+          <span class="ech">📍 GPS D-RTK 2</span>
+          <span class="ech">🛰️ Sentinel Hub + GEE</span>
+          <span class="ech">🌱 Smart Agriculture Xtreme</span>
+          <span class="ech">👥 2 residencias profesionales</span>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:38%"></div></div>
+        <div class="prog-lbl">▸ En desarrollo</div>
+      </div>
+    </div>
+    <div class="etapa-card">
+      <div class="etapa-head" style="background:rgba(61,43,31,0.7)">
+        <h3>Etapa 2 · Desarrollo y difusión</h3>
+        <span class="etapa-dur" style="background:rgba(212,146,42,0.12)">11 meses</span>
+      </div>
+      <div class="etapa-body">
+        <p>Desarrollo iterativo de la plataforma web, integración de IA geoespacial, análisis nutrimental de 30+ muestras, pruebas de usabilidad con usuarios comunitarios. 5 talleres presenciales, elaboración de manuales y videotutoriales. Publicación de artículo académico y presentación en congreso nacional.</p>
+        <div class="etapa-chips">
+          <span class="ech">⚙️ Django + Leaflet + PostGIS</span>
+          <span class="ech">🤖 Machine learning espacial</span>
+          <span class="ech">🔬 Análisis nutrimental</span>
+          <span class="ech">🏫 5 talleres · 100 personas</span>
+          <span class="ech">📝 2 tesis de maestría</span>
+          <span class="ech">📄 Publicación académica</span>
+        </div>
+        <div class="prog"><div class="prog-fill" style="width:0;background:rgba(212,146,42,0.25)"></div></div>
+        <div class="prog-lbl" style="color:var(--gris-txt)">▸ Pendiente de inicio</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="divider"></div>
+
+<!-- ═══════════ 07 · EQUIPO ═══════════ -->
+<section class="sec" id="equipo">
+  <div class="reveal">
+    <p class="sec-label">07 · Equipo de investigación</p>
+    <h2>Las personas <em>detrás</em> del proyecto</h2>
+
+    <div class="resp">
+      <div class="resp-lbl">Responsable técnico</div>
+      <div class="resp-nombre">Dr. Alfredo Barrón Rodríguez</div>
+      <div class="resp-contacto">alfredo.barron@tecvalles.mx · 481 391 8309 · IT Ciudad Valles</div>
+    </div>
+
+    <div class="inv-grid">
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">Dra. Dulce Carolina Acosta Pintor</div>
+        <p class="inv-esp">Desarrollo sustentable</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigador</div>
+        <div class="inv-nombre">Dr. Hugo René Larraga Altamirano</div>
+        <p class="inv-esp">Sistemas computacionales</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">Dra. Cynthia Wong Arguelles</div>
+        <p class="inv-esp">Ciencias ambientales</p>
+        <span class="inv-sni">SNI Nivel I</span>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigador</div>
+        <div class="inv-nombre">Dr. Daniel Perales Rosas</div>
+        <p class="inv-esp">Parasitología agrícola</p>
+        <span class="inv-sni">SNI Nivel I</span>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">Dra. Rosa María Jiménez Maldonado</div>
+        <p class="inv-esp">Emprendimiento comunitario</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigador</div>
+        <div class="inv-nombre">Dr. Omar Espinosa Guerra</div>
+        <p class="inv-esp">Electrónica y software</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">Dra. Sofía del Rosario Romero Ramos</div>
+        <p class="inv-esp">Industrias alimentarias</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigador</div>
+        <div class="inv-nombre">Dr. Carlos Cecilio Góngora Canul</div>
+        <p class="inv-esp">Fitopatología</p>
+        <span class="inv-sni">SNI Nivel I</span>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">MC. Ana María Piedad Rubio</div>
+        <p class="inv-esp">Sistemas computacionales</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigador</div>
+        <div class="inv-nombre">MC. Habacuc Lorenzo Márquez</div>
+        <p class="inv-esp">SIG y análisis estadístico</p>
+      </div>
+      <div class="inv-card">
+        <div class="inv-rol">Investigadora</div>
+        <div class="inv-nombre">MAE. Dalia Rosario Hernández López</div>
+        <p class="inv-esp">Sistemas computacionales</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ 08 · COLABORAR ═══════════ -->
+<div class="colab-section" id="colaborar">
+  <div class="colab-inner">
+    <p class="sec-label reveal">08 · Únete al proyecto</p>
+    <h2 class="reveal">¿Quieres <em style="color:var(--maiz-cl);font-style:italic">colaborar</em> con nosotros?</h2>
+    <p class="reveal" style="max-width:640px">La Agroplataforma es un proyecto abierto, transdisciplinario y orientado al impacto comunitario. Buscamos personas y organizaciones que compartan la visión de conservar el maíz nativo a través de la tecnología, la ciencia y el conocimiento local.</p>
+    <div class="colab-grid reveal">
+      <div class="colab-card">
+        <div class="colab-ico">🔬</div>
+        <h3>Investigadores y académicos</h3>
+        <p>¿Trabajas en agroecología, SIG, etnobotánica, sistemas computacionales, nutrición o ciencias sociales? Hay espacio para vinculación de investigación, publicaciones conjuntas y participación en trabajo de campo.</p>
+      </div>
+      <div class="colab-card">
+        <div class="colab-ico">💻</div>
+        <h3>Desarrolladores y especialistas técnicos</h3>
+        <p>Buscamos perfiles con experiencia en Django, PostGIS, Leaflet, machine learning geoespacial, procesamiento de imágenes multiespectrales o diseño UX/UI para entornos de baja conectividad.</p>
+      </div>
+      <div class="colab-card">
+        <div class="colab-ico">🌱</div>
+        <h3>Estudiantes de licenciatura y posgrado</h3>
+        <p>Hay oportunidades de residencia profesional (4–6 meses) y tesis de maestría en análisis geoespacial, sistemas socioecológicos, nutrición de maíz nativo o desarrollo de plataformas digitales.</p>
+      </div>
+      <div class="colab-card">
+        <div class="colab-ico">🏛️</div>
+        <h3>Instituciones y organizaciones</h3>
+        <p>Convocamos a instituciones de investigación, organizaciones de la sociedad civil, dependencias de gobierno y organismos internacionales interesados en conservación biocultural y soberanía alimentaria.</p>
+      </div>
+      <div class="colab-card">
+        <div class="colab-ico">👨‍🌾</div>
+        <h3>Comunidades y productores</h3>
+        <p>La plataforma se construye con y para las comunidades. Si eres productor, promotor comunitario o trabajas directamente con comunidades de la Huasteca, tu participación es fundamental.</p>
+      </div>
+      <div class="colab-card">
+        <div class="colab-ico">📡</div>
+        <h3>Alianzas de datos abiertos</h3>
+        <p>Buscamos colaboración con centros de datos, repositorios de germoplasma, redes de monitoreo ambiental e iniciativas de datos abiertos para enriquecer la base de información regional.</p>
+      </div>
+    </div>
+    <div class="colab-cta reveal">
+      <a href="mailto:alfredo.barron@tecvalles.mx?subject=Colaboración%20Agroplataforma%20Maíz%20Nativo" class="btn-colab">Enviar mensaje al equipo</a>
+      <span class="colab-mail">alfredo.barron@tecvalles.mx · 481 391 8309</span>
+    </div>
+  </div>
+</div>
+
+<!-- ═══════════ 09 · REFERENCIAS ═══════════ -->
+<section class="sec" id="referencias">
+  <div class="reveal">
+    <p class="sec-label">09 · Marco teórico y referencias</p>
+    <h2>Fundamentos <em>científicos</em> del proyecto</h2>
+    <p style="max-width:680px">El proyecto articula agroecología, tecnologías geoespaciales, conservación biocultural y participación comunitaria en una propuesta transdisciplinaria.</p>
+    <div class="ref-grid">
+      <div class="ref-item"><strong>Guzzon et al. (2021)</strong>Conservation of Latin American maize diversity. Agronomy, 11(1), 172.</div>
+      <div class="ref-item"><strong>Brush, S. B. (2008)</strong>Farmers' bounty: Locating crop diversity in the contemporary world. Yale University Press.</div>
+      <div class="ref-item"><strong>Barrera-Bassols et al. (2009)</strong>Saberes locales y defensa de la agrobiodiversidad. Papeles, (107), 77–91.</div>
+      <div class="ref-item"><strong>CONABIO (2021)</strong>Diversidad y distribución del maíz nativo en México. biodiversidad.gob.mx</div>
+      <div class="ref-item"><strong>Bellon & van Etten (2014)</strong>On-farm conservation of crop landraces. Plant genetic resources and climate change. CABI.</div>
+      <div class="ref-item"><strong>González, J. J. L. (2025)</strong>La tradición agrícola mesoamericana: Apuntes sobre el maíz en la Huasteca. Antrópica, 11(21).</div>
+      <div class="ref-item"><strong>Kamilaris & Prenafeta-Boldú (2018)</strong>Deep learning in agriculture. Computers and Electronics in Agriculture, 147, 70–90.</div>
+      <div class="ref-item"><strong>Chambers, R. (1994)</strong>Participatory rural appraisal (PRA): Analysis of experience. World Development, 22(9).</div>
+      <div class="ref-item"><strong>Gorelick et al. (2017)</strong>Google Earth Engine: Geospatial analysis for everyone. Remote Sensing of Environment, 202.</div>
+      <div class="ref-item"><strong>Peralta-Rivero et al. (2016)</strong>Percepción local respecto a la valoración ambiental y pérdida de recursos forestales en la Huasteca SLP.</div>
+      <div class="ref-item"><strong>Altieri, M. A. (2000)</strong>Agroecology: Principles and strategies for designing sustainable farming systems.</div>
+      <div class="ref-item"><strong>DOF (2020)</strong>Ley Federal para el Fomento y Protección del Maíz Nativo. Diario Oficial de la Federación.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════ FOOTER ═══════════ -->
+<footer>
+  <div>
+    <div class="foot-logos">
+      <img src="img/LOGOTECNM.png" alt="TecNM">
+      <img src="img/secihti.png"   alt="Secihti">
+      <img src="img/logotec.png"   alt="IT Ciudad Valles">
+    </div>
+    <div class="foot-logo">Agroplataforma · Maíz Nativo
+      <span>Huasteca Potosina · IT Ciudad Valles · TecNM</span>
+    </div>
+  </div>
+  <div class="foot-right">
+    <div>PEE-2025-G-369 · Secihti 2025</div>
+    <div>Alfredo Barrón Rodríguez · alfredo.barron@tecvalles.mx</div>
+    <div>481 391 8309 · IT Ciudad Valles · San Luis Potosí</div>
+    <div style="opacity:0.4;margin-top:4px">Eje 2 · Mejoramiento de Cultivos de Maíz y Frijol</div>
+  </div>
+</footer>
+
+<script>
+const obs = new IntersectionObserver(entries => {
+  entries.forEach((e, i) => {
+    if (e.isIntersecting) {
+      setTimeout(() => e.target.classList.add('on'), i * 70);
+      obs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.07 });
+document.querySelectorAll('.reveal').forEach(el => obs.observe(el));
+</script>
+
+<!-- ═══════════ BOTÓN FLOTANTE ═══════════ -->
+<style>
+.btn-ir-plataforma {
+  position: fixed; bottom: 26px; right: 22px; z-index: 300;
+  background: var(--tierra); color: var(--maiz);
+  font-family: 'Nunito', sans-serif; font-size: 12px; font-weight: 800;
+  padding: 11px 20px; border-radius: 100px;
+  text-decoration: none; display: flex; align-items: center; gap: 8px;
+  box-shadow: 0 4px 20px rgba(61,34,8,0.35);
+  border: 2px solid rgba(240,180,41,0.28);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.btn-ir-plataforma:hover { transform: translateY(-3px); box-shadow: 0 8px 28px rgba(61,34,8,0.45); }
+@media(max-width:500px){ .btn-ir-plataforma { font-size: 11px; padding: 9px 14px; bottom: 14px; right: 10px; } }
+</style>
+<a href="/" class="btn-ir-plataforma">
+  <span>🌽</span> Ir a la plataforma
+</a>
+</body>
+</html>

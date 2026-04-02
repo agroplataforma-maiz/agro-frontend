@@ -9,14 +9,15 @@ jobs:
     runs-on: ubuntu-latest
     env:
       # Prioridad: secret de repo -> variable de repo
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL }}
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL || secrets.API_URL || vars.API_URL || 'https://agromaiz.mx' }}
+      FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     permissions:
       contents: read
       packages: write
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v5
 
       - name: Set version
         id: version
@@ -28,8 +29,7 @@ jobs:
       - name: Validate required envs
         run: |
           if [ -z "$NEXT_PUBLIC_API_URL" ]; then
-            echo "ERROR: Missing NEXT_PUBLIC_API_URL (define it as secret or repo variable)"
-            exit 1
+            echo "WARNING: NEXT_PUBLIC_API_URL no definido; usando fallback de workflow"
           fi
 
       - name: Build

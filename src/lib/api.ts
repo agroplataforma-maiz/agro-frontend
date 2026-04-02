@@ -1,8 +1,9 @@
 // src/lib/api.ts
 // Helper centralizado — reemplaza los 5 API distintos del proyecto actual
 
-const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '')
-const IS_LOCAL_BACKEND = /localhost|127\.0\.0\.1/i.test(BASE_URL)
+const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '')
+const BASE_URL = RAW_BASE_URL.replace(/\/api\/?$/i, '')
+const IS_LOCAL_BACKEND = process.env.NODE_ENV === 'development' && /localhost|127\.0\.0\.1/i.test(BASE_URL)
 
 function normalizePath(path: string): string {
   const raw = path.trim()

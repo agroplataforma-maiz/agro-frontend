@@ -717,3 +717,21 @@
 /* ═══════════════════════════════════════════════════════
    RESPONSIVE
 ═══════════════════════════════════════════════════════ */
+@media (max-width: 767px) {
+  .pagina { padding: 16px 12px 40px; }
+  .dash-hero {
+    padding: 20px 16px;
+    flex-direction: column;
+    min-height: auto;
+  }
+  .dash-hero-right { display: none; }
+  .dash-hero-nombre { font-size: 22px; }
+  .dash-hero-saludo { font-size: 11px; }
+  .kpi-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .modulos-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .actividad-wrap { grid-template-columns: 1fr; gap: 16px; }
+}
+@media (max-width: 400px) {
+  .kpi-grid { grid-template-columns: 1fr; }
+  .modulos-grid { grid-template-columns: 1fr; }
+}

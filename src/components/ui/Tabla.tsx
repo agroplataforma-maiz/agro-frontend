@@ -5,6 +5,7 @@
 //   renderUsuariosGrid() en dashboard.js
 
 import styles from './Tabla.module.css'
+import StateView from './StateView'
 
 export interface Columna<T> {
   key: keyof T | string
@@ -13,6 +14,8 @@ export interface Columna<T> {
   width?: string
   nowrap?: boolean
   sortable?: boolean
+  hideOnMobile?: boolean
+  hideOnTablet?: boolean
 }
 
 interface TablaProps<T extends { id: number | string }> {
@@ -41,11 +44,11 @@ export default function Tabla<T extends { id: number | string }>({
   infoText,
 }: TablaProps<T>) {
   if (cargando) {
-    return <div className={styles.estado}>Cargando…</div>
+    return <StateView variant="loading" title="Cargando tabla" message="Estamos preparando la información para ti." />
   }
 
   if (!datos.length) {
-    return <div className={styles.estado}>{vacio}</div>
+    return <StateView variant="empty" title="Sin resultados" message={vacio} />
   }
 
   return (
@@ -65,7 +68,7 @@ export default function Tabla<T extends { id: number | string }>({
               return (
                 <th
                   key={String(col.key)}
-                  className={`${styles.th}${canSort ? ' ' + styles.thSortable : ''}${isSorted ? ' ' + styles.thSorted : ''}`}
+                  className={`${styles.th}${canSort ? ' ' + styles.thSortable : ''}${isSorted ? ' ' + styles.thSorted : ''}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`}
                   style={{ width: col.width }}
                   onClick={canSort ? () => onSort(String(col.key)) : undefined}
                 >
@@ -85,7 +88,7 @@ export default function Tabla<T extends { id: number | string }>({
               className={onRowClick ? styles.tbodyTr + ' ' + styles.clickable : styles.tbodyTr}
             >
               {columnas.map(col => (
-                <td key={String(col.key)} className={styles.td} style={col.nowrap ? { whiteSpace: 'nowrap', width: col.width } : { width: col.width }}>
+                <td key={String(col.key)} className={`${styles.td}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`} style={col.nowrap ? { whiteSpace: 'nowrap', width: col.width } : { width: col.width }}>
                   {col.render
                     ? col.render(row)
                     : String((row as Record<string, unknown>)[String(col.key)] ?? '—')}

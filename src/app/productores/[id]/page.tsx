@@ -11,8 +11,15 @@ import styles from './perfil.module.css'
 
 const API = process.env.NEXT_PUBLIC_API_URL
 
+function buildApiUrl(path: string): string {
+  const base = (API ?? '').replace(/\/$/, '')
+  const normalizedPath = path.startsWith('/') ? path : `/${path}`
+  const apiPath = normalizedPath.startsWith('/api/') ? normalizedPath : `/api${normalizedPath}`
+  return `${base}${apiPath}`
+}
+
 async function getProductor(id: string): Promise<Productor | null> {
-  const res = await fetch(`${API}/social/productor/${id}/`, {
+  const res = await fetch(buildApiUrl(`/social/productor/${id}/`), {
     next: { revalidate: 120 },
   })
   if (!res.ok) return null

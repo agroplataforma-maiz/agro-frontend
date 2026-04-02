@@ -7,7 +7,6 @@ import { useAppStore } from '@/store/useAppStore';
 import type { Usuario } from '@/types';
 import styles from '@/app/admin/usuarios/usuarios.module.css';
 import Paginacion from '@/components/ui/Paginacion';
-import ToastContainer from '@/components/ui/ToastContainer';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
 import SelectField from '@/components/ui/SelectField';
@@ -81,15 +80,15 @@ export default function UsuariosPanel() {
   });
 
   const activarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/activar`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/activar/`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario activado', 'ok'); },
-    onError: () => addToast('Error al activar usuario', 'err'),
+    onError: (e: Error) => addToast(e.message || 'Error al activar usuario', 'err'),
   });
 
   const desactivarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/desactivar`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/desactivar/`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario desactivado', 'ok'); },
-    onError: () => addToast('Error al desactivar usuario', 'err'),
+    onError: (e: Error) => addToast(e.message || 'Error al desactivar usuario', 'err'),
   });
 
   const eliminarUsuario = useMutation({
@@ -229,7 +228,7 @@ export default function UsuariosPanel() {
             onSort={handleSort}
             infoText={`${filtrados.length} usuario${filtrados.length !== 1 ? 's' : ''}`}
             columnas={[
-              { key: 'id', header: '#', nowrap: true, sortable: true },
+              { key: 'id', header: '#', nowrap: true, sortable: true, hideOnMobile: true },
               {
                 key: 'usuario', header: 'Usuario', width: '220px',
                 render: (u: Usuario) => {
@@ -247,18 +246,18 @@ export default function UsuariosPanel() {
                 }
               },
               {
-                key: 'email', header: 'Email', width: '260px', sortable: true,
+                key: 'email', header: 'Email', width: '260px', sortable: true, hideOnMobile: true, hideOnTablet: true,
                 render: (u: Usuario) => <span className={styles['td-email']}>{u.email || '—'}</span>
               },
               {
-                key: 'rol', header: 'Rol', width: '140px', nowrap: true, sortable: true,
+                key: 'rol', header: 'Rol', width: '140px', sortable: true,
                 render: (u: Usuario) => {
                   const info = ROL_INFO[u.rol] ?? { badge: 'b-productor', emoji: '🌽', label: u.rol };
                   return <span className={`${styles.badge} ${styles[info.badge]} ${styles['td-rol']}`}>{info.emoji} {info.label}</span>;
                 }
               },
               {
-                key: 'activo', header: 'Estado', width: '110px', nowrap: true, sortable: true,
+                key: 'activo', header: 'Estado', width: '110px', sortable: true,
                 render: (u: Usuario) => (
                   <span className={`${styles.badge} ${styles[u.activo ? 'b-activo' : 'b-inactivo']} ${styles['td-estado']}`}>
                     {u.activo ? '✓' : '✗'} {u.activo ? 'Activo' : 'Inactivo'}
@@ -266,16 +265,16 @@ export default function UsuariosPanel() {
                 )
               },
               {
-                key: 'ultimo_acceso', header: 'Último acceso', width: '130px', nowrap: true, sortable: true,
+                key: 'ultimo_acceso', header: 'Último acceso', width: '130px', nowrap: true, sortable: true, hideOnMobile: true, hideOnTablet: true,
                 render: (u: Usuario) => u.ultimo_acceso ? new Date(u.ultimo_acceso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
               },
               {
-                key: 'fecha_registro', header: 'Registro', width: '110px', nowrap: true, sortable: true,
+                key: 'fecha_registro', header: 'Registro', width: '110px', nowrap: true, sortable: true, hideOnMobile: true, hideOnTablet: true,
                 render: (u: Usuario) => u.fecha_registro ? new Date(u.fecha_registro).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
               },
             ]}
             acciones={(u: Usuario) => (
-              <div style={{ display: 'flex', gap: 6 }}>
+              <div className={styles['td-acciones']}>
                 <Button variante="ghost" tamaño="sm" onClick={e => { e.stopPropagation(); const usr = usuarios.find(x => x.id === u.id); if (usr) abrirModalPerfil(usr); }} title="Ver perfil">👤</Button>
                 {u.activo
                   ? <Button variante="peligro" tamaño="sm" onClick={e => { e.stopPropagation(); abrirModalConfirm(u.id, 'desactivar'); }} title="Desactivar">🚫</Button>
@@ -330,7 +329,6 @@ export default function UsuariosPanel() {
           </div>
         </div>
       </Modal>
-      <ToastContainer />
     </div>
   );
 }

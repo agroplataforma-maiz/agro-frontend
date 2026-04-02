@@ -13,6 +13,7 @@ import type { Catalogo } from '@/types'
 import styles from './catalogos.module.css'
 import AdminShell from '@/components/dashboard/AdminShell'
 import Button from '@/components/ui/Button'
+import ModuleHero from '@/components/ui/ModuleHero'
 import SearchInput from '@/components/ui/SearchInput'
 import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
@@ -443,7 +444,7 @@ export default function CatalogosPage() {
   const CAMPOS_OCULTOS = ['id', 'nombre', 'created_at', 'updated_at', 'creado_en', 'actualizado_en', 'fecha_creacion', 'fecha_actualizacion']
 
   const columnas: Columna<Catalogo>[] = [
-    { key: 'id', header: 'ID', nowrap: true },
+    { key: 'id', header: 'ID', nowrap: true, hideOnMobile: true, hideOnTablet: true },
     { key: 'nombre', header: 'Nombre' },
     ...(data[0]
       ? Object.keys(data[0])
@@ -456,6 +457,8 @@ export default function CatalogosPage() {
                 key: k,
                 header: HEADERS[k] ?? k,
                 nowrap: true,
+                hideOnMobile: true,
+                hideOnTablet: true,
                 render: (row: Catalogo) => {
                   const val = (row as Record<string, unknown>)[k]
                   return val
@@ -476,6 +479,8 @@ export default function CatalogosPage() {
                 key: k,
                 header: 'Nivel de riesgo',
                 nowrap: true,
+                hideOnMobile: true,
+                hideOnTablet: true,
                 render: (row: Catalogo) => {
                   const val = Number((row as Record<string, unknown>)[k])
                   const cfg = RIESGO[val]
@@ -493,7 +498,7 @@ export default function CatalogosPage() {
                 },
               }
             }
-            return { key: k, header: k.replace(/_/g, ' ') }
+            return { key: k, header: k.replace(/_/g, ' '), hideOnMobile: true, hideOnTablet: true }
           })
       : []),
   ]
@@ -501,6 +506,16 @@ export default function CatalogosPage() {
   return (
     <AdminShell>
     <div className={styles.page}>
+      <ModuleHero
+        eyebrow="Administración · Catálogos maestros"
+        title={<>Gestión de <em>Catálogos</em> 📋</>}
+        description="Centraliza catálogos de germoplasma, territorio, fenotipo y dimensiones socioculturales para mantener la plataforma consistente." 
+        stats={[
+          { label: 'resultados', value: totalItems },
+          { label: 'eje activo', value: ejeActivo.eje },
+          { label: 'catálogos', value: ejeActivo.catalogos.length },
+        ]}
+      />
       <header className={styles.header}>
         <h1 className={styles.titulo}>Catálogos</h1>
         <Button variante="primario" onClick={() => { setEditando(null); setModalAbierto(true) }}>

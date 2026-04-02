@@ -8,6 +8,7 @@ import { useCatalogos } from "@/hooks/useCatalogos";
 import { useAppStore } from "@/store/useAppStore";
 import ResumenSocial from "@/components/sociocultural/ResumenSocial";
 import { Button } from "@/components/ui";
+import ModuleHero from '@/components/ui/ModuleHero'
 import SelectField from "@/components/ui/SelectField";
 import { GET, POST } from "@/lib/api";
 import styles from "./sociocultural.module.css";
@@ -166,25 +167,25 @@ export default function Page() {
   return (
     <AdminShell>
       <div className={styles.page}>
+        <ModuleHero
+          eyebrow="Sociocultural · Registro de campo"
+          title={<>Registro <em>Sociocultural</em> 🎭</>}
+          description="Documenta prácticas, saberes, territorio y economía local para contextualizar el manejo tradicional del maíz." 
+          stats={[
+            { label: 'sección', value: `${step + 1}/${total}` },
+            { label: 'productores', value: productores.length || '—' },
+            { label: 'municipios', value: municipios.length || '—' },
+          ]}
+          actions={hayDatos ? (
+            <button type="button" className={styles.clearBtn} onClick={clearAll}>
+              🗑 Limpiar
+            </button>
+          ) : undefined}
+        />
         <div className={styles.layout}>
 
           {/* ── Panel izquierdo: formulario ── */}
           <div className={styles.formPanel}>
-
-            {/* Encabezado */}
-            <div className={styles.header}>
-              <div>
-                <h1 className={styles.title}>🌽 Registro Sociocultural</h1>
-                <p className={styles.subtitle}>
-                  Captura saberes, prácticas y contexto territorial del productor
-                </p>
-              </div>
-              {hayDatos && (
-                <button type="button" className={styles.clearBtn} onClick={clearAll}>
-                  🗑 Limpiar
-                </button>
-              )}
-            </div>
 
             {/* Stepper */}
             <div className={styles.stepper}>

@@ -11,6 +11,7 @@ import type { Rol } from '@/types'
 import { iniciales } from '@/lib/auth'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
+import StateView from '@/components/ui/StateView'
 
 interface AdminShellProps {
   children: React.ReactNode
@@ -22,7 +23,18 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
   const router = useRouter()
   const usuario = useAppStore(s => s.usuario)
   const addToast = useAppStore(s => s.addToast)
+  const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
   const [collapsed, setCollapsed] = useState(false)
+
+  // En pantallas pequeñas inicia colapsado
+  useEffect(() => {
+    if (isMobile()) setCollapsed(true)
+    const onResize = () => {
+      if (isMobile()) setCollapsed(true)
+    }
+    window.addEventListener('resize', onResize)
+    return () => window.removeEventListener('resize', onResize)
+  }, [])
 
   // Mantiene --sidebar-w sincronizado para que Topbar (position:fixed) se reposicione
   useEffect(() => {
@@ -30,7 +42,15 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
   }, [collapsed])
 
   if (!usuario) {
-    return <div style={{ padding: 40, textAlign: 'center' }}>Cargando usuario…</div>
+    return (
+      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
+        <StateView
+          variant="loading"
+          title="Cargando usuario"
+          message="Verificando tu sesión en Maíz Nativo..."
+        />
+      </div>
+    )
   }
 
   const ini = iniciales(usuario.nombre_completo || usuario.username)
@@ -60,7 +80,7 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
   }
 
   return (
-    <div style={{ minHeight: '100vh' }}>
+    <div style={{ display: 'flex', minHeight: '100vh' }}>
       <Sidebar
         user={userSidebar}
         rol={rolActual}
@@ -73,9 +93,10 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
         style={{
           marginLeft: collapsed ? 64 : 260,
           transition: 'margin-left 0.2s',
-          minHeight: '100vh',
+          flex: 1,
           display: 'flex',
           flexDirection: 'column',
+          minWidth: 0,
         }}
       >
         <Topbar
@@ -87,11 +108,10 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
         {/* Espaciador para compensar la Topbar fija (64px = --topbar-h) */}
         <div style={{ height: 64, flexShrink: 0 }} />
         <main style={{
-          flex: 1,
           width: '100%',
-          padding: '32px 40px',
+          padding: contentPadding,
           boxSizing: 'border-box',
-        }}>
+        }} className="admin-main">
           {children}
         </main>
       </div>

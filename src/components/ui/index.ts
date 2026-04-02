@@ -9,5 +9,6 @@ export { default as Navbar }         from './Navbar'
 export { default as Paginacion }     from './Paginacion'
 export { default as ToastContainer } from './ToastContainer'
 export { default as MapaHuasteca }   from './MapaHuasteca'
+export { default as StateView }      from './StateView'
 
 export type { Columna } from './Tabla'

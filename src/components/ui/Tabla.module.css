@@ -116,5 +116,42 @@
 .tdAcciones {
   display: flex;
   gap: 5px;
+  flex-wrap: wrap;
   pointer-events: auto;
+}
+
+@media (max-width: 1180px) {
+  .th {
+    padding: 10px 12px;
+  }
+  .td {
+    padding: 9px 12px;
+  }
+  .colHideTablet {
+    display: none;
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 767px) {
+  .tableWrap {
+    border-radius: 8px;
+  }
+  .th {
+    padding: 9px 10px;
+    font-size: 9px;
+  }
+  .td {
+    padding: 8px 10px;
+    font-size: 12px;
+  }
+  .tableInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 10px 12px;
+  }
+  .colHideMobile {
+    display: none;
+  }
 }

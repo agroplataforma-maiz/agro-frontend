@@ -26,19 +26,6 @@ const config: NextConfig = {
     ],
   },
 
-  // ── Redirects ────────────────────────────────────────────────────
-  async redirects() {
-    return [
-      // Raíz → login si no están autenticados (middleware lo maneja,
-      // pero esto protege el caso de rutas no cubiertas)
-      {
-        source: '/',
-        destination: '/login',
-        permanent: false,
-      },
-    ]
-  },
-
   // ── Compilación ──────────────────────────────────────────────────
   // Silencia warnings de paquetes de terceros en producción
   typescript: { ignoreBuildErrors: false },

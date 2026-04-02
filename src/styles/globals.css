@@ -50,6 +50,7 @@
   .kpi-grid { grid-template-columns: repeat(2, 1fr); }
   .modulos-grid { grid-template-columns: 1fr 1fr; }
   .usuarios-grid { grid-template-columns: 1fr; }
+  .admin-main { padding: 16px 12px !important; }
 }
 
 @media (max-width: 480px) {
@@ -1176,7 +1177,8 @@ body {
   font-family: "Nunito", sans-serif;
   font-size: 13px;
   color: var(--tierra);
-  width: 230px;
+  width: 100%;
+  max-width: 230px;
   outline: none;
   transition: border-color 0.2s;
 }

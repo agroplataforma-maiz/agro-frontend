@@ -3,6 +3,18 @@
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
 
+function normalizePath(path: string): string {
+  const raw = path.trim()
+
+  // Si ya es URL absoluta, no se modifica
+  if (/^https?:\/\//i.test(raw)) return raw
+
+  const withSlash = raw.startsWith('/') ? raw : `/${raw}`
+  if (withSlash === '/api' || withSlash.startsWith('/api/')) return withSlash
+
+  return `/api${withSlash}`
+}
+
 function getToken(): string | null {
   if (typeof window === 'undefined') return null
   return localStorage.getItem('agro_token')
@@ -25,7 +37,12 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
     if (token) reqHeaders['Authorization'] = `Bearer ${token}`
   }
 
-  const res = await fetch(`${BASE_URL}${path}`, {
+  const normalizedPath = normalizePath(path)
+  const url = /^https?:\/\//i.test(normalizedPath)
+    ? normalizedPath
+    : `${BASE_URL}${normalizedPath}`
+
+  const res = await fetch(url, {
     headers: reqHeaders,
     ...rest,
   })

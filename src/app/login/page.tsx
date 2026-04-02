@@ -31,6 +31,10 @@ export default function LoginPage() {
   const [ok, setOk] = useState('')
 
   useEffect(() => {
+    // Asegurar que el login siempre se vea en modo claro,
+    // independientemente de si el dark mode quedó activo de una sesión previa
+    document.documentElement.classList.remove('dark')
+
     if (getToken() && getUsuario()) {
       router.replace('/dashboard')
     }

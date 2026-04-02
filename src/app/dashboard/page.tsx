@@ -61,9 +61,9 @@ export default function DashboardPage() {
   const esVisualizador    = usuario.rol === 'visualizador'
 
   return (
-    <AdminShell contentPadding="0">
+    <AdminShell>
         {/* Contenido principal */}
-        <main id="contenido-principal" tabIndex={-1} style={{ padding: '0' }}>
+        <main id="contenido-principal" tabIndex={-1}>
           {/* Hero bienvenida */}
           <div className={styles['dash-hero']} role="region" aria-label="Bienvenida">
             <div className={styles['dash-hero-txt']}>
@@ -337,80 +337,80 @@ export default function DashboardPage() {
           {/* Actividad + Etapas */}
           <div className={styles['actividad-wrap']}>
             {/* Actividad reciente */}
-            <div className="card-panel reveal" role="region" aria-labelledby="titulo-actividad">
-              <div className="card-panel-header">
-                <h2 className="card-panel-titulo" id="titulo-actividad">Actividad reciente</h2>
-                <a className="card-panel-link" href="#" aria-label="Ver todo el historial">Ver todo →</a>
+            <div className={styles['card-panel']} role="region" aria-labelledby="titulo-actividad">
+              <div className={styles['card-panel-header']}>
+                <h2 className={styles['card-panel-titulo']} id="titulo-actividad">Actividad reciente</h2>
+                <a className={styles['card-panel-link']} href="#" aria-label="Ver todo el historial">Ver todo →</a>
               </div>
               <div role="list" aria-label="Lista de actividades recientes">
-                <div className="act-item" role="listitem">
-                  <div className="act-ico-wrap" style={{ background: 'var(--verde-pal)' }} aria-hidden="true">🌽</div>
-                  <div className="act-txt">
+                <div className={styles['act-item']} role="listitem">
+                  <div className={styles['act-ico-wrap']} style={{ background: 'var(--verde-pal)' }} aria-hidden="true">🌽</div>
+                  <div className={styles['act-txt']}>
                     <strong>Base de datos construida</strong>
                     <span>7 esquemas · 40+ tablas · PostGIS</span>
                   </div>
-                  <time className="act-tiempo" dateTime="2025-03">Mar 2025</time>
+                  <time className={styles['act-tiempo']} dateTime="2025-03">Mar 2025</time>
                 </div>
-                <div className="act-item" role="listitem">
-                  <div className="act-ico-wrap" style={{ background: 'var(--maiz-pal)' }} aria-hidden="true">🧑‍🌾</div>
-                  <div className="act-txt">
+                <div className={styles['act-item']} role="listitem">
+                  <div className={styles['act-ico-wrap']} style={{ background: 'var(--maiz-pal)' }} aria-hidden="true">🧑‍🌾</div>
+                  <div className={styles['act-txt']}>
                     <strong>Módulo Productores listo</strong>
                     <span>Perfil social y cultural completo</span>
                   </div>
-                  <time className="act-tiempo" dateTime="2025-03">Mar 2025</time>
+                  <time className={styles['act-tiempo']} dateTime="2025-03">Mar 2025</time>
                 </div>
-                <div className="act-item" role="listitem">
-                  <div className="act-ico-wrap" style={{ background: 'var(--azul-pal)' }} aria-hidden="true">🔐</div>
-                  <div className="act-txt">
+                <div className={styles['act-item']} role="listitem">
+                  <div className={styles['act-ico-wrap']} style={{ background: 'var(--azul-pal)' }} aria-hidden="true">🔐</div>
+                  <div className={styles['act-txt']}>
                     <strong>Autenticación JWT implementada</strong>
                     <span>5 roles · Login/registro activo</span>
                   </div>
-                  <time className="act-tiempo" dateTime="2025-03">Mar 2025</time>
+                  <time className={styles['act-tiempo']} dateTime="2025-03">Mar 2025</time>
                 </div>
-                <div className="act-item" role="listitem">
-                  <div className="act-ico-wrap" style={{ background: 'var(--verde-pal)' }} aria-hidden="true">📋</div>
-                  <div className="act-txt">
+                <div className={styles['act-item']} role="listitem">
+                  <div className={styles['act-ico-wrap']} style={{ background: 'var(--verde-pal)' }} aria-hidden="true">📋</div>
+                  <div className={styles['act-txt']}>
                     <strong>Catálogos territoriales cargados</strong>
                     <span>Municipios, comunidades, lenguas</span>
                   </div>
-                  <time className="act-tiempo" dateTime="2025-02">Feb 2025</time>
+                  <time className={styles['act-tiempo']} dateTime="2025-02">Feb 2025</time>
                 </div>
-                <div className="act-item" role="listitem">
-                  <div className="act-ico-wrap" style={{ background: 'var(--crema-dark)' }} aria-hidden="true">🗺️</div>
-                  <div className="act-txt">
+                <div className={styles['act-item']} role="listitem">
+                  <div className={styles['act-ico-wrap']} style={{ background: 'var(--crema-dark)' }} aria-hidden="true">🗺️</div>
+                  <div className={styles['act-txt']}>
                     <strong>Visitas de campo iniciadas</strong>
                     <span>5 comunidades · GPS D-RTK 2</span>
                   </div>
-                  <time className="act-tiempo" dateTime="2025-04">Abr 2025</time>
+                  <time className={styles['act-tiempo']} dateTime="2025-04">Abr 2025</time>
                 </div>
               </div>
             </div>
             {/* Estado de etapas */}
-            <div className="card-panel reveal" role="region" aria-labelledby="titulo-etapas">
-              <div className="card-panel-header">
-                <h2 className="card-panel-titulo" id="titulo-etapas">Estado del proyecto</h2>
+            <div className={styles['card-panel']} role="region" aria-labelledby="titulo-etapas">
+              <div className={styles['card-panel-header']}>
+                <h2 className={styles['card-panel-titulo']} id="titulo-etapas">Estado del proyecto</h2>
               </div>
-              <div className="etapa-mini">
-                <div className="etapa-mini-header">
-                  <span className="etapa-mini-nombre">Etapa 1 · Diagnóstico</span>
-                  <span className="etapa-mini-estado est-activa" role="status">En curso</span>
+              <div className={styles['etapa-mini']}>
+                <div className={styles['etapa-mini-header']}>
+                  <span className={styles['etapa-mini-nombre']}>Etapa 1 · Diagnóstico</span>
+                  <span className={`${styles['etapa-mini-estado']} ${styles['est-activa']}`} role="status">En curso</span>
                 </div>
-                <div className="prog-bar-track" role="progressbar" aria-valuenow={38} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 38% completado">
-                  <div className="prog-bar-fill fill-maiz" style={{ width: '38%' }}></div>
+                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={38} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 38% completado">
+                  <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '38%' }}></div>
                 </div>
-                <div className="prog-meta" aria-hidden="true">
+                <div className={styles['prog-meta']} aria-hidden="true">
                   <span>0%</span><span>38% completado</span><span>100%</span>
                 </div>
               </div>
-              <div className="etapa-mini">
-                <div className="etapa-mini-header">
-                  <span className="etapa-mini-nombre">Etapa 2 · Desarrollo</span>
-                  <span className="etapa-mini-estado est-pronto" role="status">Próxima</span>
+              <div className={styles['etapa-mini']}>
+                <div className={styles['etapa-mini-header']}>
+                  <span className={styles['etapa-mini-nombre']}>Etapa 2 · Desarrollo</span>
+                  <span className={`${styles['etapa-mini-estado']} ${styles['est-pronto']}`} role="status">Próxima</span>
                 </div>
-                <div className="prog-bar-track" role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 2: aún no iniciada">
-                  <div className="prog-bar-fill fill-gris" style={{ width: '0%' }}></div>
+                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 2: aún no iniciada">
+                  <div className={`${styles['prog-bar-fill']} ${styles['fill-gris']}`} style={{ width: '0%' }}></div>
                 </div>
-                <div className="prog-meta" aria-hidden="true">
+                <div className={styles['prog-meta']} aria-hidden="true">
                   <span>Pendiente</span><span>11 meses</span>
                 </div>
               </div>

@@ -10,6 +10,7 @@ import SectionForm from "@/components/fenotipo/SectionForm";
 import ReportView from "@/components/fenotipo/ReportView";
 import { grupos } from "@/data/descriptor";
 import { Button } from "@/components/ui";
+import ModuleHero from '@/components/ui/ModuleHero'
 import SelectField from "@/components/ui/SelectField";
 import { GET, POST } from "@/lib/api";
 import styles from "./fenotipo.module.css";
@@ -108,25 +109,25 @@ export default function Page() {
   return (
     <AdminShell>
       <div className={styles.page}>
+        <ModuleHero
+          eyebrow="Fenotipo · Registro técnico"
+          title={<>Registro <em>Fenotípico</em> 🌽</>}
+          description="Captura descriptores morfológicos y agronómicos de variedades de maíz con un flujo seccionado y trazable." 
+          stats={[
+            { label: 'sección', value: `${step + 1}/${total}` },
+            { label: 'razas', value: razas.length || '—' },
+            { label: 'municipios', value: municipios.length || '—' },
+          ]}
+          actions={hasDg ? (
+            <button type="button" className={styles.clearBtn} onClick={clearAll}>
+              🗑 Limpiar
+            </button>
+          ) : undefined}
+        />
 
         {/* ── Cuerpo: formulario + resumen lateral ── */}
         <div className={styles.layout}>
         <div className={styles.formPanel}>
-
-        {/* ── Encabezado ── */}
-        <div className={styles.header}>
-          <div>
-            <h1 className={styles.title}>🌽 Registro Fenotípico</h1>
-            <p className={styles.subtitle}>
-              Captura los descriptores morfológicos y agronómicos de la variedad de maíz nativo
-            </p>
-          </div>
-          {hasDg && (
-            <button type="button" className={styles.clearBtn} onClick={clearAll}>
-              🗑 Limpiar
-            </button>
-          )}
-        </div>
 
         {/* ── Stepper ── */}
         <div className={styles.stepper}>

@@ -429,3 +429,11 @@
 :global(html.dark) .hero {
   background: linear-gradient(135deg, #2A3D2E 0%, #1A2B22 100%);
 }
+
+/* ── RESPONSIVE ── */
+@media (max-width: 767px) {
+  .hero { padding: 20px 16px; flex-direction: column; gap: 16px; min-height: auto; }
+  .heroLeft { flex-direction: column; align-items: flex-start; gap: 12px; }
+  .heroStats { gap: 16px; }
+  .infoGrid, .grid2 { grid-template-columns: 1fr; }
+}

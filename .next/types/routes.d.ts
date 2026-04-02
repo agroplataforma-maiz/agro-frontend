@@ -4,7 +4,7 @@
 type AppRoutes = "/" | "/admin" | "/admin/catalogos" | "/admin/dashboard" | "/admin/productores" | "/admin/usuarios" | "/ayuda" | "/comunidades" | "/dashboard" | "/fenotipo" | "/login" | "/mi-perfil" | "/productores" | "/productores/[id]" | "/sin-acceso" | "/sociocultural"
 type PageRoutes = never
 type LayoutRoutes = "/" | "/admin"
-type RedirectRoutes = "/"
+type RedirectRoutes = never
 type RewriteRoutes = never
 type Routes = AppRoutes | PageRoutes | LayoutRoutes | RedirectRoutes | RewriteRoutes
 

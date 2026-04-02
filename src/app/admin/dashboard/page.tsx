@@ -16,6 +16,7 @@ import { Sidebar } from '@/components/dashboard/Sidebar'
 import { Topbar } from '@/components/dashboard/Topbar'
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard'
 import { UserCard } from '@/components/dashboard/UserCard'
+import StateView from '@/components/ui/StateView'
 import styles from './dashboard.module.css'
 
 // Tarjetas de acceso rápido — igual que en dashboard.js
@@ -128,8 +129,13 @@ export default function DashboardPage() {
                 Ver todos →
               </button>
             </div>
-            {loadUsuarios ? (
-              <p className={styles.cargando}>Cargando…</p>
+            {loadUsuarios ? ( 
+              <StateView
+                variant="loading"
+                size="sm"
+                title="Cargando usuarios"
+                message="Recuperando actividad reciente del equipo."
+              />
             ) : (
               <div className={styles.usuariosGrid}>
                 {(usuarios ?? []).map(u => (

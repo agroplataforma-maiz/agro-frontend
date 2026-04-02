@@ -7,6 +7,7 @@ import { calcularEdad, dash, nombreCompleto } from '@/lib/utils'
 import type { Productor } from '@/types'
 import styles from './PerfilProductor.module.css'
 import Button from '@/components/ui/Button'
+import StateView from '@/components/ui/StateView'
 
 interface Props {
   id: number
@@ -41,20 +42,59 @@ export default function PerfilProductor({ id, onVolver }: Props) {
 
   if (isLoading) return (
     <div className={styles.estadoCentro}>
-      <div className={styles.spinner} />
-      <span>Cargando perfil…</span>
+      <StateView variant="loading" title="Cargando perfil" message="Preparando la ficha del productor..." />
     </div>
   )
   if (!productor) return (
-    <div className={styles.estadoCentro}>Productor no encontrado</div>
+    <div className={styles.estadoCentro}>
+      <StateView variant="empty" title="Productor no encontrado" message="No encontramos información para este productor." />
+    </div>
   )
 
   const nombre = nombreCompleto(productor.nombres, productor.apellido_paterno, productor.apellido_materno)
   const edad   = productor.fecha_nacimiento ? calcularEdad(productor.fecha_nacimiento) : null
   const ini    = iniciales(nombre)
 
+  const irASeccion = (key: string) => {
+    const el = document.getElementById(`sec-${key}`) as HTMLDetailsElement | null
+    if (!el) return
+    el.open = true
+    el.scrollIntoView({ behavior: 'smooth', block: 'start' })
+  }
+
   return (
     <div className={styles.page}>
+
+      <div className={styles.topNav}>
+        <div className={styles.topActions}>
+          <Button variante="secundario" tamaño="sm" onClick={onVolver} className={styles.topBackBtn}>
+            ← Volver a productores
+          </Button>
+          <Button
+            variante="ghost"
+            tamaño="sm"
+            onClick={() => window.scrollTo({ top: 0, behavior: 'smooth' })}
+            className={styles.topBackBtn}
+          >
+            ↑ Ir arriba
+          </Button>
+        </div>
+        <span className={styles.topHint}>Navegación rápida del perfil</span>
+      </div>
+
+      <div className={styles.quickNav}>
+        {SECCIONES.map((s) => (
+          <button
+            key={s.key}
+            type="button"
+            className={styles.quickNavBtn}
+            onClick={() => irASeccion(s.key)}
+          >
+            <span aria-hidden="true">{s.emoji}</span>
+            <span>{s.label}</span>
+          </button>
+        ))}
+      </div>
 
       {/* Hero */}
       <div className={styles.hero}>
@@ -77,9 +117,6 @@ export default function PerfilProductor({ id, onVolver }: Props) {
               {productor.localidad_nombre && <span className={styles.metaItem}>🏠 {productor.localidad_nombre}</span>}
             </div>
           </div>
-          <Button variante="ghost" tamaño="sm" onClick={onVolver} className={styles.btnVolver}>
-            ← Volver
-          </Button>
         </div>
       </div>
 
@@ -97,7 +134,7 @@ export default function PerfilProductor({ id, onVolver }: Props) {
       {/* Secciones de saberes */}
       <div className={styles.secciones}>
         {SECCIONES.map(s => (
-          <SeccionDatos key={s.key} emoji={s.emoji} label={s.label} path={s.path(id)} />
+          <SeccionDatos key={s.key} sectionKey={s.key} emoji={s.emoji} label={s.label} path={s.path(id)} />
         ))}
       </div>
     </div>
@@ -116,7 +153,7 @@ function StatPerfil({ emoji, label, valor }: { emoji: string; label: string; val
 }
 
 // ── Sección individual (lazy fetch) ──────────────────────────────────────────
-function SeccionDatos({ emoji, label, path }: { emoji: string; label: string; path: string }) {
+function SeccionDatos({ sectionKey, emoji, label, path }: { sectionKey: string; emoji: string; label: string; path: string }) {
   const { data, isLoading, isError } = useQuery({
     queryKey: ['seccion', path],
     queryFn:  () => GET(path),
@@ -126,16 +163,16 @@ function SeccionDatos({ emoji, label, path }: { emoji: string; label: string; pa
   const tieneData = !isLoading && !isError && (items as unknown[]).length > 0
 
   return (
-    <details className={styles.seccion}>
+    <details id={`sec-${sectionKey}`} className={styles.seccion}>
       <summary className={styles.seccionTitulo}>
         <span className={styles.seccionTituloInner}>{emoji} {label}</span>
         ›
       </summary>
       <div className={styles.seccionBody}>
-        {isLoading && <p className={styles.estado}>⏳ Cargando…</p>}
-        {isError   && <p className={`${styles.estado} ${styles.estadoError}`}>⚠️ Error al cargar</p>}
+        {isLoading && <StateView variant="loading" size="sm" title="Cargando" message="Consultando datos de la sección..." />}
+        {isError   && <StateView variant="error" size="sm" title="Error al cargar" message="No pudimos obtener esta sección por ahora." />}
         {!isLoading && !isError && (items as unknown[]).length === 0 && (
-          <p className={styles.estado}>Sin datos registrados</p>
+          <StateView variant="empty" size="sm" title="Sin datos registrados" message="Todavía no hay información capturada en esta sección." />
         )}
         {tieneData && (items as Record<string, unknown>[]).map((item, i) => (
           <div key={i} className={styles.seccionItem}>

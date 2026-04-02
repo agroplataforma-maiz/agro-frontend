@@ -15,6 +15,7 @@ import type { Productor } from '@/types'
 import styles from './productores.module.css'
 import AdminShell from '@/components/dashboard/AdminShell'
 import Button from '@/components/ui/Button'
+import ModuleHero from '@/components/ui/ModuleHero'
 import SearchInput from '@/components/ui/SearchInput'
 import Modal from '@/components/ui/Modal'
 import { useRouter } from 'next/navigation'
@@ -70,10 +71,11 @@ export default function ProductoresPage() {
     const nombre = nombreCompleto(p.nombres, p.apellido_paterno, p.apellido_materno)
     return nombre.toLowerCase().includes(busqueda.toLowerCase())
   })
+  const municipiosCubiertos = new Set(filtrados.map(p => p.municipio_id).filter(Boolean)).size
 
   // ── Columnas de la tabla ──────────────────────────────────────────────────
   const columnas: Columna<Productor>[] = [
-    { key: 'id', header: 'ID', width: '60px' },
+    { key: 'id', header: 'ID', width: '60px', hideOnMobile: true, hideOnTablet: true },
     {
       key: 'nombres',
       header: 'Nombre',
@@ -83,10 +85,12 @@ export default function ProductoresPage() {
       key: 'fecha_nacimiento',
       header: 'Edad',
       width: '70px',
+      hideOnMobile: true,
+      hideOnTablet: true,
       render: p => p.fecha_nacimiento ? String(calcularEdad(p.fecha_nacimiento)) : '—',
     },
-    { key: 'genero',           header: 'Género',      render: p => dash(p.genero) },
-    { key: 'anios_experiencia', header: 'Experiencia', render: p => p.anios_experiencia ? `${p.anios_experiencia} ${p.anios_experiencia === 1 ? 'año' : 'años'}` : '—' },
+    { key: 'genero',           header: 'Género',      hideOnMobile: true, hideOnTablet: true, render: p => dash(p.genero) },
+    { key: 'anios_experiencia', header: 'Experiencia', hideOnMobile: true, hideOnTablet: true, render: p => p.anios_experiencia ? `${p.anios_experiencia} ${p.anios_experiencia === 1 ? 'año' : 'años'}` : '—' },
     {
       key: 'municipio_id',
       header: 'Municipio',
@@ -101,7 +105,7 @@ export default function ProductoresPage() {
   // ── Vista perfil ──────────────────────────────────────────────────────────
   if (vista === 'perfil' && productorId) {
     return (
-      <AdminShell contentPadding="0">
+      <AdminShell contentPadding="24px 24px 32px">
         <PerfilProductor
           id={productorId}
           onVolver={() => { setVista('lista'); setProductorId(null) }}
@@ -114,12 +118,21 @@ export default function ProductoresPage() {
   return (
     <AdminShell contentPadding="0">
       <div className={styles.page}>
+          <ModuleHero
+            eyebrow="Social · Módulo de productores"
+            title={<>Gestión de <em>Productores</em> 🌽</>}
+            description="Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma." 
+            stats={[
+              { label: 'visibles', value: filtrados.length },
+              { label: 'municipios', value: municipiosCubiertos || '—' },
+            ]}
+          />
           <header className={styles.header}>
             <div>
               <h1 className={styles.titulo}>Productores</h1>
               <p className={styles.subtitulo}>{filtrados.length} registros</p>
             </div>
-            <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+            <div className={styles.headerActions}>
               <SearchInput
                 value={busqueda}
                 onChange={e => setBusqueda(e.target.value)}

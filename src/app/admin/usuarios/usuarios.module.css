@@ -21,6 +21,16 @@
     radial-gradient(ellipse at 5% 90%, rgba(42,92,63,.2) 0%, transparent 50%);
   pointer-events: none;
 }
+.mod-hero::after {
+  content: '🌽';
+  position: absolute;
+  right: -20px;
+  bottom: -28px;
+  font-size: 150px;
+  opacity: 0.06;
+  line-height: 1;
+  pointer-events: none;
+}
 .mod-hero-txt { position: relative; z-index: 1; }
 .mod-hero-label {
   font-family: 'DM Mono', monospace;
@@ -169,10 +179,31 @@
 }
 .td-nombre-txt strong { display: block; font-size: 13px; font-weight: 800; color: var(--tierra); }
 .td-nombre-txt span   { font-size: 11px; color: var(--gris); }
+.td-nombre-txt {
+  min-width: 0;
+}
+.td-nombre-txt strong,
+.td-nombre-txt span {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
 .td-email { font-size: 12px; color: var(--gris); }
 .td-rol   { white-space: nowrap; }
 .td-estado { white-space: nowrap; }
 .td-acciones { display: flex; gap: 5px; }
+
+@media (max-width: 1180px) {
+  .table-wrap {
+    overflow-x: auto;
+  }
+  .td-nombre {
+    min-width: 180px;
+  }
+  .badge {
+    padding: 3px 8px;
+    font-size: 10px;
+  }
+}
 
 /* ── BADGES ── */
 .badge {
@@ -236,4 +267,37 @@
   background:
     radial-gradient(ellipse at 85% 50%, rgba(240,160,20,.08) 0%, transparent 55%),
     radial-gradient(ellipse at 5%  90%, rgba(42,92,63,.25) 0%, transparent 50%);
+}
+:global(html.dark) .mod-hero::after {
+  opacity: 0.08;
+}
+
+/* ── RESPONSIVE ── */
+@media (max-width: 767px) {
+  .mod-hero { padding: 20px 16px; flex-direction: column; min-height: auto; }
+  .mod-hero-right { display: none; }
+  .mod-hero-title { font-size: 22px; }
+  .sec-acciones { flex-wrap: wrap; width: 100%; }
+  .filtros { flex-direction: column; gap: 8px; }
+  .filtros-right { margin-left: 0; width: 100%; justify-content: flex-end; }
+  .search-wrap { min-width: 0; width: 100%; }
+  .filtro-sel { width: 100%; }
+  .table-wrap { overflow-x: auto; }
+  .td-nombre {
+    min-width: 0;
+  }
+  .badge {
+    max-width: 100%;
+    padding: 3px 7px;
+    font-size: 10px;
+    line-height: 1.2;
+    white-space: normal;
+    text-align: center;
+    justify-content: center;
+  }
+  .td-rol,
+  .td-estado {
+    display: inline-flex;
+    white-space: normal;
+  }
 }

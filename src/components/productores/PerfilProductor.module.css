@@ -8,6 +8,87 @@
   gap: 1.5rem;
 }
 
+.topNav {
+  position: sticky;
+  top: calc(var(--topbar-h) + 8px);
+  z-index: 20;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+  padding: 10px 12px;
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--blanco) 86%, transparent);
+  backdrop-filter: blur(8px);
+  box-shadow: var(--sombra-sm);
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.topBackBtn {
+  flex-shrink: 0;
+}
+
+.topHint {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gris);
+}
+
+.quickNav {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding: 2px 2px 4px;
+  scrollbar-width: thin;
+}
+
+.quickNavBtn {
+  border: 1px solid var(--borde);
+  background: var(--blanco);
+  color: var(--tierra);
+  border-radius: 999px;
+  padding: 6px 11px;
+  font-size: 12px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s;
+}
+
+.quickNavBtn:hover {
+  border-color: var(--verde-cl);
+  background: var(--verde-pal);
+  color: var(--verde-deep);
+}
+
+:global(html.dark) .topNav {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:global(html.dark) .quickNavBtn {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:global(html.dark) .quickNavBtn:hover {
+  background: rgba(74, 140, 100, 0.18);
+  border-color: rgba(74, 140, 100, 0.35);
+}
+
 /* ── Estado cargando ── */
 .estadoCentro {
   display: flex;
@@ -105,12 +186,6 @@
   font-size: 0.88rem;
   color: var(--gris);
 }
-.btnVolver {
-  align-self: flex-start;
-  margin-top: 0.5rem;
-  flex-shrink: 0;
-}
-
 /* ── Stats ── */
 .statsGrid {
   display: grid;
@@ -256,6 +331,18 @@
 
 /* ── Responsive ── */
 @media (max-width: 700px) {
+  .topNav {
+    top: calc(var(--topbar-h) + 6px);
+    padding: 8px 10px;
+  }
+  .topActions {
+    width: 100%;
+  }
+  .topBackBtn {
+    flex: 1 1 auto;
+    justify-content: center;
+  }
+  .topHint { width: 100%; font-size: 10px; }
   .heroBody { flex-wrap: wrap; }
   .statsGrid { grid-template-columns: repeat(2, 1fr); }
   .seccionItem { grid-template-columns: 1fr 1fr; }

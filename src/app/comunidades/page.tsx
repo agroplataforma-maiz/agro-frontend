@@ -9,12 +9,13 @@ import { useCatalogos } from '@/hooks/useCatalogos'
 import { dash } from '@/lib/utils'
 import Tabla, { type Columna } from '@/components/ui/Tabla'
 import ModalComunidad from '@/components/comunidades/ModalComunidad'
-import PerfilComunidad from '@/components/comunidades/PerfilComunidad'
+import PerfilComunidad from '../../components/comunidades/PerfilComunidad'
 
 import type { Comunidad } from '@/types'
 import styles from './comunidades.module.css'
 import AdminShell from '@/components/dashboard/AdminShell'
 import Button from '@/components/ui/Button'
+import ModuleHero from '@/components/ui/ModuleHero'
 import SearchInput from '@/components/ui/SearchInput'
 import Modal from '@/components/ui/Modal'
 import { useRolGuard } from '@/hooks/useRolGuard'
@@ -63,10 +64,12 @@ export default function ComunidadesPage() {
     c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
     (c.municipio_nombre ?? '').toLowerCase().includes(busqueda.toLowerCase())
   )
+  const municipiosCubiertos = new Set(comunidades.map(c => c.municipio_nombre).filter(Boolean)).size
+  const totalProductores = comunidades.reduce((sum, c) => sum + (c.num_productores ?? 0), 0)
 
   // ── Columnas ──────────────────────────────────────────────────────────────
   const columnas: Columna<Comunidad>[] = [
-    { key: 'id',     header: 'ID',        width: '60px' },
+    { key: 'id',     header: 'ID',        width: '60px', hideOnMobile: true, hideOnTablet: true },
     { key: 'nombre', header: 'Comunidad', render: c => c.nombre },
     {
       key: 'municipio_nombre',
@@ -76,12 +79,16 @@ export default function ComunidadesPage() {
     {
       key: 'lengua_indigena',
       header: 'Lengua indígena',
+      hideOnMobile: true,
+      hideOnTablet: true,
       render: c => dash(c.lengua_indigena),
     },
     {
       key: 'poblacion',
       header: 'Población',
       width: '100px',
+      hideOnMobile: true,
+      hideOnTablet: true,
       render: c => c.poblacion ? c.poblacion.toLocaleString() : '—',
     },
     {
@@ -108,12 +115,22 @@ export default function ComunidadesPage() {
   return (
     <AdminShell contentPadding="0">
       <div className={styles.page}>
+        <ModuleHero
+          eyebrow="Social · Territorio comunitario"
+          title={<>Mapa de <em>Comunidades</em> 🏘️</>}
+          description="Organiza comunidades, municipios y referencias territoriales para conectar productores, lengua y contexto local." 
+          stats={[
+            { label: 'comunidades', value: comunidades.length },
+            { label: 'municipios', value: municipiosCubiertos || '—' },
+            { label: 'productores', value: totalProductores || '—' },
+          ]}
+        />
         <header className={styles.header}>
           <div>
             <h1 className={styles.titulo}>Comunidades</h1>
             <p className={styles.subtitulo}>{filtradas.length} registros · Huasteca Potosina</p>
           </div>
-          <div style={{ display: 'flex', gap: 12, alignItems: 'center' }}>
+          <div className={styles.headerActions}>
             <SearchInput
               value={busqueda}
               onChange={e => setBusqueda(e.target.value)}

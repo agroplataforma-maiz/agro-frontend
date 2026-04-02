@@ -34,13 +34,15 @@
 
 /* Logo sidebar */
 .sb-logo {
-  padding: 18px 18px 14px;
+  padding: 0 18px;
   border-bottom: 1px solid rgba(255,255,255,.06);
   display: flex;
   align-items: center;
   gap: 12px;
   text-decoration: none;
-  min-height: 68px;
+  height: var(--topbar-h);
+  min-height: var(--topbar-h);
+  box-sizing: border-box;
   flex-shrink: 0;
 }
 
@@ -288,11 +290,15 @@
   text-decoration: none;
   transition: var(--trans);
   min-height: 36px;
+  min-width: 0;
+  overflow: hidden;
 }
 .sb-footer-btn:hover { background: rgba(255,255,255,.07); color: rgba(255,255,255,.75); }
 .sb-footer-btn.danger:hover { background: rgba(168,50,32,.2); color: #F09595; border-color: rgba(168,50,32,.3); }
 
 .sidebar.collapsed .sb-footer-btn-txt { display: none !important; }
+.sidebar.collapsed .sb-footer-btns { flex-direction: column; gap: 4px; }
+.sidebar.collapsed .sb-footer-btn { flex: none; width: 100%; justify-content: center; padding: 8px 4px; }
 
 /* Collapse toggle */
 .sb-collapse-btn {

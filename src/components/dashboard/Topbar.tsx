@@ -3,6 +3,7 @@ import React, { useState, useRef, useEffect } from 'react';
 import { usePathname } from 'next/navigation';
 import { useQuery } from '@tanstack/react-query';
 import { GET } from '@/lib/api';
+import StateView from '@/components/ui/StateView';
 import styles from './Topbar.module.css';
 
 // ── Tipos ──
@@ -111,6 +112,8 @@ export const Topbar: React.FC<TopbarProps> = ({
 
   const [query,      setQuery]      = useState('');
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchPanelOpen, setSearchPanelOpen] = useState(false);
+  const [showSearchTrigger, setShowSearchTrigger] = useState(false);
   const [notifOpen,  setNotifOpen]  = useState(false);
   const [userOpen,   setUserOpen]   = useState(false);
 
@@ -120,13 +123,30 @@ export const Topbar: React.FC<TopbarProps> = ({
 
   useEffect(() => {
     const close = (e: MouseEvent) => {
-      if (searchRef.current && !searchRef.current.contains(e.target as Node)) setSearchOpen(false);
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setSearchOpen(false);
+        setSearchPanelOpen(false);
+      }
       if (notifRef.current  && !notifRef.current.contains(e.target as Node))  setNotifOpen(false);
       if (userRef.current   && !userRef.current.contains(e.target as Node))   setUserOpen(false);
     };
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, []);
+
+  useEffect(() => {
+    const updateSearchMode = () => {
+      const compact = window.innerWidth <= 767
+      setShowSearchTrigger(compact)
+      if (!compact) {
+        setSearchPanelOpen(false)
+      }
+    }
+
+    updateSearchMode()
+    window.addEventListener('resize', updateSearchMode)
+    return () => window.removeEventListener('resize', updateSearchMode)
+  }, [])
 
   const results  = query.length >= 2
     ? SEARCH_ITEMS.filter(i => i.label.toLowerCase().includes(query.toLowerCase()))
@@ -145,10 +165,9 @@ export const Topbar: React.FC<TopbarProps> = ({
 
       {/* Breadcrumb dinámico multi-nivel */}
       <nav className={styles['topbar-breadcrumb']} aria-label="Ruta de navegación">
-        <span style={{ display: 'flex', alignItems: 'center', gap: 6 }}>🌽 Agroplataforma</span>
         {crumbs.map((crumb, i) => (
           <React.Fragment key={i}>
-            <span className="bc-sep" aria-hidden="true">›</span>
+            {i > 0 && <span className="bc-sep" aria-hidden="true">›</span>}
             {i === crumbs.length - 1
               ? <span className="bc-current"><b>{crumb}</b></span>
               : <span style={{ opacity: 0.6 }}>{crumb}</span>
@@ -158,7 +177,7 @@ export const Topbar: React.FC<TopbarProps> = ({
       </nav>
 
       {/* Buscador con dropdown */}
-      <div className={styles['topbar-search']} role="search" ref={searchRef}>
+      <div className={`${styles['topbar-search']}${searchPanelOpen ? ` ${styles['topbar-search-open']}` : ''}`} role="search" ref={searchRef}>
         <span className={styles['topbar-search-ico']} aria-hidden="true">🔍</span>
         <input
           type="search"
@@ -167,8 +186,8 @@ export const Topbar: React.FC<TopbarProps> = ({
           id="busqueda-global"
           value={query}
           autoComplete="off"
-          onChange={e => { setQuery(e.target.value); setSearchOpen(true); }}
-          onFocus={() => setSearchOpen(true)}
+          onChange={e => { setQuery(e.target.value); setSearchOpen(true); setSearchPanelOpen(true); }}
+          onFocus={() => { setSearchOpen(true); setSearchPanelOpen(true); }}
         />
         {searchOpen && query.length >= 2 && (
           <div className={styles['search-dropdown']} role="listbox">
@@ -178,13 +197,22 @@ export const Topbar: React.FC<TopbarProps> = ({
                     key={item.page}
                     className={styles['search-result']}
                     role="option"
-                    onClick={() => { onNavigate(item.page); setQuery(''); setSearchOpen(false); }}
+                    onClick={() => { onNavigate(item.page); setQuery(''); setSearchOpen(false); setSearchPanelOpen(false); }}
                   >
                     <span>{item.icon}</span>
                     <span>{item.label}</span>
                   </button>
                 ))
-              : <span className={styles['search-empty']}>Sin resultados para &ldquo;{query}&rdquo;</span>
+              : (
+                <div className={styles['search-empty-shell']}>
+                  <StateView
+                    variant="empty"
+                    size="sm"
+                    title="Sin resultados"
+                    message={`No encontramos coincidencias para “${query}”.`}
+                  />
+                </div>
+              )
             }
           </div>
         )}
@@ -201,6 +229,22 @@ export const Topbar: React.FC<TopbarProps> = ({
       </div>
 
       <div className={styles['topbar-actions']}>
+
+        {showSearchTrigger && (
+          <button
+            className={`${styles['topbar-btn']} ${styles['topbar-search-trigger']}`}
+            aria-label="Abrir búsqueda"
+            title="Buscar"
+            onClick={() => {
+              setSearchPanelOpen(open => !open);
+              setSearchOpen(true);
+              setNotifOpen(false);
+              setUserOpen(false);
+            }}
+          >
+            🔍
+          </button>
+        )}
 
         {/* Modo oscuro / claro */}
         <button
@@ -241,7 +285,16 @@ export const Topbar: React.FC<TopbarProps> = ({
                 {noLeidas > 0 && <span className={styles['notif-badge']}>{noLeidas} nuevas</span>}
               </div>
               {notifs.length === 0
-                ? <div className={styles['notif-item']} style={{ color: 'var(--gris)', justifyContent: 'center', fontSize: 13 }}>Sin notificaciones nuevas</div>
+                ? (
+                  <div className={styles['notif-empty-shell']}>
+                    <StateView
+                      variant="empty"
+                      size="sm"
+                      title="Sin notificaciones"
+                      message="Todo al día por ahora."
+                    />
+                  </div>
+                )
                 : notifs.map(n => (
                 <div
                   key={n.id}

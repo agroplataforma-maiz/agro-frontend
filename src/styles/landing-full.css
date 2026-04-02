@@ -887,4 +887,39 @@ footer {
   .nav-links { display: none; }
   .hamburger { display: flex; }
   .modulos-landing { grid-template-columns: 1fr; }
+
+  /* Nav */
+  .nav { padding: 0 4vw; height: 56px; }
+  .nav-btn-login { padding: 8px 16px; font-size: 12px; }
+
+  /* Hero */
+  .hero { padding: 80px 5vw 120px; }
+  .hero-contenido { max-width: 100%; }
+  .hero-h1 { font-size: clamp(36px, 10vw, 56px) !important; margin-bottom: 16px !important; }
+  .hero-desc { font-size: 15px; margin-bottom: 28px; }
+  .hero-acciones { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .btn-hero-primary, .btn-hero-ghost { width: 100%; justify-content: center; padding: 13px 20px; }
+  .hero-stats { position: static; margin-top: 40px; flex-wrap: wrap; gap: 16px 28px; }
+  .hero-stat-n { font-size: 26px; }
+  .hero-maiz-deco { width: 180px; right: -20px; opacity: .05; }
+
+  /* Secciones generales */
+  .section-kicker { font-size: 9px; }
+  .section-title { font-size: clamp(26px, 7vw, 36px); }
+  .section-desc { font-size: 14px; }
+  .section-pad { padding: 64px 5vw; }
+
+  /* Mapa */
+  .mapa-inner { grid-template-columns: 1fr; gap: 24px; }
+  .mapa-info { padding: 0; }
+
+  /* Avances */
+  .avances-grid { grid-template-columns: 1fr; }
+
+  /* Módulos */
+  .modulo-card { padding: 24px 20px; }
+
+  /* Footer */
+  .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
+  .foot-copy { font-size: 11px; }
 }

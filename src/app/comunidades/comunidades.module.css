@@ -29,6 +29,13 @@
   margin: 0;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 /* ── KPI band ── */
 .kpiBand {
   display: grid;
@@ -70,6 +77,12 @@
   align-items: center;
 }
 
+@media (max-width: 1180px) {
+  .headerActions {
+    width: 100%;
+  }
+}
+
 @media (max-width: 768px) {
   .page {
     padding: 16px;
@@ -77,5 +90,11 @@
 
   .header {
     flex-direction: column;
+  }
+
+  .headerActions {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
   }
 }

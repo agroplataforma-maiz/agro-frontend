@@ -13,6 +13,13 @@
   flex-wrap: wrap;
 }
 
+.headerActions {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
 .titulo {
   font-family: 'Fraunces', serif;
   font-size: 1.7rem;
@@ -146,7 +153,8 @@
   font-family: "Nunito", sans-serif;
   font-size: 13px;
   color: var(--tierra);
-  width: 230px;
+  width: 100%;
+  max-width: 230px;
   outline: none;
   transition: border-color 0.2s;
 }
@@ -822,20 +830,23 @@
   line-height: 1.55;
 }
 
-@media (max-width: 700px) {
-  .contenido {
-    padding: 16px;
-  }
-  .form-row,
-  .form-row-3 {
-    grid-template-columns: 1fr;
-  }
-  .perfil-header {
-    padding: 20px;
-  }
-  .tabs {
-    overflow-x: auto;
-  }
+@media (max-width: 767px) {
+  .page { padding: 12px; }
+  .contenido { padding: 12px; }
+  .header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .headerActions { width: 100%; flex-direction: column; align-items: stretch; gap: 8px; }
+  .sec-header { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .sec-header h2 { font-size: 18px; }
+  .acciones { width: 100%; justify-content: flex-start; }
+  .search-wrap { width: 100%; max-width: 100%; }
+  .search-wrap input { max-width: 100%; }
+  .form-row, .form-row-3 { grid-template-columns: 1fr; }
+  .perfil-header { padding: 16px; flex-direction: column; gap: 12px; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .datos-grid { grid-template-columns: 1fr; }
+  .check-grid { grid-template-columns: repeat(2, 1fr); }
+  .tabs { overflow-x: auto; }
+  .topbar { padding: 10px 12px; flex-wrap: wrap; gap: 8px; }
 }
 
 /* ── PAGINACIÓN ── */

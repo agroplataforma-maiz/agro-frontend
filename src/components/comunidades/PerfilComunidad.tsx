@@ -6,6 +6,7 @@ import { dash } from '@/lib/utils'
 import type { Comunidad, Productor } from '@/types'
 import styles from './PerfilComunidad.module.css'
 import Button from '@/components/ui/Button'
+import StateView from '@/components/ui/StateView'
 
 interface Props {
   id: number
@@ -30,12 +31,13 @@ export default function PerfilComunidad({ id, onVolver }: Props) {
 
   if (isLoading) return (
     <div className={styles.estadoCentro}>
-      <div className={styles.spinner} />
-      <span>Cargando comunidad…</span>
+      <StateView variant="loading" title="Cargando comunidad" message="Obteniendo la ficha territorial..." />
     </div>
   )
   if (!comunidad) return (
-    <div className={styles.estadoCentro}>Comunidad no encontrada</div>
+    <div className={styles.estadoCentro}>
+      <StateView variant="empty" title="Comunidad no encontrada" message="No encontramos información para esta comunidad." />
+    </div>
   )
 
   return (
@@ -101,7 +103,12 @@ export default function PerfilComunidad({ id, onVolver }: Props) {
       <div className={styles.seccion}>
         <h2 className={styles.secTitulo}>🧑‍🌾 Productores de esta comunidad</h2>
         {productores.length === 0 ? (
-          <p className={styles.vacio}>No hay productores registrados en esta comunidad.</p>
+          <StateView
+            variant="empty"
+            size="sm"
+            title="Sin productores vinculados"
+            message="Aún no hay productores registrados en esta comunidad."
+          />
         ) : (
           <div className={styles.productoresGrid}>
             {productores.map(p => (

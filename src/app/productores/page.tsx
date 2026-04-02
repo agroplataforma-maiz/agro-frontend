@@ -18,16 +18,16 @@ import Button from '@/components/ui/Button'
 import ModuleHero from '@/components/ui/ModuleHero'
 import SearchInput from '@/components/ui/SearchInput'
 import Modal from '@/components/ui/Modal'
-import { useRouter } from 'next/navigation'
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { useRolGuard } from '@/hooks/useRolGuard'
 
 
 type Vista = 'lista' | 'perfil'
 
 export default function ProductoresPage() {
-  useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+
   useCatalogos()
-  const router = useRouter()
   const usuario = useAppStore(s => s.usuario)
   const addToast = useAppStore(s => s.addToast)
   const qc = useQueryClient()
@@ -44,6 +44,7 @@ export default function ProductoresPage() {
   const { data: productores = [], isLoading } = useQuery<Productor[]>({
     queryKey: ['productores'],
     queryFn:  () => GET('/social/productor/'),
+    enabled: accesoPermitido,
     select:   (d: unknown) => {
       const data = d as Productor[] | { items?: Productor[]; results?: Productor[] }
       return Array.isArray(data) ? data : data.items ?? data.results ?? []
@@ -60,7 +61,8 @@ export default function ProductoresPage() {
     onError: (e: Error) => addToast(e.message, 'err'),
   })
 
-  if (!usuario) return null
+  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
+  if (!usuario) return <AccessGuardScreen message="Cargando productores..." />
 
   function confirmarEliminar(p: Productor) {
     setConfirmEliminar(p)

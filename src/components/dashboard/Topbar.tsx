@@ -279,7 +279,7 @@ export const Topbar: React.FC<TopbarProps> = ({
             {noLeidas > 0 && <span className={styles['notif-dot']} aria-hidden="true" />}
           </button>
           {notifOpen && (
-            <div className={styles['dropdown-panel']} role="menu">
+            <div className={[styles['dropdown-panel'], styles['dropdown-right'], styles['dropdown-notif']].join(' ')} role="menu">
               <div className={styles['dropdown-header']}>
                 <span>Notificaciones</span>
                 {noLeidas > 0 && <span className={styles['notif-badge']}>{noLeidas} nuevas</span>}

@@ -7,6 +7,7 @@ import React from 'react';
 import AdminShell from '@/components/dashboard/AdminShell';
 import { useQuery } from '@tanstack/react-query'
 import { GET } from '@/lib/api'
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import type { Productor, Usuario } from '@/types'
 
 
@@ -40,7 +41,7 @@ export default function DashboardPage() {
   // Días transcurridos desde inicio del proyecto
   const diasProyecto = Math.floor((Date.now() - new Date('2025-12-09').getTime()) / 86400000)
 
-  if (!usuario) return null;
+  if (!usuario) return <AccessGuardScreen message="Cargando dashboard..." />
 
   // Nombre para saludo
   const NOMBRE_ROL: Record<string, string> = {

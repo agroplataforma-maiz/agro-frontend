@@ -2,6 +2,7 @@
 // Helper centralizado — reemplaza los 5 API distintos del proyecto actual
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? 'http://localhost:8000'
+const IS_LOCAL_BACKEND = /localhost|127\.0\.0\.1/i.test(BASE_URL)
 
 function normalizePath(path: string): string {
   const raw = path.trim()
@@ -10,8 +11,16 @@ function normalizePath(path: string): string {
   if (/^https?:\/\//i.test(raw)) return raw
 
   const withSlash = raw.startsWith('/') ? raw : `/${raw}`
-  if (withSlash === '/api' || withSlash.startsWith('/api/')) return withSlash
 
+  // En local, el backend no usa prefijo /api
+  if (IS_LOCAL_BACKEND) {
+    if (withSlash === '/api') return '/'
+    if (withSlash.startsWith('/api/')) return withSlash.replace(/^\/api/, '')
+    return withSlash
+  }
+
+  // En producción, forzar prefijo /api
+  if (withSlash === '/api' || withSlash.startsWith('/api/')) return withSlash
   return `/api${withSlash}`
 }
 
@@ -22,6 +31,10 @@ function getToken(): string | null {
 
 interface ApiOptions extends RequestInit {
   auth?: boolean // true por defecto
+  next?: {
+    revalidate?: number
+    tags?: string[]
+  }
 }
 
 async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T> {
@@ -36,6 +49,7 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
     const token = getToken()
     if (token) reqHeaders['Authorization'] = `Bearer ${token}`
   }
+  const hadAuthToken = Boolean(reqHeaders['Authorization'])
 
   const normalizedPath = normalizePath(path)
   const url = /^https?:\/\//i.test(normalizedPath)
@@ -49,8 +63,8 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))
-    if (res.status === 401) {
-      // Token expirado o inválido — limpiar sesión y redirigir al login
+    if (res.status === 401 && auth && hadAuthToken) {
+      // Solo marcar "sesión expirada" cuando realmente había sesión autenticada.
       localStorage.removeItem('agro_token')
       localStorage.removeItem('agro_user')
       document.cookie = 'agro_token=; path=/; max-age=0'
@@ -74,7 +88,7 @@ export const DEL  = <T>(path: string) =>
   api<T>(path, { method: 'DELETE' })
 
 // Para llamadas sin auth (login, registro, páginas públicas)
-export const PUBLIC_GET = <T>(path: string) =>
-  api<T>(path, { auth: false })
+export const PUBLIC_GET = <T>(path: string, opts: Omit<ApiOptions, 'auth'> = {}) =>
+  api<T>(path, { ...opts, auth: false })
 
 export default api

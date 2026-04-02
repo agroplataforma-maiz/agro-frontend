@@ -12,6 +12,7 @@ import { grupos } from "@/data/descriptor";
 import { Button } from "@/components/ui";
 import ModuleHero from '@/components/ui/ModuleHero'
 import SelectField from "@/components/ui/SelectField";
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { GET, POST } from "@/lib/api";
 import styles from "./fenotipo.module.css";
 import { useRolGuard } from "@/hooks/useRolGuard";
@@ -50,7 +51,8 @@ function buildTemporadas(): { value: string; label: string }[] {
 }
 
 export default function Page() {
-  useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+
   const { data, step, setStep, update, dg, updateDg, clearAll } = useFenotipo();
   useCatalogos(); // carga municipios al store
   const municipios = useAppStore(s => s.municipios);
@@ -63,6 +65,7 @@ export default function Page() {
   const { data: razasRaw, isLoading: cargandoRazas } = useQuery({
     queryKey: ["razas-maiz"],
     queryFn: () => GET("/agro/raza_maiz/"),
+    enabled: accesoPermitido,
     staleTime: Infinity,
   });
   const razas = useMemo(() => toArray<{ id: number; nombre: string }>(razasRaw), [razasRaw]);
@@ -81,7 +84,7 @@ export default function Page() {
   const { data: localidadesRaw, isLoading: cargandoLocalidades } = useQuery({
     queryKey: ["localidades", dg.municipio_id],
     queryFn: () => GET(`/geo/localidad/?municipio_id=${dg.municipio_id}`),
-    enabled: !!dg.municipio_id,
+    enabled: accesoPermitido && !!dg.municipio_id,
     staleTime: Infinity,
   });
   const localidades = useMemo(
@@ -105,6 +108,8 @@ export default function Page() {
 
   // Raza seleccionada (para label en reporte)
   const razaLabel = razas.find(r => String(r.id) === dg.raza_id)?.nombre ?? "";
+
+  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   return (
     <AdminShell>
@@ -397,7 +402,7 @@ export default function Page() {
 
         {/* ── Panel de resumen lateral (siempre visible) ── */}
         <div className={styles.summaryPanel}>
-          <ReportView data={data} dg={dg} razaLabel={razaLabel} compact />
+          <ReportView data={data} dg={dg} razaLabel={razaLabel} />
         </div>
 
         </div>{/* /layout */}

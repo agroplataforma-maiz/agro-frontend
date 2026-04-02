@@ -31,6 +31,18 @@ const REGLAS: { ruta: string; roles: string[] }[] = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
+  // Bloquea landing público: raíz siempre redirige a flujo autenticado
+  if (pathname === '/') {
+    const token = request.cookies.get('agro_token')?.value
+    const rol   = request.cookies.get('agro_rol')?.value
+
+    if (!token || !rol) {
+      return NextResponse.redirect(new URL(RUTA_LOGIN, request.url))
+    }
+
+    return NextResponse.redirect(new URL('/dashboard', request.url))
+  }
+
   // Evitar loop infinito en rutas públicas
   if (pathname === RUTA_LOGIN || pathname === RUTA_SIN_ACCESO) {
     return NextResponse.next()
@@ -49,8 +61,15 @@ export function middleware(request: NextRequest) {
     return NextResponse.redirect(loginUrl)
   }
 
+  // Con token pero sin rol sincronizado -> forzar login para reconstruir sesión/cookies
+  if (!rol) {
+    const loginUrl = new URL(RUTA_LOGIN, request.url)
+    loginUrl.searchParams.set('redirect', pathname)
+    return NextResponse.redirect(loginUrl)
+  }
+
   // Con token pero rol no autorizado → sin acceso
-  if (rol && !regla.roles.includes(rol)) {
+  if (!regla.roles.includes(rol)) {
     return NextResponse.redirect(new URL(RUTA_SIN_ACCESO, request.url))
   }
 
@@ -59,6 +78,7 @@ export function middleware(request: NextRequest) {
 
 export const config = {
   matcher: [
+    '/',
     '/admin/:path*',
     '/productores',
     '/productores/:path*',

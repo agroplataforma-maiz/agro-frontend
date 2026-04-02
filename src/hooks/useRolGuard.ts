@@ -21,12 +21,16 @@ import type { Rol } from '@/types'
 export function useRolGuard(rolesPermitidos: Rol[]) {
   const router  = useRouter()
   const usuario = useAppStore(s => s.usuario)
+  const permitido = !!usuario && rolesPermitidos.includes(usuario.rol)
 
   useEffect(() => {
     // Todavía cargando — no redirigir aún
     if (usuario === null) return
-    if (!rolesPermitidos.includes(usuario.rol)) {
+    if (!permitido) {
       router.replace('/sin-acceso')
     }
-  }, [usuario, router, rolesPermitidos])
+  }, [usuario, permitido, router])
+
+  // Evita render de contenido sensible mientras se resuelve sesión/rol
+  return permitido
 }

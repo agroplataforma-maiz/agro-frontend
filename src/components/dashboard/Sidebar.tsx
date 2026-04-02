@@ -1,15 +1,7 @@
 import React from 'react';
+import Link from 'next/link';
 import styles from './Sidebar.module.css';
 import type { Rol } from '@/types';
-
-interface SidebarNavItem {
-  label: string;
-  icon?: React.ReactNode;
-  page: string;
-  disabled?: boolean;
-  badge?: string;
-  ariaLabel?: string;
-}
 
 interface SidebarProps {
   user: {
@@ -42,13 +34,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
   return (
     <nav className={navClass} id="sidebar" role="navigation" aria-label="Menú principal" data-collapsed={collapsed}>
       {/* Logo */}
-      <a className={styles['sb-logo']} href="/" aria-label="Inicio - Agroplataforma Maíz Nativo">
+      <Link className={styles['sb-logo']} href="/" aria-label="Inicio - Agroplataforma Maíz Nativo">
         <span className={styles['sb-logo-ico']} aria-hidden="true" style={{ fontSize: 22 }}>🌽</span>
         <div className={styles['sb-logo-txt']}>
           <div className={styles['sb-logo-nombre']}>Agroplataforma</div>
           <span className={styles['sb-logo-sub']}>Maíz Nativo · Huasteca</span>
         </div>
-      </a>
+      </Link>
 
       {/* Perfil */}
       <div className={styles['sb-perfil']} role="status" aria-label="Usuario activo">
@@ -234,10 +226,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
       {/* Footer sidebar */}
       <div className={styles['sb-footer']}>
         <div className={styles['sb-footer-btns']}>
-          <a className={styles['sb-footer-btn']} href="/" aria-label="Ir a inicio público">
+          <Link className={styles['sb-footer-btn']} href="/" aria-label="Ir a inicio público">
             <span aria-hidden="true">🏠</span>
             <span className={styles['sb-footer-btn-txt']}>Inicio</span>
-          </a>
+          </Link>
           <button className={`${styles['sb-footer-btn']} ${styles['danger']}`} onClick={onLogout} aria-label="Cerrar sesión">
             <span aria-hidden="true">🚪</span>
             <span className={styles['sb-footer-btn-txt']}>Salir</span>

@@ -10,6 +10,7 @@ import ResumenSocial from "@/components/sociocultural/ResumenSocial";
 import { Button } from "@/components/ui";
 import ModuleHero from '@/components/ui/ModuleHero'
 import SelectField from "@/components/ui/SelectField";
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { GET, POST } from "@/lib/api";
 import styles from "./sociocultural.module.css";
 import { useRolGuard } from "@/hooks/useRolGuard";
@@ -87,7 +88,8 @@ function Campo({ label, hint, children }: { label: string; hint?: string; childr
 }
 
 export default function Page() {
-  useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+
   const { registro, step, setStep, updateSeccion, toggleArray, clearAll, progreso } =
     useSociocultural();
   useCatalogos();
@@ -98,6 +100,7 @@ export default function Page() {
   const { data: productoresRaw } = useQuery({
     queryKey: ["productores-lista"],
     queryFn: () => GET("/social/productor/?limit=200"),
+    enabled: accesoPermitido,
     staleTime: Infinity,
   });
   const productores = useMemo(
@@ -116,6 +119,7 @@ export default function Page() {
   const { data: lenguasRaw } = useQuery({
     queryKey: ["lenguas"],
     queryFn: () => GET("/social/lengua/"),
+    enabled: accesoPermitido,
     staleTime: Infinity,
   });
   const lenguas = useMemo(
@@ -137,7 +141,7 @@ export default function Page() {
     queryKey: ["localidades", registro.territorio.municipio_id],
     queryFn: () =>
       GET(`/geo/localidad/?municipio_id=${registro.territorio.municipio_id}`),
-    enabled: !!registro.territorio.municipio_id,
+    enabled: accesoPermitido && !!registro.territorio.municipio_id,
     staleTime: Infinity,
   });
   const localidades = useMemo(
@@ -155,6 +159,8 @@ export default function Page() {
     },
     ...localidades.map((l) => ({ value: String(l.id), label: l.nombre })),
   ], [localidades, registro.territorio.municipio_id, cargandoLocalidades]);
+
+  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   const handleSave = async () => {
     await POST("/social/registro_sociocultural/", registro);

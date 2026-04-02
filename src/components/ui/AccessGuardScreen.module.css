@@ -1,0 +1,32 @@
+.overlay {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: linear-gradient(135deg, rgba(42, 27, 11, 0.92), rgba(61, 34, 8, 0.9));
+  color: #fff;
+  font-family: 'Nunito', sans-serif;
+  text-align: center;
+  padding: 20px;
+}
+
+.icon {
+  font-size: 62px;
+  line-height: 1;
+  animation: spinMaiz 0.9s linear infinite;
+  filter: drop-shadow(0 3px 10px rgba(240, 180, 41, 0.45));
+}
+
+.label {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+@keyframes spinMaiz {
+  to {
+    transform: rotate(360deg);
+  }
+}

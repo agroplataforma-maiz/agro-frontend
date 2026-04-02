@@ -6,24 +6,18 @@ import type { Metadata } from 'next'
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
 import type { Productor } from '@/types'
+import { PUBLIC_GET } from '@/lib/api'
 import { nombreCompleto, calcularEdad, dash } from '@/lib/utils'
 import styles from './perfil.module.css'
 
-const API = process.env.NEXT_PUBLIC_API_URL
-
-function buildApiUrl(path: string): string {
-  const base = (API ?? '').replace(/\/$/, '')
-  const normalizedPath = path.startsWith('/') ? path : `/${path}`
-  const apiPath = normalizedPath.startsWith('/api/') ? normalizedPath : `/api${normalizedPath}`
-  return `${base}${apiPath}`
-}
-
 async function getProductor(id: string): Promise<Productor | null> {
-  const res = await fetch(buildApiUrl(`/social/productor/${id}/`), {
-    next: { revalidate: 120 },
-  })
-  if (!res.ok) return null
-  return res.json()
+  try {
+    return await PUBLIC_GET<Productor>(`/social/productor/${id}/`, {
+      next: { revalidate: 120 },
+    })
+  } catch {
+    return null
+  }
 }
 
 // SEO dinámico por productor — cada perfil tiene su propio título y descripción

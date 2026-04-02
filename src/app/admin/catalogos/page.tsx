@@ -19,6 +19,7 @@ import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
 import SelectField from '@/components/ui/SelectField'
 import Paginacion from '@/components/ui/Paginacion'
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { useRolGuard } from '@/hooks/useRolGuard'
 
 // Tipos de campo para el modal dinámico
@@ -376,11 +377,9 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
   },
 ]
 
-// Lista plana para compatibilidad con lógica existente
-const CATALOGOS: CatDef[] = EJES.flatMap(e => e.catalogos)
-
 export default function CatalogosPage() {
-  useRolGuard(['administrador', 'investigador'])
+  const accesoPermitido = useRolGuard(['administrador', 'investigador'])
+
   const qc       = useQueryClient()
   const addToast = useAppStore(s => s.addToast)
 
@@ -436,6 +435,8 @@ export default function CatalogosPage() {
     },
     onError: (e: Error) => addToast(e.message, 'err'),
   })
+
+  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   const totalPaginas = Math.ceil(totalItems / PAG) || 1
   const paginados = data

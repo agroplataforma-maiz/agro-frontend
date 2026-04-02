@@ -36,6 +36,7 @@ const ROL_COLOR: Record<string, string> = {
 export default function UsuariosPanel() {
   const qc = useQueryClient();
   const addToast = useAppStore(s => s.addToast);
+  const usuarioSesion = useAppStore(s => s.usuario);
 
   // Filtros y paginación
   const [search, setSearch] = useState('');
@@ -48,7 +49,7 @@ export default function UsuariosPanel() {
   const [modalUsuario, setModalUsuario] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
   const [modalPermisos, setModalPermisos] = useState(false);
   const [modalPerfil, setModalPerfil] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
-  const [modalConfirm, setModalConfirm] = useState<{ open: boolean; id?: number; accion?: 'activar' | 'desactivar' | 'eliminar' }>({ open: false });
+  const [modalConfirm, setModalConfirm] = useState<{ open: boolean; id?: number; nombre?: string; esInvitado?: boolean; estaActivo?: boolean; accion?: 'activar' | 'desactivar' | 'eliminar' }>({ open: false });
 
   const abrirModalUsuario = (usuario?: Usuario) => setModalUsuario({ open: true, usuario });
   const cerrarModalUsuario = () => setModalUsuario({ open: false });
@@ -56,8 +57,39 @@ export default function UsuariosPanel() {
   const cerrarModalPermisos = () => setModalPermisos(false);
   const abrirModalPerfil = (usuario: Usuario) => setModalPerfil({ open: true, usuario });
   const cerrarModalPerfil = () => setModalPerfil({ open: false });
-  const abrirModalConfirm = (id: number, accion: 'activar' | 'desactivar' | 'eliminar') => setModalConfirm({ open: true, id, accion });
+  const esUsuarioInvitado = (u: Usuario) => (u.username ?? '').trim().toLowerCase() === 'invitado';
+  const abrirModalConfirm = (usuario: Usuario, accion: 'activar' | 'desactivar' | 'eliminar') => {
+    const esInvitado = esUsuarioInvitado(usuario);
+    if (esInvitado && (accion === 'desactivar' || accion === 'eliminar')) {
+      addToast('El usuario invitado está protegido y no se puede desactivar ni eliminar.', 'warn');
+      return;
+    }
+    if (accion === 'eliminar' && usuario.activo) {
+      addToast('Para eliminar un usuario primero debes desactivar su cuenta.', 'warn');
+      return;
+    }
+
+    setModalConfirm({
+      open: true,
+      id: usuario.id,
+      nombre: usuario.nombre_completo || usuario.username,
+      esInvitado,
+      estaActivo: usuario.activo,
+      accion,
+    });
+  };
   const cerrarModalConfirm = () => setModalConfirm({ open: false });
+
+  const esAdmin = usuarioSesion?.rol === 'administrador';
+
+  type UsuarioSavePayload = {
+    nombre_completo?: string;
+    username?: string;
+    email?: string;
+    password?: string;
+    rol?: string;
+    activo?: boolean;
+  };
 
   // Queries y mutaciones
   const { data: usuarios = [], isLoading, isError, error, refetch } = useQuery<Usuario[]>({
@@ -71,7 +103,7 @@ export default function UsuariosPanel() {
   });
 
   const guardarUsuario = useMutation({
-    mutationFn: async (data: any) => {
+    mutationFn: async (data: UsuarioSavePayload) => {
       if (modalUsuario.usuario) return PUT(`/auth/usuarios/${modalUsuario.usuario.id}/`, data);
       return POST('/auth/register', data);
     },
@@ -276,10 +308,23 @@ export default function UsuariosPanel() {
             acciones={(u: Usuario) => (
               <div className={styles['td-acciones']}>
                 <Button variante="ghost" tamaño="sm" onClick={e => { e.stopPropagation(); const usr = usuarios.find(x => x.id === u.id); if (usr) abrirModalPerfil(usr); }} title="Ver perfil">👤</Button>
-                {u.activo
-                  ? <Button variante="peligro" tamaño="sm" onClick={e => { e.stopPropagation(); abrirModalConfirm(u.id, 'desactivar'); }} title="Desactivar">🚫</Button>
-                  : <Button variante="primario" tamaño="sm" onClick={e => { e.stopPropagation(); abrirModalConfirm(u.id, 'activar'); }} title="Activar">✅</Button>
-                }
+                {u.activo ? (
+                  esUsuarioInvitado(u) ? (
+                    <Button variante="ghost" tamaño="sm" onClick={e => e.stopPropagation()} title="Usuario invitado protegido">🔒</Button>
+                  ) : (
+                    <Button variante="peligro" tamaño="sm" onClick={e => { e.stopPropagation(); abrirModalConfirm(u, 'desactivar'); }} title="Desactivar">🚫</Button>
+                  )
+                ) : (
+                  <Button variante="primario" tamaño="sm" onClick={e => { e.stopPropagation(); abrirModalConfirm(u, 'activar'); }} title="Activar">✅</Button>
+                )}
+                {esAdmin && u.id !== usuarioSesion?.id && !esUsuarioInvitado(u) && (
+                  <Button
+                    variante="peligro"
+                    tamaño="sm"
+                    onClick={e => { e.stopPropagation(); abrirModalConfirm(u, 'eliminar'); }}
+                    title={u.activo ? 'Primero desactiva la cuenta para poder eliminar' : 'Eliminar usuario'}
+                  >🗑️</Button>
+                )}
               </div>
             )}
           />
@@ -313,6 +358,16 @@ export default function UsuariosPanel() {
           <>
             <Button variante="ghost" onClick={cerrarModalConfirm}>Cancelar</Button>
             <Button variante="peligro" onClick={() => {
+              if (modalConfirm.esInvitado && (modalConfirm.accion === 'desactivar' || modalConfirm.accion === 'eliminar')) {
+                addToast('El usuario invitado está protegido y no se puede desactivar ni eliminar.', 'warn');
+                cerrarModalConfirm();
+                return;
+              }
+              if (modalConfirm.accion === 'eliminar' && modalConfirm.estaActivo) {
+                addToast('Para eliminar un usuario primero debes desactivar su cuenta.', 'warn');
+                cerrarModalConfirm();
+                return;
+              }
               if (modalConfirm.accion === 'activar') activarUsuario.mutate(modalConfirm.id!);
               else if (modalConfirm.accion === 'desactivar') desactivarUsuario.mutate(modalConfirm.id!);
               else if (modalConfirm.accion === 'eliminar') eliminarUsuario.mutate(modalConfirm.id!);
@@ -325,7 +380,7 @@ export default function UsuariosPanel() {
           <div style={{ fontSize: 14, color: 'var(--cafe)', lineHeight: 1.6 }}>
             {modalConfirm.accion === 'activar' ? '¿Activar usuario?' :
              modalConfirm.accion === 'desactivar' ? '¿Desactivar usuario?' :
-             '¿Eliminar usuario?'}
+             `¿Estás seguro que vas a eliminar al usuario ${modalConfirm.nombre ?? ''}?`}
           </div>
         </div>
       </Modal>

@@ -56,7 +56,7 @@ body{font-family:'Nunito',sans-serif;background:var(--crema);color:var(--tierra)
   flex-shrink: 0;
 }
 .nav-inst img:hover { opacity: 1; }
-@media(max-width:860px) { .nav-inst { display: none; } }
+@media(max-width:1200px) { .nav-inst { display: none; } }
 
 :root {
   --verde:    #2A5C3F;
@@ -164,6 +164,9 @@ html{scroll-behavior:smooth}
 .nav-btn-salir:hover { color: var(--rojo); background: rgba(168,50,32,.1); }
 .hamburger { display: none; flex-direction: column; gap: 4px; cursor: pointer; padding: 8px; border: none; background: none; }
 .hamburger span { display: block; width: 20px; height: 2px; background: rgba(255,255,255,.6); border-radius: 1px; transition: all .2s; }
+.hamburger.is-open span:nth-child(1) { transform: translateY(6px) rotate(45deg); }
+.hamburger.is-open span:nth-child(2) { opacity: 0; }
+.hamburger.is-open span:nth-child(3) { transform: translateY(-6px) rotate(-45deg); }
 
 /* ════════════════════════════════════
    HERO
@@ -647,7 +650,7 @@ html{scroll-behavior:smooth}
   gap: 48px;
   align-items: center;
 }
-@media(max-width:800px){ .mapa-inner { grid-template-columns: 1fr; } }
+@media(max-width:1024px){ .mapa-inner { grid-template-columns: 1fr; } }
 
 .mapa-txt .sec-titulo { color: #fff; }
 .mapa-txt .sec-desc { color: rgba(255,255,255,.65); }
@@ -690,7 +693,7 @@ html{scroll-behavior:smooth}
   margin-top: 48px;
   align-items: start;
 }
-@media(max-width:700px){ .avances-grid { grid-template-columns: 1fr; } }
+@media(max-width:767px){ .avances-grid { grid-template-columns: 1fr; } }
 
 .avance-item {
   display: flex;
@@ -874,18 +877,136 @@ footer {
 }
 .foot-logos img { height: 36px; object-fit: contain; }
 .foot-logos-sep { width: 1px; height: 30px; background: rgba(61,34,8,0.12); flex-shrink: 0; }
-@media(max-width:700px) { .foot-logos { display: none; } }
+@media(max-width:767px) { .foot-logos { display: none; } }
 
 /* ── REVEAL ── */
 .reveal { opacity: 0; transform: translateY(24px); transition: opacity .6s ease, transform .6s ease; }
 .reveal.on { opacity: 1; transform: translateY(0); }
 
-/* ── RESPONSIVE ── */
-@media(max-width:700px){
-  .hero-stats { gap: 20px; }
-  .hero-sep { display: none; }
+/* ── RESPONSIVE INTERMEDIO (evita traslape en hero) ── */
+@media (max-width: 1200px) {
   .nav-links { display: none; }
+  .nav-links.open {
+    position: absolute;
+    top: 64px;
+    left: 0;
+    right: 0;
+    z-index: 150;
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+    padding: 10px 12px 14px;
+    background: rgba(61,34,8,.99);
+    border-top: 1px solid rgba(255,255,255,.08);
+    box-shadow: 0 12px 24px rgba(0,0,0,.25);
+  }
+  .nav-links.open .nav-link {
+    width: 100%;
+    border-radius: 8px;
+    padding: 10px 12px;
+  }
+  .nav-links.open .nav-btn-login {
+    margin-left: 0;
+    margin-top: 8px;
+    justify-content: center;
+    width: 100%;
+  }
+  .nav-links.open .nav-usuario {
+    width: 100%;
+    justify-content: space-between;
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255,255,255,.08);
+  }
   .hamburger { display: flex; }
+  .hamburger { position: relative; z-index: 160; }
+
+  .hero {
+    padding: 88px 5vw 72px;
+  }
+
+  .sec {
+    padding: 76px 5vw;
+  }
+
+  .sec-titulo {
+    font-size: clamp(30px, 4.8vw, 50px);
+  }
+
+  .sec-desc {
+    font-size: 16px;
+    max-width: 58ch;
+  }
+
+  .hero-contenido {
+    max-width: 100%;
+  }
+
+  .hero-acciones {
+    gap: 10px;
+  }
+
+  .hero-stats {
+    position: static;
+    margin-top: 30px;
+    gap: 16px 22px;
+  }
+
+  .hero-sep {
+    display: none;
+  }
+}
+
+@media (max-width: 1024px) {
+  .hero-h1 {
+    font-size: clamp(38px, 7.2vw, 62px);
+    line-height: 1.03;
+  }
+
+  .hero-desc {
+    font-size: 15px;
+    max-width: 52ch;
+  }
+
+  .modulos-landing {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 14px;
+  }
+
+  .numeros-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .equipo-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ── RESPONSIVE ── */
+@media(max-width:767px){
+  .hero-stats {
+    gap: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px;
+    overflow: hidden;
+  }
+  .hero-sep { display: none; }
+  .hero-stat {
+    padding: 14px 12px;
+    border-right: 1px solid rgba(255,255,255,.08);
+    border-bottom: 1px solid rgba(255,255,255,.08);
+  }
+  .hero-stat:nth-child(2n) {
+    border-right: none;
+  }
+  .hero-stat:nth-last-child(-n+2) {
+    border-bottom: none;
+  }
+  .nav-links.open {
+    top: 56px;
+  }
   .modulos-landing { grid-template-columns: 1fr; }
 
   /* Nav */
@@ -899,15 +1020,15 @@ footer {
   .hero-desc { font-size: 15px; margin-bottom: 28px; }
   .hero-acciones { flex-direction: column; align-items: flex-start; gap: 10px; }
   .btn-hero-primary, .btn-hero-ghost { width: 100%; justify-content: center; padding: 13px 20px; }
-  .hero-stats { position: static; margin-top: 40px; flex-wrap: wrap; gap: 16px 28px; }
+  .hero-stats { position: static; margin-top: 40px; }
   .hero-stat-n { font-size: 26px; }
   .hero-maiz-deco { width: 180px; right: -20px; opacity: .05; }
 
   /* Secciones generales */
-  .section-kicker { font-size: 9px; }
-  .section-title { font-size: clamp(26px, 7vw, 36px); }
-  .section-desc { font-size: 14px; }
-  .section-pad { padding: 64px 5vw; }
+  .sec-kicker { font-size: 9px; }
+  .sec-titulo { font-size: clamp(26px, 7vw, 36px); }
+  .sec-desc { font-size: 14px; }
+  .sec { padding: 64px 5vw; }
 
   /* Mapa */
   .mapa-inner { grid-template-columns: 1fr; gap: 24px; }
@@ -917,9 +1038,17 @@ footer {
   .avances-grid { grid-template-columns: 1fr; }
 
   /* Módulos */
-  .modulo-card { padding: 24px 20px; }
+  .ml-card { padding: 24px 20px; }
+  .ml-nombre { font-size: 18px; }
+  .ml-desc { font-size: 13px; }
+
+  /* Números y equipo */
+  .numeros-grid { grid-template-columns: 1fr; }
+  .num-card { padding: 24px 18px; }
+  .num-n { font-size: 42px; }
+  .equipo-grid { grid-template-columns: 1fr; }
 
   /* Footer */
-  .footer-inner { flex-direction: column; gap: 12px; text-align: center; }
-  .foot-copy { font-size: 11px; }
+  footer { padding: 30px 5vw; align-items: flex-start; }
+  .foot-der { text-align: left; }
 }

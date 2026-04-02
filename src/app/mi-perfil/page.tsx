@@ -1,13 +1,15 @@
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAppStore } from '@/store/useAppStore';
 import AdminShell from '@/components/dashboard/AdminShell';
-import { PUT } from '@/lib/api';
+import { GET, PUT } from '@/lib/api';
 import { iniciales } from '@/lib/auth';
 import { ROL_COLOR } from '@/types';
+import type { Usuario } from '@/types';
 import Button from '@/components/ui/Button';
 import Field from '@/components/ui/Field';
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import styles from './mi-perfil.module.css';
 
 const ROL_LABEL: Record<string, string> = {
@@ -20,13 +22,18 @@ const ROL_LABEL: Record<string, string> = {
 };
 
 type Tab = 'info' | 'password';
+type UsuarioExtendido = Usuario & {
+  date_joined?: string;
+  created_at?: string;
+  fecha_creacion?: string;
+};
 
 export default function MiPerfilPage() {
   const usuario   = useAppStore(s => s.usuario);
   const setUsuario = useAppStore(s => s.setUsuario);
   const addToast  = useAppStore(s => s.addToast);
 
-  const esInvitado = usuario?.rol === 'invitado';
+  const esUsuarioInvitado = (usuario?.username ?? '').trim().toLowerCase() === 'invitado';
   const [tab, setTab]         = useState<Tab>('info');
   const [editando, setEditando] = useState(false);
   const [loading, setLoading]  = useState(false);
@@ -41,18 +48,73 @@ export default function MiPerfilPage() {
   const [passNueva,     setPassNueva]     = useState('');
   const [passConfirm,   setPassConfirm]   = useState('');
   const [passError,     setPassError]     = useState('');
+  const usuarioExt = usuario as UsuarioExtendido | null;
 
-  if (!usuario) return null;
+  useEffect(() => {
+    if (!usuario) return;
+
+    const tieneUltimoAcceso = Boolean(usuario.ultimo_acceso || usuario.last_login);
+    const tieneFechaRegistro = Boolean(
+      usuario.fecha_registro ||
+      usuarioExt?.date_joined ||
+      usuarioExt?.created_at ||
+      usuarioExt?.fecha_creacion
+    );
+
+    if (tieneUltimoAcceso && tieneFechaRegistro) return;
+
+    let cancelado = false;
+
+    (async () => {
+      try {
+        const me = await GET('/auth/me/');
+        if (!cancelado && me && typeof me === 'object') {
+          setUsuario({ ...usuario, ...(me as object) });
+        }
+      } catch {
+        // Si falla el refresco, se mantiene la data ya cargada en sesión.
+      }
+    })();
+
+    return () => {
+      cancelado = true;
+    };
+  }, [usuario, setUsuario]);
+
+  if (!usuario) return <AccessGuardScreen message="Cargando perfil..." />
 
   const ini   = iniciales(usuario.nombre_completo || usuario.username);
   const color = ROL_COLOR[usuario.rol] ?? '#888';
+  const ultimoAccesoRaw = usuario.ultimo_acceso ?? usuario.last_login ?? null;
+  const fechaRegistroRaw =
+    usuario.fecha_registro ??
+    usuarioExt?.date_joined ??
+    usuarioExt?.created_at ??
+    usuarioExt?.fecha_creacion ??
+    null;
+
+  const formatearFechaConHora = (valor: string | null) => {
+    if (!valor) return '—';
+    return new Date(valor).toLocaleString('es-MX', {
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+      hour12: false,
+    });
+  };
 
   // ── Guardar información ────────────────────────────────────────────────────
   async function guardarInfo(e: React.FormEvent) {
     e.preventDefault();
+    if (esUsuarioInvitado) {
+      addToast('El usuario invitado no puede modificar sus datos.', 'err');
+      return;
+    }
     setLoading(true);
     try {
-      const updated = await PUT(`/auth/usuarios/${usuario!.id}/`, {
+      const updated = await PUT('/auth/me/', {
         nombre_completo: nombre,
         username,
         email,
@@ -60,8 +122,9 @@ export default function MiPerfilPage() {
       setUsuario({ ...usuario!, ...(updated as object) });
       addToast('Perfil actualizado', 'ok');
       setEditando(false);
-    } catch (err: any) {
-      addToast(err.message || 'Error al actualizar perfil', 'err');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al actualizar perfil';
+      addToast(msg, 'err');
     } finally {
       setLoading(false);
     }
@@ -70,26 +133,31 @@ export default function MiPerfilPage() {
   // ── Cambiar contraseña ────────────────────────────────────────────────────
   async function cambiarPassword(e: React.FormEvent) {
     e.preventDefault();
+    if (esUsuarioInvitado) {
+      addToast('El usuario invitado no puede cambiar su contraseña.', 'err');
+      return;
+    }
     setPassError('');
     if (passNueva.length < 8) { setPassError('La contraseña debe tener al menos 8 caracteres.'); return; }
     if (passNueva !== passConfirm) { setPassError('Las contraseñas no coinciden.'); return; }
     setLoading(true);
     try {
-      await PUT(`/auth/usuarios/${usuario!.id}/cambiar-password/`, {
+      await PUT('/auth/me/cambiar-password/', {
         password_actual: passActual,
         password_nuevo:  passNueva,
       });
       addToast('Contraseña actualizada', 'ok');
       setPassActual(''); setPassNueva(''); setPassConfirm('');
-    } catch (err: any) {
-      addToast(err.message || 'Error al cambiar contraseña', 'err');
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al cambiar contraseña';
+      addToast(msg, 'err');
     } finally {
       setLoading(false);
     }
   }
 
-  const diasMiembro = usuario.fecha_registro
-    ? Math.floor((Date.now() - new Date(usuario.fecha_registro).getTime()) / 86400000)
+  const diasMiembro = fechaRegistroRaw
+    ? Math.floor((Date.now() - new Date(fechaRegistroRaw).getTime()) / 86400000)
     : null;
 
   return (
@@ -108,18 +176,11 @@ export default function MiPerfilPage() {
             </h1>
             <div className={styles.heroBadges}>
               <span className={styles.badgeRol}>{ROL_LABEL[usuario.rol] ?? usuario.rol}</span>
-              <span className={`${styles.badgeEstado} ${usuario.activo ? styles.activo : styles.inactivo}`}>
-                {usuario.activo ? '✓ Activo' : '✗ Inactivo'}
-              </span>
               <span className={styles.badgeRol}>@{usuario.username}</span>
             </div>
           </div>
         </div>
         <div className={styles.heroStats}>
-          <div className={styles.heroStat}>
-            <span className={styles.heroStatVal}>#{usuario.id}</span>
-            <span className={styles.heroStatLbl}>ID usuario</span>
-          </div>
           {diasMiembro !== null && (
             <div className={styles.heroStat}>
               <span className={styles.heroStatVal}>{diasMiembro}</span>
@@ -128,9 +189,7 @@ export default function MiPerfilPage() {
           )}
           <div className={styles.heroStat}>
             <span className={styles.heroStatVal}>
-              {usuario.ultimo_acceso
-                ? new Date(usuario.ultimo_acceso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short' })
-                : '—'}
+              {formatearFechaConHora(ultimoAccesoRaw)}
             </span>
             <span className={styles.heroStatLbl}>último acceso</span>
           </div>
@@ -140,7 +199,7 @@ export default function MiPerfilPage() {
       {/* ── Tabs ─────────────────────────────────────────────────────────── */}
       <div className={styles.tabs}>
         <button className={`${styles.tab}${tab === 'info'     ? ' ' + styles.tabActive : ''}`} onClick={() => setTab('info')}>👤 Información</button>
-        {!esInvitado && (
+        {!esUsuarioInvitado && (
           <button className={`${styles.tab}${tab === 'password' ? ' ' + styles.tabActive : ''}`} onClick={() => setTab('password')}>🔑 Contraseña</button>
         )}
       </div>
@@ -153,7 +212,7 @@ export default function MiPerfilPage() {
               <h2 className={styles.cardTitulo}>Información personal</h2>
               <p className={styles.cardSub}>Datos de tu cuenta en la plataforma</p>
             </div>
-            {!editando && (
+            {!editando && !esUsuarioInvitado && (
               <Button variante="ghost" onClick={() => {
                 setEditando(true);
                 setNombre(usuario.nombre_completo ?? '');
@@ -162,6 +221,12 @@ export default function MiPerfilPage() {
               }}>✏️ Editar</Button>
             )}
           </div>
+
+          {esUsuarioInvitado && (
+            <div className={styles.aviso}>
+              🔒 Tu perfil está en modo lectura: como invitado no puedes modificar tus datos ni cambiar la contraseña.
+            </div>
+          )}
 
           {editando ? (
             <form className={styles.form} onSubmit={guardarInfo}>
@@ -194,26 +259,18 @@ export default function MiPerfilPage() {
                 <span className={styles.infoValor}>{ROL_LABEL[usuario.rol] ?? usuario.rol}</span>
               </div>
               <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>Estado de cuenta</span>
-                <span className={styles.infoValor}>{usuario.activo ? '✓ Activo' : '✗ Inactivo'}</span>
-              </div>
-              <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Último acceso</span>
                 <span className={styles.infoValor}>
-                  {usuario.ultimo_acceso ? new Date(usuario.ultimo_acceso).toLocaleString('es-MX') : '—'}
+                  {formatearFechaConHora(ultimoAccesoRaw)}
                 </span>
               </div>
               <div className={styles.infoItem}>
                 <span className={styles.infoLabel}>Miembro desde</span>
                 <span className={styles.infoValor}>
-                  {usuario.fecha_registro
-                    ? new Date(usuario.fecha_registro).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })
+                  {fechaRegistroRaw
+                    ? new Date(fechaRegistroRaw).toLocaleDateString('es-MX', { year: 'numeric', month: 'long', day: 'numeric' })
                     : '—'}
                 </span>
-              </div>
-              <div className={styles.infoItem}>
-                <span className={styles.infoLabel}>ID de usuario</span>
-                <span className={`${styles.infoValor} ${styles.mono}`}>#{usuario.id}</span>
               </div>
             </div>
           )}
@@ -221,7 +278,7 @@ export default function MiPerfilPage() {
       )}
 
       {/* ── Tab: Contraseña ──────────────────────────────────────────────── */}
-      {tab === 'password' && !esInvitado && (
+      {tab === 'password' && !esUsuarioInvitado && (
         <div className={styles.card}>
           <div className={styles.cardHeader}>
             <div>

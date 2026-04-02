@@ -5,7 +5,6 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { useRouter } from 'next/navigation'
-import type { Metadata } from 'next'
 import { GET } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { ROL_LABELS, ROL_COLOR } from '@/types'
@@ -17,6 +16,7 @@ import { Topbar } from '@/components/dashboard/Topbar'
 import { QuickAccessCard } from '@/components/dashboard/QuickAccessCard'
 import { UserCard } from '@/components/dashboard/UserCard'
 import StateView from '@/components/ui/StateView'
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import styles from './dashboard.module.css'
 
 // Tarjetas de acceso rápido — igual que en dashboard.js
@@ -37,7 +37,7 @@ export default function DashboardPage() {
     queryFn: () => GET('/auth/usuarios?limit=6'),
   })
 
-  if (!usuario) return null
+  if (!usuario) return <AccessGuardScreen message="Cargando panel admin..." />
 
   const ini   = iniciales(usuario.nombre_completo || usuario.username)
   const color = ROL_COLOR[usuario.rol] ?? '#888'

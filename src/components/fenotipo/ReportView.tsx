@@ -16,10 +16,9 @@ interface Props {
   data: Record<number, string | number>;
   dg?: DatosGenerales;
   razaLabel?: string;
-  compact?: boolean;
 }
 
-export default function ReportView({ data, dg, razaLabel, compact }: Props) {
+export default function ReportView({ data, dg, razaLabel }: Props) {
   const totalCapturados = descriptors.filter(
     (d) => data[d.id] !== undefined && data[d.id] !== ""
   ).length;

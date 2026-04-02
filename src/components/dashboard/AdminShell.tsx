@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/store/useAppStore'
 import { ROL_LABELS, ROL_COLOR } from '@/types'
 import type { Rol } from '@/types'
+import { useAuth } from '@/hooks/useAuth'
 import { iniciales } from '@/lib/auth'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
@@ -21,6 +22,7 @@ interface AdminShellProps {
 
 export default function AdminShell({ children, contentPadding = '32px 40px' }: AdminShellProps) {
   const router = useRouter()
+  const { logout } = useAuth()
   const usuario = useAppStore(s => s.usuario)
   const addToast = useAppStore(s => s.addToast)
   const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
@@ -71,12 +73,8 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
   }
 
   const handleLogout = () => {
-    if (typeof window !== 'undefined') {
-      localStorage.clear()
-      sessionStorage.clear()
-    }
     addToast('Sesión cerrada', 'ok')
-    router.push('/login')
+    logout()
   }
 
   return (

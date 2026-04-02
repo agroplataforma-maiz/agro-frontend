@@ -32,6 +32,54 @@ export function useAuth() {
     document.cookie = 'agro_rol=; path=/; max-age=0'
   }
 
+  function mostrarOverlayTransicion(texto: string) {
+    if (typeof document === 'undefined') return () => {}
+
+    if (!document.getElementById('agro-auth-transition-style')) {
+      const style = document.createElement('style')
+      style.id = 'agro-auth-transition-style'
+      style.textContent = `
+        @keyframes agroMaizSpin { to { transform: rotate(360deg); } }
+      `
+      document.head.appendChild(style)
+    }
+
+    const overlay = document.createElement('div')
+    overlay.setAttribute('data-auth-transition', 'true')
+    overlay.style.position = 'fixed'
+    overlay.style.inset = '0'
+    overlay.style.zIndex = '11000'
+    overlay.style.background = 'rgba(42, 27, 11, 0.78)'
+    overlay.style.backdropFilter = 'blur(4px)'
+    overlay.style.display = 'flex'
+    overlay.style.flexDirection = 'column'
+    overlay.style.alignItems = 'center'
+    overlay.style.justifyContent = 'center'
+    overlay.style.gap = '12px'
+    overlay.style.color = '#fff'
+    overlay.style.fontFamily = 'Nunito, sans-serif'
+
+    const icono = document.createElement('div')
+    icono.textContent = '🌽'
+    icono.style.fontSize = '58px'
+    icono.style.lineHeight = '1'
+    icono.style.animation = 'agroMaizSpin 0.9s linear infinite'
+
+    const label = document.createElement('div')
+    label.textContent = texto
+    label.style.fontSize = '15px'
+    label.style.fontWeight = '700'
+    label.style.letterSpacing = '0.02em'
+
+    overlay.appendChild(icono)
+    overlay.appendChild(label)
+    document.body.appendChild(overlay)
+
+    return () => {
+      overlay.remove()
+    }
+  }
+
   async function login(payload: LoginPayload) {
     const data = await POST<AuthResponse>('/auth/login', payload)
     guardarSesion(data.access_token, data.usuario)
@@ -41,11 +89,14 @@ export function useAuth() {
     return data
   }
 
-  function logout() {
+  async function logout() {
+    const limpiarOverlay = mostrarOverlayTransicion('Cerrando sesión...')
     cerrarSesion()
     clearTokenCookie()
     clearRolCookie()
     setUsuario(null)
+    await new Promise(resolve => setTimeout(resolve, 2000))
+    limpiarOverlay()
     router.push('/login')
   }
 

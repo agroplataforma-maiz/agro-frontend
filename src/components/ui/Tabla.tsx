@@ -3,6 +3,7 @@
 //   renderTabla() en catalogos.js
 //   renderLista() en productores.js
 //   renderUsuariosGrid() en dashboard.js
+'use client'
 
 import styles from './Tabla.module.css'
 import StateView from './StateView'

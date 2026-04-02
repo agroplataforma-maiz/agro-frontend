@@ -1,6 +1,7 @@
 'use client'
 import { useState, useEffect } from 'react'
 import { useRouter } from 'next/navigation'
+import Link from 'next/link'
 import { useAuth } from '@/hooks/useAuth'
 import { getToken, getUsuario } from '@/lib/auth'
 import { ROL_HOME } from '@/types'
@@ -16,6 +17,7 @@ export default function LoginPage() {
   // Campos login
   const [identificador, setIdentificador] = useState('')
   const [password, setPassword] = useState('')
+  const [showLoginPassword, setShowLoginPassword] = useState(false)
 
   // Campos registro
   const [registro, setRegistro] = useState({
@@ -24,11 +26,11 @@ export default function LoginPage() {
 
 
   // Login real
-  const { login } = useAuth()
+  const { login, addToast } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
-  const [error, setError] = useState('')
-  const [ok, setOk] = useState('')
+  const [showRecoveryInfo, setShowRecoveryInfo] = useState(false)
+  const [showLoginTransition, setShowLoginTransition] = useState(false)
 
   useEffect(() => {
     // Asegurar que el login siempre se vea en modo claro,
@@ -41,29 +43,39 @@ export default function LoginPage() {
     // Mostrar aviso si el token expiró
     const params = new URLSearchParams(window.location.search)
     if (params.get('expired') === '1') {
-      setError('Tu sesión expiró, vuelve a iniciar sesión.')
+      addToast('Tu sesión expiró, vuelve a iniciar sesión.', 'err')
+      params.delete('expired')
+      const nextQuery = params.toString()
+      const nextUrl = nextQuery ? `${window.location.pathname}?${nextQuery}` : window.location.pathname
+      window.history.replaceState({}, '', nextUrl)
     }
-  }, [router])
+  }, [router, addToast])
 
-  const cambiarTab = (t: 'login'|'registro') => { setTab(t); setError(''); setOk(''); }
-  const mostrarRecuperacion = () => alert('Funcionalidad de recuperación no implementada')
+  const cambiarTab = (t: 'login'|'registro') => { setTab(t); setShowRecoveryInfo(false) }
+  const mostrarRecuperacion = (e: React.MouseEvent<HTMLAnchorElement>) => {
+    e.preventDefault()
+    setShowRecoveryInfo(true)
+  }
   const cerrarSesion = () => setSesionActiva(false)
   const seleccionarRol = (rol: string) => setRegistro(r => ({...r, rol}))
 
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
-    setError('')
-    setOk('')
     setLoading(true)
+    let loginExitoso = false
     try {
       const data = await login({ identificador, password })
-      setOk('Sesión iniciada')
+      loginExitoso = true
+      addToast('Sesión iniciada correctamente', 'ok')
       const destino = ROL_HOME[data.usuario.rol] ?? '/dashboard'
-      setTimeout(() => router.push(destino), 900)
-    } catch (err: any) {
-      setError(err?.message || 'Error al iniciar sesión')
+      setShowLoginTransition(true)
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      router.push(destino)
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'
+      addToast(msg, 'err')
     } finally {
-      setLoading(false)
+      if (!loginExitoso) setLoading(false)
     }
   }
 
@@ -115,7 +127,7 @@ export default function LoginPage() {
             <div className={styles['sesion-nombre']} id="sa-nombre">—</div>
             <div className={styles['sesion-rol']} id="sa-rol">—</div>
             <div className={styles['sesion-btns']}>
-              <a className={styles['btn-ir']} href="/productores">🌱 Ir a la plataforma</a>
+              <Link className={styles['btn-ir']} href="/productores">🌱 Ir a la plataforma</Link>
               <a className={styles['btn-ir']} href="/catalogos" style={{background:'var(--maiz)',color:'var(--tierra)'}}>📋 Catálogos</a>
               <button className={styles['btn-salir']} onClick={cerrarSesion}>✕ Cerrar sesión</button>
             </div>
@@ -174,24 +186,36 @@ export default function LoginPage() {
                 <div className={styles['input-wrap']}>
                   <span className={styles['input-ico']}>🔒</span>
                   <input
-                    type="password"
+                    type={showLoginPassword ? 'text' : 'password'}
                     placeholder="••••••••"
                     autoComplete="current-password"
                     value={password}
                     onChange={e => setPassword(e.target.value)}
                     disabled={loading}
                   />
-                  <button type="button" className={styles['input-toggle']}>👁</button>
+                  <button
+                    type="button"
+                    className={styles['input-toggle']}
+                    aria-label={showLoginPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    title={showLoginPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'}
+                    onClick={() => setShowLoginPassword(v => !v)}
+                  >
+                    {showLoginPassword ? '🙈' : '👁'}
+                  </button>
                 </div>
               </div>
-              {error && <div className={styles['alerta'] + ' ' + styles['alerta-err']} style={{display:'flex',marginBottom:8}}><span className={styles['alerta-ico']}>⚠</span><span>{error}</span></div>}
-              {ok && <div className={styles['alerta'] + ' ' + styles['alerta-ok']} style={{display:'flex',marginBottom:8}}><span className={styles['alerta-ico']}>✓</span><span>{ok}</span></div>}
+              {showRecoveryInfo && (
+                <div className={styles['alerta'] + ' ' + styles['alerta-ok']} style={{display:'flex',marginBottom:8}}>
+                  <span className={styles['alerta-ico']}>ℹ️</span>
+                  <span>Escríbenos a soporte@agromaiz.mx para recuperar tu acceso mientras habilitamos el flujo automático.</span>
+                </div>
+              )}
               <div style={{display:'flex',justifyContent:'flex-end',marginTop:-8,marginBottom:4}}>
                 <a href="#" className={styles['footer-link']} style={{fontSize:12}} onClick={mostrarRecuperacion}>¿Olvidaste tu contraseña?</a>
               </div>
               <button className={styles['btn-submit']} id="btn-login" disabled={loading} type="submit">
-                {loading && <div className={styles['spinner']} id="sp-login"></div>}
-                <span id="lbl-login">{loading ? 'Entrando...' : 'Entrar a la plataforma'}</span>
+                {loading && <span className={styles['maiz-spinner']} id="sp-login" aria-hidden>🌽</span>}
+                <span id="lbl-login">{loading ? 'Iniciando sesión...' : 'Entrar a la plataforma'}</span>
               </button>
               <div className={styles['divider']}>o</div>
               <button
@@ -309,7 +333,6 @@ export default function LoginPage() {
           {/* Footer */}
           <div className={styles['card-footer']}>
             <span className={styles['footer-txt']}>PEE-2025-G-369 · IT Ciudad Valles</span>
-            <a href="/" className={styles['footer-link']}>← Inicio</a>
           </div>
         </div>
         </div>
@@ -330,9 +353,16 @@ export default function LoginPage() {
       </footer>
 
       {/* Botón flotante */}
-      <a href="/" className={styles['btn-flotante']} title="Volver al inicio">
+      <Link href="/" className={styles['btn-flotante']} title="Volver al inicio">
         🌽 Inicio
-      </a>
+      </Link>
+
+      {showLoginTransition && (
+        <div className={styles['auth-transition-overlay']} aria-live="polite">
+          <div className={styles['auth-transition-maiz']} aria-hidden>🌽</div>
+          <div className={styles['auth-transition-label']}>Iniciando sesión...</div>
+        </div>
+      )}
     </>
   )
 }

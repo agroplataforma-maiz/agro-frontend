@@ -18,12 +18,14 @@ import Button from '@/components/ui/Button'
 import ModuleHero from '@/components/ui/ModuleHero'
 import SearchInput from '@/components/ui/SearchInput'
 import Modal from '@/components/ui/Modal'
+import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { useRolGuard } from '@/hooks/useRolGuard'
 
 type Vista = 'lista' | 'perfil'
 
 export default function ComunidadesPage() {
-  useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+
   useCatalogos()
 
   const usuario  = useAppStore(s => s.usuario)
@@ -41,6 +43,7 @@ export default function ComunidadesPage() {
   const { data: comunidades = [], isLoading } = useQuery<Comunidad[]>({
     queryKey: ['comunidades'],
     queryFn:  () => GET('/social/comunidad/'),
+    enabled: accesoPermitido,
     select:   (d: unknown) => {
       const data = d as Comunidad[] | { items?: Comunidad[]; results?: Comunidad[] }
       return Array.isArray(data) ? data : data.items ?? data.results ?? []
@@ -57,7 +60,8 @@ export default function ComunidadesPage() {
     onError: (e: Error) => addToast(e.message, 'err'),
   })
 
-  if (!usuario) return null
+  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
+  if (!usuario) return <AccessGuardScreen message="Cargando comunidades..." />
 
   // ── Filtro ────────────────────────────────────────────────────────────────
   const filtradas = comunidades.filter(c =>

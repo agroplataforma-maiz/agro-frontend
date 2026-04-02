@@ -13,6 +13,19 @@ interface PerfilModalProps {
   usuario?: Usuario;
 }
 
+type ActividadItem = {
+  tipo?: string;
+  descripcion?: string;
+  fecha?: string;
+};
+
+type UsuarioPatchPayload = {
+  nombre_completo?: string;
+  username?: string;
+  email?: string;
+  rol?: string;
+};
+
 const ROLES = [
   { value: 'administrador', emoji: '👑', label: 'Administrador', desc: 'Acceso total' },
   { value: 'investigador',  emoji: '🔬', label: 'Investigador',  desc: 'Captura y edición' },
@@ -52,7 +65,7 @@ const PerfilModal: React.FC<PerfilModalProps> = ({ open, onClose, usuario }) => 
   const [editNombre, setEditNombre] = useState(usuario?.nombre_completo ?? '');
   const [editUsername, setEditUsername] = useState(usuario?.username ?? '');
   const [editEmail, setEditEmail] = useState(usuario?.email ?? '');
-  const [actividad, setActividad] = useState<any[]>([]);
+  const [actividad, setActividad] = useState<ActividadItem[]>([]);
   const [loadingLog, setLoadingLog] = useState(false);
 
   const guardarRol = useMutation({
@@ -62,13 +75,13 @@ const PerfilModal: React.FC<PerfilModalProps> = ({ open, onClose, usuario }) => 
   });
 
   const guardarInfo = useMutation({
-    mutationFn: () => PUT(`/auth/usuarios/${usuario!.id}/`, { nombre_completo: editNombre, username: editUsername, email: editEmail }),
+    mutationFn: () => PUT<UsuarioPatchPayload>(`/auth/usuarios/${usuario!.id}/`, { nombre_completo: editNombre, username: editUsername, email: editEmail }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Información actualizada', 'ok'); setEditando(false); },
     onError: () => addToast('Error al guardar información', 'err'),
   });
 
   const restablecerPwd = useMutation({
-    mutationFn: () => PUT(`/auth/usuarios/${usuario!.id}/reset-password`, { password: pwdNueva }),
+    mutationFn: () => PUT(`/auth/usuarios/${usuario!.id}/reset-password`, { password_nuevo: pwdNueva }),
     onSuccess: () => { setPwdNueva(''); setPwdConfirm(''); addToast('Contraseña restablecida', 'ok'); },
     onError: () => addToast('Error al restablecer contraseña', 'err'),
   });
@@ -224,7 +237,7 @@ const PerfilModal: React.FC<PerfilModalProps> = ({ open, onClose, usuario }) => 
             <div style={{ textAlign: 'center', padding: 32, color: 'var(--gris,#888)', fontSize: 13 }}>Sin actividad registrada</div>
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              {actividad.map((a: any, i: number) => (
+              {actividad.map((a, i: number) => (
                 <div key={i} style={{ display: 'flex', gap: 12, alignItems: 'flex-start', padding: '10px 12px', background: 'var(--crema,#fdf6e3)', borderRadius: 8 }}>
                   <span style={{ fontSize: 18 }}>{a.tipo === 'login' ? '🔑' : a.tipo === 'edicion' ? '✏' : '📋'}</span>
                   <div>

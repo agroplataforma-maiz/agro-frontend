@@ -99,7 +99,7 @@ export default function Page() {
   // ── Catálogo productores ──────────────────────────────────────────────
   const { data: productoresRaw } = useQuery({
     queryKey: ["productores-lista"],
-    queryFn: () => GET("/social/productor/?limit=200"),
+    queryFn: () => GET("/social/productor?limit=200"),
     enabled: accesoPermitido,
     staleTime: Infinity,
   });
@@ -118,7 +118,7 @@ export default function Page() {
   // ── Catálogo lenguas ──────────────────────────────────────────────────
   const { data: lenguasRaw } = useQuery({
     queryKey: ["lenguas"],
-    queryFn: () => GET("/social/lengua/"),
+    queryFn: () => GET("/social/lengua"),
     enabled: accesoPermitido,
     staleTime: Infinity,
   });
@@ -140,7 +140,7 @@ export default function Page() {
   const { data: localidadesRaw, isLoading: cargandoLocalidades } = useQuery({
     queryKey: ["localidades", registro.territorio.municipio_id],
     queryFn: () =>
-      GET(`/geo/localidad/?municipio_id=${registro.territorio.municipio_id}`),
+      GET(`/geo/localidad?municipio_id=${registro.territorio.municipio_id}`),
     enabled: accesoPermitido && !!registro.territorio.municipio_id,
     staleTime: Infinity,
   });
@@ -163,7 +163,7 @@ export default function Page() {
   if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   const handleSave = async () => {
-    await POST("/social/registro_sociocultural/", registro);
+    await POST("/social/registro_sociocultural", registro);
     clearAll();
   };
 

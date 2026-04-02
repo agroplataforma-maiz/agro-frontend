@@ -23,19 +23,19 @@ export function useCatalogos() {
 
   const municipios = useQuery({
     queryKey: ['municipios'],
-    queryFn:  () => GET('/geo/municipio/'),
+    queryFn:  () => GET('/geo/municipio'),
     staleTime: Infinity,  // catálogos no cambian frecuentemente
   })
 
   const localidades = useQuery({
     queryKey: ['localidades'],
-    queryFn:  () => GET('/geo/localidad/'),
+    queryFn:  () => GET('/geo/localidad'),
     staleTime: Infinity,
   })
 
   const tiposProductor = useQuery({
     queryKey: ['tipos-productor'],
-    queryFn:  () => GET('/social/tipo_productor/'),
+    queryFn:  () => GET('/social/tipo_productor'),
     staleTime: Infinity,
   })
 

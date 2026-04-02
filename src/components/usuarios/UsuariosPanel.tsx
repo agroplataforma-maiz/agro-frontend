@@ -104,7 +104,7 @@ export default function UsuariosPanel() {
 
   const guardarUsuario = useMutation({
     mutationFn: async (data: UsuarioSavePayload) => {
-      if (modalUsuario.usuario) return PUT(`/auth/usuarios/${modalUsuario.usuario.id}/`, data);
+      if (modalUsuario.usuario) return PUT(`/auth/usuarios/${modalUsuario.usuario.id}`, data);
       return POST('/auth/register', data);
     },
     onSuccess: () => { cerrarModalUsuario(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario guardado', 'ok'); },
@@ -112,19 +112,19 @@ export default function UsuariosPanel() {
   });
 
   const activarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/activar/`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/activar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario activado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al activar usuario', 'err'),
   });
 
   const desactivarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/desactivar/`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/desactivar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario desactivado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al desactivar usuario', 'err'),
   });
 
   const eliminarUsuario = useMutation({
-    mutationFn: (id: number) => DEL(`/auth/usuarios/${id}/`),
+    mutationFn: (id: number) => DEL(`/auth/usuarios/${id}`),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario eliminado', 'ok'); },
     onError: () => addToast('Error al eliminar usuario', 'err'),
   });

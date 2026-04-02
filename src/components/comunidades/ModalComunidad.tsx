@@ -60,9 +60,9 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
     setLoading(true)
     try {
       if (comunidad?.id) {
-        await PUT(`/social/comunidad/${comunidad.id}/`, form)
+        await PUT(`/social/comunidad/${comunidad.id}`, form)
       } else {
-        await POST('/social/comunidad/', form)
+        await POST('/social/comunidad', form)
       }
       onSaved()
     } catch (err: unknown) {

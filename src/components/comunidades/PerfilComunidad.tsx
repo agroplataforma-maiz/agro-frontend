@@ -16,12 +16,12 @@ interface Props {
 export default function PerfilComunidad({ id, onVolver }: Props) {
   const { data: comunidad, isLoading } = useQuery<Comunidad>({
     queryKey: ['comunidad', id],
-    queryFn:  () => GET(`/social/comunidad/${id}/`),
+    queryFn:  () => GET(`/social/comunidad/${id}`),
   })
 
   const { data: productores = [] } = useQuery<Productor[]>({
     queryKey: ['productores-comunidad', id],
-    queryFn:  () => GET(`/social/productor/?comunidad_id=${id}`),
+    queryFn:  () => GET(`/social/productor?comunidad_id=${id}`),
     select: (d: unknown) => {
       const data = d as Productor[] | { items?: Productor[]; results?: Productor[] }
       return Array.isArray(data) ? data : data.items ?? data.results ?? []

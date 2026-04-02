@@ -40,6 +40,8 @@ export default function Home() {
     setToken(t);
     setUsuario(u);
     if (t && u) {
+      router.replace('/dashboard');
+      return;
     }
     // Navbar scroll color
     const onScroll = () => setNavScrolled(window.scrollY > 40);

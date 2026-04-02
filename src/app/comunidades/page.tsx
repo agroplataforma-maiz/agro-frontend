@@ -42,7 +42,7 @@ export default function ComunidadesPage() {
   // ── Fetch lista ───────────────────────────────────────────────────────────
   const { data: comunidades = [], isLoading } = useQuery<Comunidad[]>({
     queryKey: ['comunidades'],
-    queryFn:  () => GET('/social/comunidad/'),
+    queryFn:  () => GET('/social/comunidad'),
     enabled: accesoPermitido,
     select:   (d: unknown) => {
       const data = d as Comunidad[] | { items?: Comunidad[]; results?: Comunidad[] }
@@ -52,7 +52,7 @@ export default function ComunidadesPage() {
 
   // ── Eliminar ──────────────────────────────────────────────────────────────
   const eliminar = useMutation({
-    mutationFn: (id: number) => DEL(`/social/comunidad/${id}/`),
+    mutationFn: (id: number) => DEL(`/social/comunidad/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['comunidades'] })
       addToast('Comunidad eliminada', 'ok')

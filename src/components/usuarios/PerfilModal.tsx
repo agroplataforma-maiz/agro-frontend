@@ -69,13 +69,13 @@ const PerfilModal: React.FC<PerfilModalProps> = ({ open, onClose, usuario }) => 
   const [loadingLog, setLoadingLog] = useState(false);
 
   const guardarRol = useMutation({
-    mutationFn: () => PUT(`/auth/usuarios/${usuario!.id}/`, { rol: rolSel }),
+    mutationFn: () => PUT(`/auth/usuarios/${usuario!.id}`, { rol: rolSel }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Rol actualizado', 'ok'); },
     onError: () => addToast('Error al cambiar rol', 'err'),
   });
 
   const guardarInfo = useMutation({
-    mutationFn: () => PUT<UsuarioPatchPayload>(`/auth/usuarios/${usuario!.id}/`, { nombre_completo: editNombre, username: editUsername, email: editEmail }),
+    mutationFn: () => PUT<UsuarioPatchPayload>(`/auth/usuarios/${usuario!.id}`, { nombre_completo: editNombre, username: editUsername, email: editEmail }),
     onSuccess: () => { qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Información actualizada', 'ok'); setEditando(false); },
     onError: () => addToast('Error al guardar información', 'err'),
   });

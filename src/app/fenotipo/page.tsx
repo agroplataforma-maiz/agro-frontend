@@ -64,7 +64,7 @@ export default function Page() {
   // ── Catálogo razas de maíz ───────────────────────────────────────────
   const { data: razasRaw, isLoading: cargandoRazas } = useQuery({
     queryKey: ["razas-maiz"],
-    queryFn: () => GET("/agro/raza_maiz/"),
+    queryFn: () => GET("/agro/raza_maiz"),
     enabled: accesoPermitido,
     staleTime: Infinity,
   });
@@ -83,7 +83,7 @@ export default function Page() {
   // ── Localidades on-demand por municipio ────────────────────────────
   const { data: localidadesRaw, isLoading: cargandoLocalidades } = useQuery({
     queryKey: ["localidades", dg.municipio_id],
-    queryFn: () => GET(`/geo/localidad/?municipio_id=${dg.municipio_id}`),
+    queryFn: () => GET(`/geo/localidad?municipio_id=${dg.municipio_id}`),
     enabled: accesoPermitido && !!dg.municipio_id,
     staleTime: Infinity,
   });
@@ -102,7 +102,7 @@ export default function Page() {
   };
 
   const handleSave = async () => {
-    await POST("/fenotipo/", { dg, data });
+    await POST("/fenotipo", { dg, data });
     clearAll();
   };
 

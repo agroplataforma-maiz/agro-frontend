@@ -20,24 +20,24 @@ function iniciales(nombre: string) {
 
 // Secciones del perfil — cada una consume su propio endpoint
 const SECCIONES: { key: string; emoji: string; label: string; path: (id: number) => string }[] = [
-  { key: 'lenguas',     emoji: '🗣️',  label: 'Lenguas',                path: id => `/social/lengua/?productor_id=${id}` },
-  { key: 'geo',         emoji: '🌐',  label: 'Geografía',              path: id => `/social/geo/?productor_id=${id}` },
-  { key: 'socio',       emoji: '👥',  label: 'Datos socioeconómicos',  path: id => `/social/socioeconomico/?productor_id=${id}` },
-  { key: 'practicas',   emoji: '🌱',  label: 'Prácticas agrícolas',    path: id => `/social/practica_agricola/?productor_id=${id}` },
-  { key: 'elcsa',       emoji: '🍽️',  label: 'ELCSA',                  path: id => `/social/elcsa/?productor_id=${id}` },
-  { key: 'climatica',   emoji: '🌧️',  label: 'Adaptación climática',   path: id => `/social/climatica/?productor_id=${id}` },
-  { key: 'red',         emoji: '🌳',  label: 'Red de intercambio',     path: id => `/social/red_intercambio/?productor_id=${id}` },
-  { key: 'identidad',   emoji: '🏗️',  label: 'Identidad cultural',     path: id => `/cultural/identidad/?productor_id=${id}` },
-  { key: 'transmision', emoji: '📚',  label: 'Transmisión de saberes', path: id => `/cultural/transmision/?productor_id=${id}` },
-  { key: 'saberes',     emoji: '🌽',  label: 'Saberes del maíz',       path: id => `/cultural/saber_maiz/?productor_id=${id}` },
-  { key: 'narrativas',  emoji: '📜',  label: 'Narrativas',             path: id => `/cultural/narrativa/?productor_id=${id}` },
-  { key: 'gastronomia', emoji: '👨‍🍳',  label: 'Gastronomía',            path: id => `/cultural/gastronomia/?productor_id=${id}` },
+  { key: 'lenguas',     emoji: '🗣️',  label: 'Lenguas',                path: id => `/social/lengua?productor_id=${id}` },
+  { key: 'geo',         emoji: '🌐',  label: 'Geografía',              path: id => `/social/geo?productor_id=${id}` },
+  { key: 'socio',       emoji: '👥',  label: 'Datos socioeconómicos',  path: id => `/social/socioeconomico?productor_id=${id}` },
+  { key: 'practicas',   emoji: '🌱',  label: 'Prácticas agrícolas',    path: id => `/social/practica_agricola?productor_id=${id}` },
+  { key: 'elcsa',       emoji: '🍽️',  label: 'ELCSA',                  path: id => `/social/elcsa?productor_id=${id}` },
+  { key: 'climatica',   emoji: '🌧️',  label: 'Adaptación climática',   path: id => `/social/climatica?productor_id=${id}` },
+  { key: 'red',         emoji: '🌳',  label: 'Red de intercambio',     path: id => `/social/red_intercambio?productor_id=${id}` },
+  { key: 'identidad',   emoji: '🏗️',  label: 'Identidad cultural',     path: id => `/cultural/identidad?productor_id=${id}` },
+  { key: 'transmision', emoji: '📚',  label: 'Transmisión de saberes', path: id => `/cultural/transmision?productor_id=${id}` },
+  { key: 'saberes',     emoji: '🌽',  label: 'Saberes del maíz',       path: id => `/cultural/saber_maiz?productor_id=${id}` },
+  { key: 'narrativas',  emoji: '📜',  label: 'Narrativas',             path: id => `/cultural/narrativa?productor_id=${id}` },
+  { key: 'gastronomia', emoji: '👨‍🍳',  label: 'Gastronomía',            path: id => `/cultural/gastronomia?productor_id=${id}` },
 ]
 
 export default function PerfilProductor({ id, onVolver }: Props) {
   const { data: productor, isLoading } = useQuery<Productor>({
     queryKey: ['productor', id],
-    queryFn:  () => GET(`/social/productor/${id}/`),
+    queryFn:  () => GET(`/social/productor/${id}`),
   })
 
   if (isLoading) return (

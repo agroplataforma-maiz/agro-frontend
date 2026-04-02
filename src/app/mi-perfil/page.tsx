@@ -67,7 +67,7 @@ export default function MiPerfilPage() {
 
     (async () => {
       try {
-        const me = await GET('/auth/me/');
+        const me = await GET('/auth/me');
         if (!cancelado && me && typeof me === 'object') {
           setUsuario({ ...usuario, ...(me as object) });
         }
@@ -114,7 +114,7 @@ export default function MiPerfilPage() {
     }
     setLoading(true);
     try {
-      const updated = await PUT('/auth/me/', {
+      const updated = await PUT('/auth/me', {
         nombre_completo: nombre,
         username,
         email,
@@ -142,7 +142,7 @@ export default function MiPerfilPage() {
     if (passNueva !== passConfirm) { setPassError('Las contraseñas no coinciden.'); return; }
     setLoading(true);
     try {
-      await PUT('/auth/me/cambiar-password/', {
+      await PUT('/auth/me/cambiar-password', {
         password_actual: passActual,
         password_nuevo:  passNueva,
       });

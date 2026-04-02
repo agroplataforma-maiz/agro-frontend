@@ -12,7 +12,7 @@ import styles from './perfil.module.css'
 
 async function getProductor(id: string): Promise<Productor | null> {
   try {
-    return await PUBLIC_GET<Productor>(`/social/productor/${id}/`, {
+    return await PUBLIC_GET<Productor>(`/social/productor/${id}`, {
       next: { revalidate: 120 },
     })
   } catch {

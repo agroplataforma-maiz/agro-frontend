@@ -35,7 +35,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Germoplasma', emoji: '🌽',
     catalogos: [
       {
-        key: 'raza_maiz', label: 'Razas de maíz', path: '/agro/raza_maiz/',
+        key: 'raza_maiz', label: 'Razas de maíz', path: '/agro/raza_maiz',
         campos: [
           { key: 'nombre',        label: 'Nombre',           type: 'text',     required: true },
           { key: 'descripcion',   label: 'Descripción',      type: 'textarea' },
@@ -45,7 +45,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'color_grano', label: 'Colores de grano', path: '/agro/color_grano/',
+        key: 'color_grano', label: 'Colores de grano', path: '/agro/color_grano',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text', required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -53,7 +53,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'estado_conservacion', label: 'Estados de conservación', path: '/agro/estado_conservacion/',
+        key: 'estado_conservacion', label: 'Estados de conservación', path: '/agro/estado_conservacion',
         campos: [
           { key: 'nombre',       label: 'Nombre',               type: 'text',     required: true },
           { key: 'descripcion',  label: 'Descripción',           type: 'textarea' },
@@ -61,7 +61,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'uso_maiz', label: 'Usos del maíz', path: '/agro/uso_maiz/',
+        key: 'uso_maiz', label: 'Usos del maíz', path: '/agro/uso_maiz',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -73,22 +73,22 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Agronómico', emoji: '🌾',
     catalogos: [
       {
-        key: 'tipo_practica', label: 'Tipos de práctica', path: '/agro/tipo_practica/',
+        key: 'tipo_practica', label: 'Tipos de práctica', path: '/agro/tipo_practica',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'practica_agricola', label: 'Prácticas agrícolas', path: '/agro/practica_agricola/',
+        key: 'practica_agricola', label: 'Prácticas agrícolas', path: '/agro/practica_agricola',
         campos: [
           { key: 'nombre',      label: 'Nombre',           type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción',      type: 'textarea' },
-          { key: 'tipo_id',     label: 'Tipo de práctica', type: 'select', queryPath: '/agro/tipo_practica/' },
+          { key: 'tipo_id',     label: 'Tipo de práctica', type: 'select', queryPath: '/agro/tipo_practica' },
         ],
       },
       {
-        key: 'sistema_manejo', label: 'Sistemas de manejo', path: '/agro/sistema_manejo/',
+        key: 'sistema_manejo', label: 'Sistemas de manejo', path: '/agro/sistema_manejo',
         campos: [
           { key: 'nombre',         label: 'Nombre',         type: 'text',     required: true },
           { key: 'descripcion',    label: 'Descripción',    type: 'textarea' },
@@ -96,14 +96,14 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'sistema_cultivo', label: 'Sistemas de cultivo', path: '/agro/sistema_cultivo/',
+        key: 'sistema_cultivo', label: 'Sistemas de cultivo', path: '/agro/sistema_cultivo',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'metodo_almacenamiento', label: 'Métodos de almacenamiento', path: '/agro/metodo_almacenamiento/',
+        key: 'metodo_almacenamiento', label: 'Métodos de almacenamiento', path: '/agro/metodo_almacenamiento',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -115,7 +115,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Fenotipo', emoji: '🔬',
     catalogos: [
       {
-        key: 'tipo_fenotipo', label: 'Tipos de fenotipo', path: '/fenotipo/tipo_fenotipo/',
+        key: 'tipo_fenotipo', label: 'Tipos de fenotipo', path: '/fenotipo/tipo_fenotipo',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'unidad',      label: 'Unidad',      type: 'text' },
@@ -123,7 +123,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'etapa_fenologica', label: 'Etapas fenológicas', path: '/fenotipo/etapa_fenologica/',
+        key: 'etapa_fenologica', label: 'Etapas fenológicas', path: '/fenotipo/etapa_fenologica',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -135,7 +135,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Territorio', emoji: '🗺',
     catalogos: [
       {
-        key: 'estado', label: 'Estados', path: '/geo/estado/',
+        key: 'estado', label: 'Estados', path: '/geo/estado',
         campos: [
           { key: 'nombre',       label: 'Nombre',       type: 'text', required: true },
           { key: 'clave_inegi',  label: 'Clave INEGI',  type: 'text' },
@@ -143,10 +143,10 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'municipio', label: 'Municipios', path: '/geo/municipio/',
+        key: 'municipio', label: 'Municipios', path: '/geo/municipio',
         campos: [
           { key: 'nombre',              label: 'Nombre',              type: 'text',   required: true },
-          { key: 'estado_id',           label: 'Estado',              type: 'select', queryPath: '/geo/estado/', required: true },
+          { key: 'estado_id',           label: 'Estado',              type: 'select', queryPath: '/geo/estado', required: true },
           { key: 'clave_inegi',         label: 'Clave INEGI',         type: 'text' },
           { key: 'clave_completa',      label: 'Clave completa',      type: 'text' },
           { key: 'nombre_corto',        label: 'Nombre corto',        type: 'text' },
@@ -158,11 +158,11 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'localidad', label: 'Localidades', path: '/geo/localidad/',
+        key: 'localidad', label: 'Localidades', path: '/geo/localidad',
         campos: [
           { key: 'nombre',            label: 'Nombre',              type: 'text',   required: true },
-          { key: 'municipio_id',      label: 'Municipio',           type: 'select', queryPath: '/geo/municipio/', required: true },
-          { key: 'comunidad_id',      label: 'Comunidad',           type: 'select', queryPath: '/geo/comunidad/' },
+          { key: 'municipio_id',      label: 'Municipio',           type: 'select', queryPath: '/geo/municipio', required: true },
+          { key: 'comunidad_id',      label: 'Comunidad',           type: 'select', queryPath: '/geo/comunidad' },
           { key: 'clave_inegi',       label: 'Clave INEGI',         type: 'text' },
           { key: 'nombre_lengua_orig',label: 'Nombre en lengua orig.', type: 'text' },
           { key: 'tipo',              label: 'Tipo',                type: 'text' },
@@ -178,10 +178,10 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'comunidad', label: 'Comunidades', path: '/geo/comunidad/',
+        key: 'comunidad', label: 'Comunidades', path: '/geo/comunidad',
         campos: [
           { key: 'nombre',             label: 'Nombre',                 type: 'text',   required: true },
-          { key: 'municipio_id',       label: 'Municipio',              type: 'select', queryPath: '/geo/municipio/', required: true },
+          { key: 'municipio_id',       label: 'Municipio',              type: 'select', queryPath: '/geo/municipio', required: true },
           { key: 'nombre_lengua_orig', label: 'Nombre en lengua orig.', type: 'text' },
           { key: 'tipo',               label: 'Tipo',                   type: 'text' },
           { key: 'poblacion_total',    label: 'Población total',        type: 'number' },
@@ -190,10 +190,10 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'colonia', label: 'Colonias', path: '/geo/colonia/',
+        key: 'colonia', label: 'Colonias', path: '/geo/colonia',
         campos: [
           { key: 'nombre',       label: 'Nombre',         type: 'text',   required: true },
-          { key: 'localidad_id', label: 'Localidad',      type: 'select', queryPath: '/geo/localidad/', required: true },
+          { key: 'localidad_id', label: 'Localidad',      type: 'select', queryPath: '/geo/localidad', required: true },
           { key: 'tipo',         label: 'Tipo',           type: 'text' },
           { key: 'codigo_postal',label: 'Código postal',  type: 'text' },
           { key: 'latitud',      label: 'Latitud',        type: 'number' },
@@ -206,7 +206,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Ambiental', emoji: '🌧',
     catalogos: [
       {
-        key: 'tipo_evento_climatico', label: 'Tipos de evento climático', path: '/amb/tipo_evento_climatico/',
+        key: 'tipo_evento_climatico', label: 'Tipos de evento climático', path: '/amb/tipo_evento_climatico',
         campos: [
           { key: 'nombre',         label: 'Nombre',              type: 'text',     required: true },
           { key: 'descripcion',    label: 'Descripción',         type: 'textarea' },
@@ -214,7 +214,7 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'variable_ambiental', label: 'Variables ambientales', path: '/amb/variable_ambiental/',
+        key: 'variable_ambiental', label: 'Variables ambientales', path: '/amb/variable_ambiental',
         campos: [
           { key: 'nombre',     label: 'Nombre',     type: 'text', required: true },
           { key: 'unidad',     label: 'Unidad',     type: 'text' },
@@ -223,14 +223,14 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'tipo_amenaza', label: 'Tipos de amenaza', path: '/amb/tipo_amenaza/',
+        key: 'tipo_amenaza', label: 'Tipos de amenaza', path: '/amb/tipo_amenaza',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'clase_uso_suelo', label: 'Clases de uso de suelo', path: '/amb/clase_uso_suelo/',
+        key: 'clase_uso_suelo', label: 'Clases de uso de suelo', path: '/amb/clase_uso_suelo',
         campos: [
           { key: 'nombre',             label: 'Nombre',              type: 'text',     required: true },
           { key: 'codigo',             label: 'Código',              type: 'text' },
@@ -246,14 +246,14 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Social', emoji: '👥',
     catalogos: [
       {
-        key: 'tipo_productor', label: 'Tipos de productor', path: '/social/tipo_productor/',
+        key: 'tipo_productor', label: 'Tipos de productor', path: '/social/tipo_productor',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'lengua', label: 'Lenguas', path: '/social/lengua/',
+        key: 'lengua', label: 'Lenguas', path: '/social/lengua',
         campos: [
           { key: 'nombre',              label: 'Nombre',              type: 'text', required: true },
           { key: 'nombre_original',     label: 'Nombre original',     type: 'text' },
@@ -263,11 +263,11 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'pueblo_originario', label: 'Pueblos originarios', path: '/social/pueblo_originario/',
+        key: 'pueblo_originario', label: 'Pueblos originarios', path: '/social/pueblo_originario',
         campos: [
           { key: 'nombre',               label: 'Nombre',                type: 'text',     required: true },
           { key: 'nombre_propio',        label: 'Nombre propio',         type: 'text' },
-          { key: 'lengua_id',            label: 'Lengua',                type: 'select',   queryPath: '/social/lengua/' },
+          { key: 'lengua_id',            label: 'Lengua',                type: 'select',   queryPath: '/social/lengua' },
           { key: 'region_historica',     label: 'Región histórica',      type: 'text' },
           { key: 'municipios_presencia', label: 'Municipios de presencia', type: 'textarea' },
         ],
@@ -278,42 +278,42 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Cultural', emoji: '🎭',
     catalogos: [
       {
-        key: 'tipo_ritual_agricola', label: 'Tipos de ritual agrícola', path: '/cultural/tipo_ritual_agricola/',
+        key: 'tipo_ritual_agricola', label: 'Tipos de ritual agrícola', path: '/cultural/tipo_ritual_agricola',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'tipo_narrativa_oral', label: 'Tipos de narrativa oral', path: '/cultural/tipo_narrativa_oral/',
+        key: 'tipo_narrativa_oral', label: 'Tipos de narrativa oral', path: '/cultural/tipo_narrativa_oral',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'categoria_saber_agricola', label: 'Categorías de saber agrícola', path: '/cultural/categoria_saber_agricola/',
+        key: 'categoria_saber_agricola', label: 'Categorías de saber agrícola', path: '/cultural/categoria_saber_agricola',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'ocasion', label: 'Ocasiones', path: '/cultural/ocasion/',
+        key: 'ocasion', label: 'Ocasiones', path: '/cultural/ocasion',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'mecanismo_transmision', label: 'Mecanismos de transmisión', path: '/cultural/mecanismo_transmision/',
+        key: 'mecanismo_transmision', label: 'Mecanismos de transmisión', path: '/cultural/mecanismo_transmision',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'vinculo_maiz', label: 'Vínculos con el maíz', path: '/cultural/vinculo_maiz/',
+        key: 'vinculo_maiz', label: 'Vínculos con el maíz', path: '/cultural/vinculo_maiz',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -325,34 +325,34 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
     eje: 'Trazabilidad', emoji: '📋',
     catalogos: [
       {
-        key: 'tipo_producto_dron', label: 'Tipos de producto dron', path: '/trazabilidad/tipo_producto_dron/',
+        key: 'tipo_producto_dron', label: 'Tipos de producto dron', path: '/trazabilidad/tipo_producto_dron',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'formato_archivo', label: 'Formatos de archivo', path: '/trazabilidad/formato_archivo/',
+        key: 'formato_archivo', label: 'Formatos de archivo', path: '/trazabilidad/formato_archivo',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text', required: true },
         ],
       },
       {
-        key: 'tipo_capa_sig', label: 'Tipos de capa SIG', path: '/trazabilidad/tipo_capa_sig/',
+        key: 'tipo_capa_sig', label: 'Tipos de capa SIG', path: '/trazabilidad/tipo_capa_sig',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'fuente_captura', label: 'Fuentes de captura', path: '/trazabilidad/fuente_captura/',
+        key: 'fuente_captura', label: 'Fuentes de captura', path: '/trazabilidad/fuente_captura',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'fuente_informacion', label: 'Fuentes de información', path: '/trazabilidad/fuente_informacion/',
+        key: 'fuente_informacion', label: 'Fuentes de información', path: '/trazabilidad/fuente_informacion',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -360,14 +360,14 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
         ],
       },
       {
-        key: 'origen_muestra', label: 'Orígenes de muestra', path: '/trazabilidad/origen_muestra/',
+        key: 'origen_muestra', label: 'Orígenes de muestra', path: '/trazabilidad/origen_muestra',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
         ],
       },
       {
-        key: 'origen_semilla', label: 'Orígenes de semilla', path: '/trazabilidad/origen_semilla/',
+        key: 'origen_semilla', label: 'Orígenes de semilla', path: '/trazabilidad/origen_semilla',
         campos: [
           { key: 'nombre',      label: 'Nombre',      type: 'text',     required: true },
           { key: 'descripcion', label: 'Descripción', type: 'textarea' },
@@ -428,7 +428,7 @@ export default function CatalogosPage() {
     : (respuesta as PaginatedResponse)?.count ?? (respuesta as PaginatedResponse)?.total ?? 0
 
   const eliminar = useMutation({
-    mutationFn: (id: number) => DEL(`${catActivo.path}${id}/`),
+    mutationFn: (id: number) => DEL(`${catActivo.path}/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['catalogo', catActivo.key] })
       addToast('Registro eliminado', 'ok')
@@ -717,7 +717,7 @@ function ModalCatalogo({
           payload[c.key] = val
         }
       })
-      if (item?.id) await PUT(`${catPath}${item.id}/`, payload)
+      if (item?.id) await PUT(`${catPath}/${item.id}`, payload)
       else           await POST(catPath, payload)
       onSaved()
     } catch (err: unknown) {

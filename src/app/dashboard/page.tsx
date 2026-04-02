@@ -23,7 +23,7 @@ export default function DashboardPage() {
   // Queries para KPIs
   const { data: productores = [] } = useQuery<Productor[]>({
     queryKey: ['productores-count'],
-    queryFn:  () => GET('/social/productor/') as Promise<Productor[]>,
+    queryFn:  () => GET('/social/productor') as Promise<Productor[]>,
     select:   (d: unknown) => {
       const data = d as Productor[] | { items?: Productor[]; results?: Productor[] }
       return Array.isArray(data) ? data : (data.items ?? data.results ?? [])

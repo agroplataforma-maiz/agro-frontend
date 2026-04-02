@@ -7,6 +7,9 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    env:
+      # Prioridad: secret de repo -> variable de repo
+      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL }}
 
     permissions:
       contents: read
@@ -22,9 +25,17 @@ jobs:
       - name: Login GHCR
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
+      - name: Validate required envs
+        run: |
+          if [ -z "$NEXT_PUBLIC_API_URL" ]; then
+            echo "ERROR: Missing NEXT_PUBLIC_API_URL (define it as secret or repo variable)"
+            exit 1
+          fi
+
       - name: Build
         run: |
           docker build \
+            --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
             -t ghcr.io/agroplataforma-maiz/agro-frontend:${{ steps.version.outputs.VERSION }} \
             -t ghcr.io/agroplataforma-maiz/agro-frontend:latest \
             .

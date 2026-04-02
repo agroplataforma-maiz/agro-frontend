@@ -8,8 +8,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     env:
-      # Prioridad: secret de repo -> variable de repo
-      NEXT_PUBLIC_API_URL: ${{ secrets.NEXT_PUBLIC_API_URL || vars.NEXT_PUBLIC_API_URL || secrets.API_URL || vars.API_URL || 'https://agromaiz.mx' }}
       FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
 
     permissions:
@@ -26,16 +24,9 @@ jobs:
       - name: Login GHCR
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login ghcr.io -u ${{ github.actor }} --password-stdin
 
-      - name: Validate required envs
-        run: |
-          if [ -z "$NEXT_PUBLIC_API_URL" ]; then
-            echo "WARNING: NEXT_PUBLIC_API_URL no definido; usando fallback de workflow"
-          fi
-
       - name: Build
         run: |
           docker build \
-            --build-arg NEXT_PUBLIC_API_URL="$NEXT_PUBLIC_API_URL" \
             -t ghcr.io/agroplataforma-maiz/agro-frontend:${{ steps.version.outputs.VERSION }} \
             -t ghcr.io/agroplataforma-maiz/agro-frontend:latest \
             .

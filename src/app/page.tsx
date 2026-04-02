@@ -40,7 +40,6 @@ export default function Home() {
     setToken(t);
     setUsuario(u);
     if (t && u) {
-      router.replace('/dashboard');
     }
     // Navbar scroll color
     const onScroll = () => setNavScrolled(window.scrollY > 40);
@@ -75,7 +74,7 @@ export default function Home() {
         <link rel="icon" type="image/x-icon" href="/favicon.ico" />
       </Head>
       {/* NAVBAR */}
-      <nav className={`nav${navScrolled ? ' scrolled' : ''}`} id="nav">
+        <nav className={`nav${navScrolled ? ' scrolled' : ''}`} id="nav">
         <a className="nav-logo" href="#">
           <span className="nav-logo-ico">🌽</span>
           <div>
@@ -103,8 +102,10 @@ export default function Home() {
           )}
         </div>
         <button className="hamburger" onClick={() => {
-          const links = document.querySelector('.nav-links') as HTMLElement;
-          if (links) links.style.display = links.style.display === 'flex' ? 'none' : 'flex';
+           const links = document.querySelector('.nav-links') as HTMLElement;
+           const btn = document.querySelector('.hamburger') as HTMLElement;
+           if (links) links.classList.toggle('open');
+           if (btn) btn.classList.toggle('is-open');
         }}>
           <span></span><span></span><span></span>
         </button>

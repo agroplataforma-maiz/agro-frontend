@@ -70,7 +70,7 @@ export default function Tabla<T extends { id: number | string }>({
                 <th
                   key={String(col.key)}
                   className={`${styles.th}${canSort ? ' ' + styles.thSortable : ''}${isSorted ? ' ' + styles.thSorted : ''}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`}
-                  style={{ width: col.width }}
+                  style={{ width: col.width, minWidth: col.width }}
                   onClick={canSort ? () => onSort(String(col.key)) : undefined}
                 >
                   {col.header}
@@ -89,7 +89,7 @@ export default function Tabla<T extends { id: number | string }>({
               className={onRowClick ? styles.tbodyTr + ' ' + styles.clickable : styles.tbodyTr}
             >
               {columnas.map(col => (
-                <td key={String(col.key)} className={`${styles.td}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`} style={col.nowrap ? { whiteSpace: 'nowrap', width: col.width } : { width: col.width }}>
+                <td key={String(col.key)} className={`${styles.td}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`} style={col.nowrap ? { whiteSpace: 'nowrap', width: col.width, minWidth: col.width } : { width: col.width, minWidth: col.width }}>
                   {col.render
                     ? col.render(row)
                     : String((row as Record<string, unknown>)[String(col.key)] ?? '—')}

@@ -1,32 +1,20 @@
 // src/lib/api.ts
-// Helper centralizado — reemplaza los 5 API distintos del proyecto actual
+// Helper centralizado de HTTP para toda la aplicación.
+// Producción: https://agromaiz.mx — nginx proxia /api/* al backend
 
-const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '')
-const SANITIZED_BASE_URL = RAW_BASE_URL.replace(/\/api\/?$/i, '')
-const IS_PRODUCTION = process.env.NODE_ENV === 'production'
-
-// En producción usa env si está definida; si no, usa base relativa.
-const BASE_URL = IS_PRODUCTION ? (SANITIZED_BASE_URL || '') : SANITIZED_BASE_URL
-const IS_LOCAL_BACKEND = !IS_PRODUCTION && /localhost|127\.0\.0\.1/i.test(BASE_URL)
+const API_BASE = 'https://agromaiz.mx'
 
 function normalizePath(path: string): string {
   const raw = path.trim()
 
-  // Si ya es URL absoluta, no se modifica
+  // URL absoluta: no se toca
   if (/^https?:\/\//i.test(raw)) return raw
 
-  const withSlash = raw.startsWith('/') ? raw : `/${raw}`
+  const p = raw.startsWith('/') ? raw : `/${raw}`
 
-  // En local, el backend no usa prefijo /api
-  if (IS_LOCAL_BACKEND) {
-    if (withSlash === '/api') return '/'
-    if (withSlash.startsWith('/api/')) return withSlash.replace(/^\/api/, '')
-    return withSlash
-  }
-
-  // En producción, forzar prefijo /api
-  if (withSlash === '/api' || withSlash.startsWith('/api/')) return withSlash
-  return `/api${withSlash}`
+  // Asegurar prefijo /api
+  if (p === '/api' || p.startsWith('/api/')) return p
+  return `/api${p}`
 }
 
 function getToken(): string | null {
@@ -59,7 +47,7 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
   const normalizedPath = normalizePath(path)
   const url = /^https?:\/\//i.test(normalizedPath)
     ? normalizedPath
-    : `${BASE_URL}${normalizedPath}`
+    : `${API_BASE}${normalizedPath}`
 
   const res = await fetch(url, {
     headers: reqHeaders,

@@ -92,16 +92,13 @@
   background: var(--crema);
 }
 .td {
-  padding: 10px 16px;
+  padding: 10px 24px;
   font-size: 13px;
   color: var(--cafe);
   vertical-align: middle;
   white-space: normal;
   word-break: break-word;
   overflow-wrap: anywhere;
-  max-width: 1px;
-  padding-left: 24px;
-  padding-right: 24px;
 }
 
 /* Ajuste para celdas de rol y estado: ancho fijo y sin saltos de línea */

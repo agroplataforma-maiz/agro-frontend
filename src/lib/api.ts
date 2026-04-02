@@ -2,7 +2,10 @@
 // Helper centralizado — reemplaza los 5 API distintos del proyecto actual
 
 const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '')
-const BASE_URL = RAW_BASE_URL.replace(/\/api\/?$/i, '')
+const SANITIZED_BASE_URL = RAW_BASE_URL.replace(/\/api\/?$/i, '')
+const BASE_URL = process.env.NODE_ENV === 'production' && /localhost|127\.0\.0\.1/i.test(SANITIZED_BASE_URL)
+  ? ''
+  : SANITIZED_BASE_URL
 const IS_LOCAL_BACKEND = process.env.NODE_ENV === 'development' && /localhost|127\.0\.0\.1/i.test(BASE_URL)
 
 function normalizePath(path: string): string {

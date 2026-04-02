@@ -3,10 +3,11 @@
 
 const RAW_BASE_URL = process.env.NEXT_PUBLIC_API_URL ?? (process.env.NODE_ENV === 'development' ? 'http://localhost:8000' : '')
 const SANITIZED_BASE_URL = RAW_BASE_URL.replace(/\/api\/?$/i, '')
-const BASE_URL = process.env.NODE_ENV === 'production' && /localhost|127\.0\.0\.1/i.test(SANITIZED_BASE_URL)
-  ? ''
-  : SANITIZED_BASE_URL
-const IS_LOCAL_BACKEND = process.env.NODE_ENV === 'development' && /localhost|127\.0\.0\.1/i.test(BASE_URL)
+const IS_PRODUCTION = process.env.NODE_ENV === 'production'
+
+// En producción usamos base relativa para forzar proxy local /api y evitar errores por envs incorrectos.
+const BASE_URL = IS_PRODUCTION ? '' : SANITIZED_BASE_URL
+const IS_LOCAL_BACKEND = !IS_PRODUCTION && /localhost|127\.0\.0\.1/i.test(BASE_URL)
 
 function normalizePath(path: string): string {
   const raw = path.trim()

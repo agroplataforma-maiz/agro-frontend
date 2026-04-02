@@ -31,16 +31,16 @@ const REGLAS: { ruta: string; roles: string[] }[] = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // Bloquea landing público: raíz siempre redirige a flujo autenticado
+  // En la raíz: si hay sesión, ir al dashboard; si no, mostrar landing pública.
   if (pathname === '/') {
     const token = request.cookies.get('agro_token')?.value
     const rol   = request.cookies.get('agro_rol')?.value
 
-    if (!token || !rol) {
-      return NextResponse.redirect(new URL(RUTA_LOGIN, request.url))
+    if (token && rol) {
+      return NextResponse.redirect(new URL('/dashboard', request.url))
     }
 
-    return NextResponse.redirect(new URL('/dashboard', request.url))
+    return NextResponse.next()
   }
 
   // Evitar loop infinito en rutas públicas

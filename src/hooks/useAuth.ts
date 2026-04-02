@@ -7,7 +7,41 @@ import { useRouter } from 'next/navigation'
 import { useAppStore } from '@/store/useAppStore'
 import { guardarSesion, cerrarSesion, getToken, getUsuario } from '@/lib/auth'
 import { POST } from '@/lib/api'
-import type { LoginPayload, AuthResponse } from '@/types'
+import type { LoginPayload, AuthResponse, Rol, Usuario } from '@/types'
+
+const ROLES_VALIDOS: Rol[] = [
+  'administrador',
+  'investigador',
+  'tecnico_campo',
+  'visualizador',
+  'productor',
+  'invitado',
+]
+
+function normalizarRol(rol: string): Rol {
+  const base = rol
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, '_')
+
+  if (base === 'tecnico_de_campo') return 'tecnico_campo'
+  if (base === 'tecnico') return 'tecnico_campo'
+
+  if ((ROLES_VALIDOS as string[]).includes(base)) {
+    return base as Rol
+  }
+
+  return 'invitado'
+}
+
+function normalizarUsuario(usuario: Usuario): Usuario {
+  return {
+    ...usuario,
+    rol: normalizarRol(String(usuario.rol)),
+  }
+}
 
 export function useAuth() {
   const router  = useRouter()
@@ -16,7 +50,7 @@ export function useAuth() {
 
   // Sincroniza el token de localStorage a cookie para que el middleware lo lea
   function syncTokenCookie(token: string) {
-    document.cookie = `agro_token=${token}; path=/; SameSite=Lax`
+    document.cookie = `agro_token=${encodeURIComponent(token)}; path=/; SameSite=Lax`
   }
 
   function clearTokenCookie() {
@@ -25,7 +59,8 @@ export function useAuth() {
 
   // Sincroniza el rol en cookie para que el middleware pueda verificar permisos
   function syncRolCookie(rol: string) {
-    document.cookie = `agro_rol=${rol}; path=/; SameSite=Lax`
+    const rolNormalizado = normalizarRol(rol)
+    document.cookie = `agro_rol=${encodeURIComponent(rolNormalizado)}; path=/; SameSite=Lax`
   }
 
   function clearRolCookie() {
@@ -82,11 +117,17 @@ export function useAuth() {
 
   async function login(payload: LoginPayload) {
     const data = await POST<AuthResponse>('/auth/login', payload)
-    guardarSesion(data.access_token, data.usuario)
-    syncTokenCookie(data.access_token)
-    syncRolCookie(data.usuario.rol)
-    setUsuario(data.usuario)
-    return data
+    const usuarioNormalizado = normalizarUsuario(data.usuario)
+    const responseNormalizada: AuthResponse = {
+      ...data,
+      usuario: usuarioNormalizado,
+    }
+
+    guardarSesion(responseNormalizada.access_token, responseNormalizada.usuario)
+    syncTokenCookie(responseNormalizada.access_token)
+    syncRolCookie(responseNormalizada.usuario.rol)
+    setUsuario(responseNormalizada.usuario)
+    return responseNormalizada
   }
 
   async function logout() {
@@ -105,9 +146,10 @@ export function useAuth() {
     const usuario = getUsuario()
     const token   = getToken()
     if (usuario && token) {
-      setUsuario(usuario)
+      const usuarioNormalizado = normalizarUsuario(usuario)
+      setUsuario(usuarioNormalizado)
       syncTokenCookie(token)
-      syncRolCookie(usuario.rol)
+      syncRolCookie(usuarioNormalizado.rol)
     }
   }
 

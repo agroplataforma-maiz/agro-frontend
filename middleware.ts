@@ -7,6 +7,29 @@ import { NextResponse } from 'next/server'
 import type { NextRequest } from 'next/server'
 
 const RUTA_LOGIN      = '/login'
+
+function decodeCookieValue(value?: string): string {
+  if (!value) return ''
+  try {
+    return decodeURIComponent(value)
+  } catch {
+    return value
+  }
+}
+
+function normalizarRol(rol?: string): string {
+  const base = decodeCookieValue(rol)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .trim()
+    .toLowerCase()
+    .replace(/[-\s]+/g, '_')
+
+  if (base === 'tecnico_de_campo') return 'tecnico_campo'
+  if (base === 'tecnico') return 'tecnico_campo'
+
+  return base
+}
 const RUTA_SIN_ACCESO = '/sin-acceso'
 
 // Cada regla define qué roles pueden acceder al prefijo de ruta.
@@ -31,16 +54,16 @@ const REGLAS: { ruta: string; roles: string[] }[] = [
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl
 
-  // En la raíz: si hay sesión, ir al dashboard; si no, mostrar landing pública.
+  // Bloquea landing público: raíz siempre redirige a flujo autenticado
   if (pathname === '/') {
-    const token = request.cookies.get('agro_token')?.value
-    const rol   = request.cookies.get('agro_rol')?.value
+    const token = decodeCookieValue(request.cookies.get('agro_token')?.value)
+    const rol   = normalizarRol(request.cookies.get('agro_rol')?.value)
 
-    if (token && rol) {
-      return NextResponse.redirect(new URL('/dashboard', request.url))
+    if (!token || !rol) {
+      return NextResponse.redirect(new URL(RUTA_LOGIN, request.url))
     }
 
-    return NextResponse.next()
+    return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 
   // Evitar loop infinito en rutas públicas
@@ -51,8 +74,8 @@ export function middleware(request: NextRequest) {
   const regla = REGLAS.find(r => pathname.startsWith(r.ruta))
   if (!regla) return NextResponse.next()
 
-  const token = request.cookies.get('agro_token')?.value
-  const rol   = request.cookies.get('agro_rol')?.value
+  const token = decodeCookieValue(request.cookies.get('agro_token')?.value)
+  const rol   = normalizarRol(request.cookies.get('agro_rol')?.value)
 
   // Sin token → login
   if (!token) {

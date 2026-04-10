@@ -49,8 +49,8 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
   }
   const hadAuthToken = Boolean(reqHeaders['Authorization'])
 
-  //const normalizedPath = normalizePath(path)
-  const normalizedPath = path.trim() // No forzar prefijo /api, lo maneja el backend QUITAR CUANDO SE VAYA A PRODUCCIÓN
+  const normalizedPath = normalizePath(path)
+  //const normalizedPath = path.trim() // No forzar prefijo /api, lo maneja el backend QUITAR CUANDO SE VAYA A PRODUCCIÓN
   const url = /^https?:\/\//i.test(normalizedPath)
     ? normalizedPath
     : `${API_BASE}${normalizedPath}`

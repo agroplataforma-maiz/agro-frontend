@@ -34,13 +34,28 @@ export default function LoginPage() {
   // Estado de transición de login/logout: 'none' | 'login' | 'logout'
   const [showLoginTransition, setShowLoginTransition] = useState<'none' | 'login' | 'logout'>('none')
 
-  useEffect(() => { setMounted(true) }, [])
+
+  useEffect(() => {
+    setMounted(true)
+    // Forzar modo claro SOLO mientras este componente esté montado
+    const root = document.documentElement;
+    const wasDark = root.classList.contains('dark');
+    root.classList.remove('dark');
+    return () => {
+      // Restaurar modo oscuro si estaba activo antes
+      if (wasDark) root.classList.add('dark');
+    };
+  }, [])
 
   useEffect(() => {
     // El login no manipula el modo global, solo usa colores fijos propios
     const usuarioActual = getUsuario()
     if (getToken() && usuarioActual) {
       router.replace(ROL_HOME[usuarioActual.rol] ?? '/dashboard')
+      // Limpiar parámetros de la URL tras login
+      if (typeof window !== 'undefined') {
+        window.history.replaceState({}, '', ROL_HOME[usuarioActual.rol] ?? '/dashboard');
+      }
     }
     // Mostrar aviso si el token expiró
     const params = new URLSearchParams(window.location.search)
@@ -143,7 +158,7 @@ export default function LoginPage() {
             <div className={styles['sesion-rol']} id="sa-rol">—</div>
             <div className={styles['sesion-btns']}>
               <Link className={styles['btn-ir']} href="/productores">🌱 Ir a la plataforma</Link>
-              <a className={styles['btn-ir']} href="/catalogos" style={{background:'var(--maiz)',color:'var(--tierra)'}}>📋 Catálogos</a>
+              <Link className={styles['btn-ir']} href="/catalogos" style={{background:'var(--maiz)',color:'var(--tierra)'}}>📋 Catálogos</Link>
               <button className={styles['btn-salir']} onClick={cerrarSesion}>✕ Cerrar sesión</button>
             </div>
           </div>

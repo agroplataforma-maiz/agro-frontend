@@ -148,10 +148,13 @@ export function useAuth() {
     clearTokenCookie()
     clearRolCookie()
     setUsuario(null)
-    await new Promise(resolve => setTimeout(resolve, 2000))
+    await new Promise(resolve => setTimeout(resolve, 1200))
     limpiarOverlay()
-    // Redirigir a dashboard tras logout (evita bucle con /)
-    router.push('/dashboard')
+    // Redirigir a login tras logout y limpiar la URL
+    router.replace('/login')
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({}, '', '/login');
+    }
   }
 
   // Inicializa el store desde localStorage al montar la app

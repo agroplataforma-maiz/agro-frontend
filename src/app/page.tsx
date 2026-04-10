@@ -3,6 +3,7 @@ import '@/styles/globals.css';
 import '@/styles/landing-full.css';
 
 import Head from 'next/head';
+import Link from 'next/link';
 
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -36,7 +37,10 @@ export default function Home() {
   const [navScrolled, setNavScrolled] = useState(false);
 
   useEffect(() => {
-    document.documentElement.classList.remove('dark');
+    // Forzar modo claro SOLO mientras este componente esté montado
+    const root = document.documentElement;
+    const wasDark = root.classList.contains('dark');
+    root.classList.remove('dark');
 
     const t = getToken();
     const u = getUsuario();
@@ -50,7 +54,11 @@ export default function Home() {
     const onScroll = () => setNavScrolled(window.scrollY > 40);
     window.addEventListener('scroll', onScroll);
     setNavScrolled(window.scrollY > 40);
-    return () => window.removeEventListener('scroll', onScroll);
+    return () => {
+      window.removeEventListener('scroll', onScroll);
+      // Restaurar modo oscuro si estaba activo antes
+      if (wasDark) root.classList.add('dark');
+    };
   }, [router]);
 
   useRevealOnScroll();
@@ -59,7 +67,11 @@ export default function Home() {
     cerrarSesion();
     setToken(null);
     setUsuario(null);
-    router.replace('/');
+    router.replace('/login');
+    // Limpiar parámetros de la URL si los hubiera
+    if (typeof window !== 'undefined') {
+      window.history.replaceState({}, '', '/login');
+    }
   };
 
   const iniciales = usuario?.nombre_completo
@@ -103,7 +115,7 @@ export default function Home() {
               <button className="nav-btn-salir" onClick={handleLogout}>✕</button>
             </div>
           ) : (
-            <a className="nav-btn-login" href="/login" id="nav-login-btn">🔐 Iniciar sesión</a>
+            <Link className="nav-btn-login" href="/login" id="nav-login-btn">🔐 Iniciar sesión</Link>
           )}
         </div>
         <button className="hamburger" onClick={() => {
@@ -152,18 +164,9 @@ export default function Home() {
             <h1 className="hero-h1">Conservando el<br/>maíz <em>nativo</em><br/>de la Huasteca</h1>
             <p className="hero-desc">Una agroplataforma digital que combina inteligencia geoespacial, saberes comunitarios y ciencia de datos para proteger la biodiversidad del maíz nativo en la Huasteca Potosina.</p>
             <div className="hero-acciones">
-              <a className="btn-hero-primary" href="/login">🔐 Acceder a la plataforma</a>
+              <Link className="btn-hero-primary" href="/login">🔐 Acceder a la plataforma</Link>
               <a className="btn-hero-ghost" href="/divulgacion.html">🌽 Para comunidades</a>
             </div>
-          </div>
-          <div className="hero-stats">
-            <div className="hero-stat"><div className="hero-stat-n">15+</div><div className="hero-stat-l">Comunidades</div></div>
-            <div className="hero-sep"></div>
-            <div className="hero-stat"><div className="hero-stat-n">11</div><div className="hero-stat-l">Investigadores</div></div>
-            <div className="hero-sep"></div>
-            <div className="hero-stat"><div className="hero-stat-n">30+</div><div className="hero-stat-l">Muestras</div></div>
-            <div className="hero-sep"></div>
-            <div className="hero-stat"><div className="hero-stat-n">16</div><div className="hero-stat-l">Meses</div></div>
           </div>
         </section>
         {/* NÚMEROS */}
@@ -195,19 +198,19 @@ export default function Home() {
               <div className="ml-ico">🧑‍🌾</div>
               <div className="ml-nombre">Productores</div>
               <p className="ml-desc">Registro completo de custodios del maíz nativo: perfil personal, socioeconómico, seguridad alimentaria, vulnerabilidad climática, identidad cultural y consentimiento informado.</p>
-              <a className="ml-link" href="/login">Acceder →</a>
+              <Link className="ml-link" href="/login">Acceder →</Link>
             </div>
             <div className="ml-card">
               <div className="ml-ico">🎭</div>
               <div className="ml-nombre">Social y Cultural</div>
               <p className="ml-desc">Saberes tradicionales, rituales agrícolas, narrativas orales, gastronomía, transmisión del conocimiento y nombres en lenguas originarias — el patrimonio biocultural del maíz.</p>
-              <a className="ml-link" href="/login">Acceder →</a>
+              <Link className="ml-link" href="/login">Acceder →</Link>
             </div>
             <div className="ml-card">
               <div className="ml-ico">📋</div>
               <div className="ml-nombre">Catálogos</div>
               <p className="ml-desc">Razas de maíz, colores de grano, uso del maíz, municipios, comunidades, lenguas, pueblos originarios y más de 15 catálogos del sistema con CRUD completo.</p>
-              <a className="ml-link" href="/login">Acceder →</a>
+              <Link className="ml-link" href="/login">Acceder →</Link>
             </div>
             <div className="ml-card" style={{ opacity: .65 }}>
               <div className="ml-ico">🗺️</div>
@@ -348,8 +351,8 @@ export default function Home() {
             <h2 className="cta-titulo">¿Formas parte<br/>del <em>equipo</em>?</h2>
             <p className="cta-desc">Accede a la plataforma para registrar productores, capturar datos de campo, consultar catálogos y visualizar el avance del proyecto en tiempo real.</p>
             <div className="cta-btns">
-              <a className="btn-hero-primary" href="/login">🔐 Iniciar sesión</a>
-              <a className="btn-hero-ghost" href="/login#registro">✉ Crear cuenta</a>
+              <Link className="btn-hero-primary" href="/login">🔐 Iniciar sesión</Link>
+              <Link className="btn-hero-ghost" href="/login#registro">✉ Crear cuenta</Link>
             </div>
           </div>
         </div>

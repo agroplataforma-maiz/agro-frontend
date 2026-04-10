@@ -1,17 +1,21 @@
 "use client";
 
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import AdminShell from "@/components/dashboard/AdminShell";
 import { useFenotipo } from "@/hooks/useFenotipo";
 import { useCatalogos } from "@/hooks/useCatalogos";
 import { useAppStore } from "@/store/useAppStore";
+import { useRouter } from "next/navigation";
 import SectionForm from "@/components/fenotipo/SectionForm";
 import ReportView from "@/components/fenotipo/ReportView";
 import { grupos } from "@/data/descriptor";
 import { Button } from "@/components/ui";
+import Tabla, { type Columna } from '@/components/ui/Tabla'
 import ModuleHero from '@/components/ui/ModuleHero'
+import SearchInput from '@/components/ui/SearchInput'
 import SelectField from "@/components/ui/SelectField";
+import { useUsuariosTecnicos } from "@/hooks/useUsuariosTecnicos";
 import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { GET, POST } from "@/lib/api";
 import styles from "./fenotipo.module.css";
@@ -34,6 +38,19 @@ const ALL_STEPS = [
 
 const TIPOS_VARIEDAD = ["Nativo", "Criollo", "Mejorado", "Híbrido"];
 
+interface FenotipoListItem {
+  id: number;
+  dg?: {
+    raza_id?: string;
+    tipo?: string;
+    colector?: string;
+    municipio_id?: string;
+    temporada?: string;
+    plantas?: string;
+    reps?: string;
+  };
+}
+
 function toArray<T>(data: unknown): T[] {
   if (Array.isArray(data)) return data as T[];
   const d = data as Record<string, unknown>;
@@ -50,16 +67,33 @@ function buildTemporadas(): { value: string; label: string }[] {
   return opts;
 }
 
+
+import { useEffect } from "react";
+
 export default function Page() {
   const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
 
   const { data, step, setStep, update, dg, updateDg, clearAll } = useFenotipo();
   useCatalogos(); // carga municipios al store
+  const usuario = useAppStore(s => s.usuario);
+  const { tecnicos: responsables, isLoading: cargandoResponsables } = useUsuariosTecnicos();
+  const addToast = useAppStore(s => s.addToast);
   const municipios = useAppStore(s => s.municipios);
   const total = ALL_STEPS.length;
+  const esAdmin = usuario?.rol === 'administrador';
+  const puedeCrear = !esAdmin;
+  const [busqueda, setBusqueda] = useState("");
 
   const hasDg = Object.values(dg).some(v => v.length > 0);
   const temporadas = useMemo(() => buildTemporadas(), []);
+
+  // Redirige a '/' si no hay usuario (tras logout)
+  const router = useRouter();
+  useEffect(() => {
+    if (usuario === null) {
+      router.replace('/');
+    }
+  }, [usuario, router]);
 
   // ── Catálogo razas de maíz ───────────────────────────────────────────
   const { data: razasRaw, isLoading: cargandoRazas } = useQuery({
@@ -96,12 +130,24 @@ export default function Page() {
     ...localidades.map(l => ({ value: String(l.id), label: l.nombre })),
   ], [localidades, dg.municipio_id, cargandoLocalidades]);
 
+  const { data: registrosRaw = [], isLoading: cargandoRegistros } = useQuery<FenotipoListItem[]>({
+    queryKey: ["fenotipo-registros"],
+    queryFn: () => GET("/fenotipo") as Promise<FenotipoListItem[]>,
+    enabled: accesoPermitido && esAdmin,
+    select: (d: unknown) => toArray<FenotipoListItem>(d),
+  });
+
   const handleMunicipioChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     updateDg("municipio_id", e.target.value);
     updateDg("localidad_id", "");
   };
 
   const handleSave = async () => {
+    if (!puedeCrear) {
+      addToast('Solo investigadores y técnicos de campo pueden crear registros fenotípicos.', 'err');
+      return;
+    }
+
     await POST("/fenotipo", { dg, data });
     clearAll();
   };
@@ -109,7 +155,124 @@ export default function Page() {
   // Raza seleccionada (para label en reporte)
   const razaLabel = razas.find(r => String(r.id) === dg.raza_id)?.nombre ?? "";
 
+  if (!usuario) return null;
   if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
+
+  const nombreRaza = (item: FenotipoListItem) => {
+    const raza = razas.find((r) => String(r.id) === String(item.dg?.raza_id))
+    return raza?.nombre ?? '—'
+  }
+
+  const nombreMunicipio = (item: FenotipoListItem) => {
+    const municipio = municipios.find((m) => String(m.id) === String(item.dg?.municipio_id))
+    return municipio?.nombre ?? '—'
+  }
+
+  const registrosFiltrados = registrosRaw.filter((item) => {
+    const texto = [
+      nombreRaza(item),
+      item.dg?.tipo ?? '',
+      item.dg?.colector ?? '',
+      nombreMunicipio(item),
+      item.dg?.temporada ?? '',
+    ].join(' ').toLowerCase()
+
+    return texto.includes(busqueda.toLowerCase())
+  })
+
+  const columnasAdmin: Columna<FenotipoListItem>[] = [
+    { key: 'id', header: 'ID', width: '60px', hideOnMobile: true, hideOnTablet: true },
+    {
+      key: 'raza',
+      header: 'Raza',
+      render: (item) => nombreRaza(item),
+    },
+    {
+      key: 'tipo',
+      header: 'Tipo',
+      width: '110px',
+      render: (item) => item.dg?.tipo || '—',
+    },
+    {
+      key: 'colector',
+      header: 'Responsable',
+      render: (item) => item.dg?.colector || '—',
+    },
+    {
+      key: 'municipio',
+      header: 'Municipio',
+      hideOnTablet: true,
+      render: (item) => nombreMunicipio(item),
+    },
+    {
+      key: 'temporada',
+      header: 'Temporada',
+      width: '100px',
+      render: (item) => item.dg?.temporada || '—',
+    },
+  ]
+
+  if (esAdmin) {
+    return (
+      <AdminShell contentPadding="0">
+        <div className={styles.page}>
+          <ModuleHero
+            eyebrow="Fenotipo · Consulta administrativa"
+            title={<>Tabla de <em>Registros</em> 🌽</>}
+            description="Como administrador visualizas solo el listado de evaluaciones fenotípicas registradas, sin mostrar el flujo de captura por secciones."
+            stats={[
+              { label: 'registros', value: registrosRaw.length || '—' },
+              { label: 'razas', value: razas.length || '—' },
+              { label: 'municipios', value: municipios.length || '—' },
+            ]}
+          />
+
+          <div className={styles.readOnlyNotice}>
+            🔒 Vista administrativa: solo consulta de registros fenotípicos. El flujo de captura queda reservado para investigación y técnicos de campo.
+          </div>
+
+          <header className={styles.header}>
+            <div>
+              <h2 className={styles.title}>Registros fenotípicos</h2>
+              <p className={styles.subtitle}>{registrosFiltrados.length} evaluaciones visibles</p>
+            </div>
+            <div className={styles.headerActions}>
+              <SearchInput
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Buscar por raza, responsable o municipio…"
+              />
+            </div>
+          </header>
+
+          <div className={styles.kpiBand}>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{registrosRaw.length || '—'}</span>
+              <span className={styles.kpiLbl}>Evaluaciones</span>
+            </div>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{razas.length || '—'}</span>
+              <span className={styles.kpiLbl}>Razas disponibles</span>
+            </div>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{municipios.length || '—'}</span>
+              <span className={styles.kpiLbl}>Municipios disponibles</span>
+            </div>
+          </div>
+
+          <div className={styles.adminTableWrap}>
+            <Tabla
+              datos={registrosFiltrados}
+              columnas={columnasAdmin}
+              cargando={cargandoRegistros}
+              vacio="No hay registros fenotípicos disponibles"
+              infoText={`${registrosFiltrados.length} registros encontrados`}
+            />
+          </div>
+        </div>
+      </AdminShell>
+    )
+  }
 
   return (
     <AdminShell>
@@ -117,18 +280,25 @@ export default function Page() {
         <ModuleHero
           eyebrow="Fenotipo · Registro técnico"
           title={<>Registro <em>Fenotípico</em> 🌽</>}
-          description="Captura descriptores morfológicos y agronómicos de variedades de maíz con un flujo seccionado y trazable." 
+          description={esAdmin
+            ? 'Consulta el flujo técnico y el resumen fenotípico. Las nuevas altas están reservadas para investigadores y técnicos de campo.'
+            : 'Captura descriptores morfológicos y agronómicos de variedades de maíz con un flujo seccionado y trazable.'}
           stats={[
             { label: 'sección', value: `${step + 1}/${total}` },
             { label: 'razas', value: razas.length || '—' },
             { label: 'municipios', value: municipios.length || '—' },
           ]}
-          actions={hasDg ? (
+          actions={puedeCrear && hasDg ? (
             <button type="button" className={styles.clearBtn} onClick={clearAll}>
               🗑 Limpiar
             </button>
           ) : undefined}
         />
+        {esAdmin && (
+          <div className={styles.readOnlyNotice}>
+            🔒 El alta de registros fenotípicos está reservada para investigadores y técnicos de campo; como administrador solo puedes revisar el flujo y la información.
+          </div>
+        )}
 
         {/* ── Cuerpo: formulario + resumen lateral ── */}
         <div className={styles.layout}>
@@ -232,13 +402,39 @@ export default function Page() {
                     <label className={styles.dgLabel} htmlFor="dg-colector">
                       Colector / Responsable
                     </label>
-                    <input
-                      id="dg-colector"
-                      className={styles.dgInput}
-                      value={dg.colector}
-                      placeholder="Nombre completo del responsable"
-                      onChange={e => updateDg("colector", e.target.value)}
-                    />
+                    {usuario?.rol === 'investigador' ? (
+                      <SelectField
+                        label=""
+                        name="colector"
+                        value={dg.colector || ''}
+                        options={[
+                          { value: '', label: cargandoResponsables ? 'Cargando…' : responsables.length === 0 ? 'No hay técnicos disponibles' : 'Selecciona técnico responsable…' },
+                          ...responsables.map((u) => ({
+                            value: String(u.id),
+                            label: u.nombre_completo || u.username
+                          }))
+                        ]}
+                        onChange={e => updateDg("colector", e.target.value)}
+                        className={styles.selectLg}
+                      />
+                    ) : usuario?.rol === 'tecnico_campo' ? (
+                      <input
+                        id="dg-colector"
+                        className={styles.dgInput}
+                        value={usuario.nombre_completo || usuario.username}
+                        placeholder="Nombre completo del responsable"
+                        readOnly
+                        disabled
+                      />
+                    ) : (
+                      <input
+                        id="dg-colector"
+                        className={styles.dgInput}
+                        value={dg.colector}
+                        placeholder="Nombre completo del responsable"
+                        onChange={e => updateDg("colector", e.target.value)}
+                      />
+                    )}
                   </div>
                 </div>
 
@@ -392,8 +588,8 @@ export default function Page() {
                 Siguiente →
               </Button>
             ) : (
-              <Button variante="primario" onClick={handleSave}>
-                💾 Guardar registro
+              <Button variante={puedeCrear ? "primario" : "secundario"} onClick={handleSave} disabled={!puedeCrear}>
+                {puedeCrear ? '💾 Guardar registro' : '🔒 Alta restringida para admin'}
               </Button>
             )}
           </div>{/* /cardFoot */}

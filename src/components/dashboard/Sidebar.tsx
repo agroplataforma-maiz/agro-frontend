@@ -26,10 +26,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
   const pathname = usePathname();
 
   // Flags de permiso para mostrar/ocultar items del menú
-  const puedeCapturar      = !rol || ['administrador', 'investigador', 'tecnico_campo'].includes(rol);
-  const puedeVerCatalogos  = !rol || ['administrador', 'investigador'].includes(rol);
-  const puedeVerUsuarios   = !rol || rol === 'administrador';
-  const puedeVerPerfil     = !rol || rol !== 'invitado';
+  const esAdmin = rol === 'administrador';
+  const esConsultaMapa = !rol || ['visualizador', 'productor', 'invitado'].includes(rol);
+  const puedeCapturar = !rol || ['investigador', 'tecnico_campo'].includes(rol);
+  const puedeVerMapaComunidades = !rol || ['administrador', 'investigador', 'tecnico_campo', 'visualizador', 'productor', 'invitado'].includes(rol);
+  const puedeVerCatalogos = !rol || ['administrador', 'investigador'].includes(rol);
+  const puedeVerUsuarios = !rol || esAdmin;
+  const puedeVerPerfil = !rol || rol !== 'invitado';
+  const dashboardHref = esAdmin ? '/admin/dashboard' : '/dashboard';
 
   return (
     <nav className={navClass} id="sidebar" role="navigation" aria-label="Menú principal" data-collapsed={collapsed}>
@@ -64,142 +68,236 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
         </button>
       )}
 
-      {/* Nav principal */}
-      <div className={styles['sb-group-label']} aria-hidden="true">Principal</div>
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname === '/dashboard' || pathname === '/admin/dashboard' ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname === '/dashboard' || pathname === '/admin/dashboard' ? 'page' : undefined}
-        aria-label="Dashboard - Inicio"
-        data-tooltip="Dashboard"
-        onClick={() => onNavigate('/dashboard')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">🏠</span>
-        <span className={styles['sb-item-txt']}>Dashboard</span>
-      </button>
+      {/* Orden específico para admin */}
+      {esAdmin ? (
+        <>
+          {/* Dashboard */}
+          <button
+            className={
+              styles['sb-item'] +
+              (pathname === '/dashboard' || pathname === '/admin/dashboard' ? ' ' + styles['active'] : '')
+            }
+            aria-current={pathname === '/dashboard' || pathname === '/admin/dashboard' ? 'page' : undefined}
+            aria-label="Dashboard - Inicio"
+            data-tooltip="Dashboard"
+            onClick={() => onNavigate(dashboardHref)}
+          >
+            <span className={styles['sb-item-ico']} aria-hidden="true">🏠</span>
+            <span className={styles['sb-item-txt']}>Dashboard</span>
+          </button>
+          {/* Productores */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/admin/productores') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/admin/productores') ? 'page' : undefined}
+              aria-label="Productores"
+              data-tooltip="Productores"
+              onClick={() => onNavigate('/admin/productores')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🌾</span>
+              <span className={styles['sb-item-txt']}>Productores</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+            </button>
+          )}
+          {/* Comunidades */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/admin/comunidades') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/admin/comunidades') ? 'page' : undefined}
+              aria-label="Comunidades"
+              data-tooltip="Comunidades"
+              onClick={() => onNavigate('/admin/comunidades')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
+              <span className={styles['sb-item-txt']}>Comunidades</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+            </button>
+          )}
+          {/* Sociocultural */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/admin/sociocultural') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/admin/sociocultural') ? 'page' : undefined}
+              aria-label="Sociocultural"
+              data-tooltip="Sociocultural"
+              onClick={() => onNavigate('/admin/sociocultural')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🎭</span>
+              <span className={styles['sb-item-txt']}>Sociocultural</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta" style={{marginLeft:4}}>Beta</span>
+            </button>
+          )}
+          {/* Fenotípico */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/admin/fenotipo') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/admin/fenotipo') ? 'page' : undefined}
+              aria-label="Fenotípico"
+              data-tooltip="Fenotípico"
+              onClick={() => onNavigate('/admin/fenotipo')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🔬</span>
+              <span className={styles['sb-item-txt']}>Fenotípico</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta" style={{marginLeft:4}}>Beta</span>
+            </button>
+          )}
+          {/* Catálogos */}
+          {puedeVerCatalogos && (
+            <button
+              className={
+                styles['sb-item'] +
+                (pathname.startsWith('/admin/catalogos') ? ' ' + styles['active'] : '')
+              }
+              aria-current={pathname.startsWith('/admin/catalogos') ? 'page' : undefined}
+              aria-label="Catálogos"
+              data-tooltip="Catálogos"
+              onClick={() => onNavigate('/admin/catalogos')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">📋</span>
+              <span className={styles['sb-item-txt']}>Catálogos</span>
+            </button>
+          )}
+          {/* Usuarios */}
+          {puedeVerUsuarios && (
+            <button
+              className={
+                styles['sb-item'] +
+                (pathname === '/admin/usuarios' ? ' ' + styles['active'] : '')
+              }
+              aria-label="Inventario de Usuarios"
+              data-tooltip="Usuarios"
+              aria-current={pathname === '/admin/usuarios' ? 'page' : undefined}
+              onClick={() => onNavigate('/admin/usuarios')}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">⚙️</span>
+              <span className={styles['sb-item-txt']}>Usuarios</span>
+            </button>
+          )}
+        </>
+      ) : (
+        <>
+          {/* Dashboard */}
+          <button
+            className={
+              styles['sb-item'] +
+              (pathname === '/dashboard' ? ' ' + styles['active'] : '')
+            }
+            aria-current={pathname === '/dashboard' ? 'page' : undefined}
+            aria-label="Dashboard - Inicio"
+            data-tooltip="Dashboard"
+            onClick={() => onNavigate(dashboardHref)}
+          >
+            <span className={styles['sb-item-ico']} aria-hidden="true">🏠</span>
+            <span className={styles['sb-item-txt']}>Dashboard</span>
+          </button>
+          {/* Solo para roles permitidos, no consultor */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <>
+              {/* Productores */}
+              <button
+                className={
+                  styles['sb-item'] +
+                  (pathname.startsWith('/productores') ? ' ' + styles['active'] : '')
+                }
+                aria-current={pathname.startsWith('/productores') ? 'page' : undefined}
+                aria-label="Productores"
+                data-tooltip="Productores"
+                onClick={() => onNavigate('/productores')}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🌾</span>
+                <span className={styles['sb-item-txt']}>Productores</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+              </button>
+              {/* Comunidades debajo de Productores, con badge Nuevo */}
+              <button
+                className={
+                  styles['sb-item'] +
+                  (pathname.startsWith('/comunidades') ? ' ' + styles['active'] : '')
+                }
+                aria-current={pathname.startsWith('/comunidades') ? 'page' : undefined}
+                aria-label="Comunidades"
+                data-tooltip="Comunidades"
+                onClick={() => onNavigate('/comunidades')}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
+                <span className={styles['sb-item-txt']}>Comunidades</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+              </button>
+              {/* Sociocultural */}
+              <button
+                className={
+                  styles['sb-item'] +
+                  (pathname.startsWith('/sociocultural') ? ' ' + styles['active'] : '')
+                }
+                aria-current={pathname.startsWith('/sociocultural') ? 'page' : undefined}
+                aria-label="Sociocultural"
+                data-tooltip="Sociocultural"
+                onClick={() => onNavigate('/sociocultural')}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🎭</span>
+                <span className={styles['sb-item-txt']}>Sociocultural</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta" style={{marginLeft:4}}>Beta</span>
+              </button>
+              {/* Fenotípico */}
+              <button
+                className={
+                  styles['sb-item'] +
+                  (pathname.startsWith('/fenotipo') ? ' ' + styles['active'] : '')
+                }
+                aria-current={pathname.startsWith('/fenotipo') ? 'page' : undefined}
+                aria-label="Fenotípico"
+                data-tooltip="Fenotípico"
+                onClick={() => onNavigate('/fenotipo')}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🔬</span>
+                <span className={styles['sb-item-txt']}>Fenotípico</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta" style={{marginLeft:4}}>Beta</span>
+              </button>
+            </>
+          )}
+        </>
+      )}
 
-      {puedeCapturar && <div className={styles['sb-group-label']} aria-hidden="true">Módulos activos</div>}
-      {puedeCapturar && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname.startsWith('/productores') ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname.startsWith('/productores') ? 'page' : undefined}
-        aria-label="Módulo Productores"
-        data-tooltip="Productores"
-        onClick={() => onNavigate('/productores')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🌾</span>
-        <span className={styles['sb-item-txt']}>Productores</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo">Nuevo</span>
-      </button>
-      )}
-      {puedeCapturar && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname.startsWith('/comunidades') ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname.startsWith('/comunidades') ? 'page' : undefined}
-        aria-label="Módulo Comunidades"
-        data-tooltip="Comunidades"
-        onClick={() => onNavigate('/comunidades')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
-        <span className={styles['sb-item-txt']}>Comunidades</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo">Nuevo</span>
-      </button>
-      )}
-      {puedeCapturar && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname.startsWith('/sociocultural') ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname.startsWith('/sociocultural') ? 'page' : undefined}
-        aria-label="Módulo Sociocultural"
-        data-tooltip="Sociocultural"
-        onClick={() => onNavigate('/sociocultural')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">🎭</span>
-        <span className={styles['sb-item-txt']}>Sociocultural</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta">Beta</span>
-      </button>
-      )}
-      {puedeCapturar && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname.startsWith('/fenotipo') ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname.startsWith('/fenotipo') ? 'page' : undefined}
-        aria-label="Módulo Fenotípico"
-        data-tooltip="Fenotípico"
-        onClick={() => onNavigate('/fenotipo')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">🔬</span>
-        <span className={styles['sb-item-txt']}>Fenotípico</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Beta">Beta</span>
-      </button>
+      {/* Módulos públicos/campo */}
+      {/* Solo mostrar Comunidades (Mapa) para roles de solo consulta, no para técnicos/campo */}
+      {puedeVerMapaComunidades && !esAdmin && esConsultaMapa && (
+        <button
+          className={
+            styles['sb-item'] +
+            (pathname.startsWith('/comunidades') ? ' ' + styles['active'] : '')
+          }
+          aria-current={pathname.startsWith('/comunidades') ? 'page' : undefined}
+          aria-label="Mapa de comunidades"
+          data-tooltip="Mapa de comunidades"
+          onClick={() => onNavigate('/comunidades')}
+        >
+          <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
+          <span className={styles['sb-item-txt']}>Mapa de comunidades</span>
+          <span className={styles['sb-item-badge'] + ' ' + styles['badge-beta']} aria-label="Mapa">Mapa</span>
+        </button>
       )}
 
-      {puedeCapturar && <div className={styles['sb-group-label']} aria-hidden="true">En construcción</div>}
+      {/* En construcción */}
       {puedeCapturar && (
-      <>
-      <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Mapas y SIG - próximamente" data-tooltip="Mapas y SIG" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
-        <span className={styles['sb-item-ico']} aria-hidden="true">🗺️</span>
-        <span className={styles['sb-item-txt']}>Mapas y SIG</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
-      </button>
-      <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Agronómico - próximamente" data-tooltip="Agronómico" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
-        <span className={styles['sb-item-ico']} aria-hidden="true">🌱</span>
-        <span className={styles['sb-item-txt']}>Agronómico</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
-      </button>
-      <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Ambiental - próximamente" data-tooltip="Ambiental" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
-        <span className={styles['sb-item-ico']} aria-hidden="true">🌧️</span>
-        <span className={styles['sb-item-txt']}>Ambiental</span>
-        <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
-      </button>
-      </>
+        <>
+          <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Mapas y SIG - próximamente" data-tooltip="Mapas y SIG" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
+            <span className={styles['sb-item-ico']} aria-hidden="true">🗺️</span>
+            <span className={styles['sb-item-txt']}>Mapas y SIG</span>
+            <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
+          </button>
+          <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Agronómico - próximamente" data-tooltip="Agronómico" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
+            <span className={styles['sb-item-ico']} aria-hidden="true">🌱</span>
+            <span className={styles['sb-item-txt']}>Agronómico</span>
+            <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
+          </button>
+          <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Ambiental - próximamente" data-tooltip="Ambiental" aria-disabled="true" tabIndex={-1} onClick={() => {}}>
+            <span className={styles['sb-item-ico']} aria-hidden="true">🌧️</span>
+            <span className={styles['sb-item-txt']}>Ambiental</span>
+            <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
+          </button>
+        </>
       )}
-
-      {(puedeVerCatalogos || puedeVerUsuarios) && (
-        <div className={styles['sb-group-label']} aria-hidden="true">Gestión</div>
-      )}
-      {puedeVerCatalogos && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname.startsWith('/admin/catalogos') ? ' ' + styles['active'] : '')
-        }
-        aria-current={pathname.startsWith('/admin/catalogos') ? 'page' : undefined}
-        aria-label="Módulo Catálogos"
-        data-tooltip="Catálogos"
-        onClick={() => onNavigate('/admin/catalogos')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">📋</span>
-        <span className={styles['sb-item-txt']}>Catálogos</span>
-      </button>
-      )}
-      {puedeVerUsuarios && (
-      <button
-        className={
-          styles['sb-item'] +
-          (pathname === '/admin/usuarios' ? ' ' + styles['active'] : '')
-        }
-        aria-label="Inventario de Usuarios"
-        data-tooltip="Usuarios"
-        aria-current={pathname === '/admin/usuarios' ? 'page' : undefined}
-        onClick={() => onNavigate('/admin/usuarios')}
-      >
-        <span className={styles['sb-item-ico']} aria-hidden="true">⚙️</span>
-        <span className={styles['sb-item-txt']}>Usuarios</span>
-      </button>
-      )}
+      {/* Eliminado botón duplicado de Usuarios */}
       {puedeVerPerfil && (
       <button
         className={styles['sb-item'] + (pathname.startsWith('/mi-perfil') ? ' ' + styles['active'] : '')}

@@ -19,18 +19,16 @@ import type { Rol } from '@/types'
  * redirige a /sin-acceso.
  */
 export function useRolGuard(rolesPermitidos: Rol[]) {
-  const router  = useRouter()
-  const usuario = useAppStore(s => s.usuario)
-  const permitido = !!usuario && rolesPermitidos.includes(usuario.rol)
+  const router  = useRouter();
+  const usuario = useAppStore(s => s.usuario);
+  // Si usuario es null, aún no se sabe el estado de sesión, devolvemos false
+  const permitido = !!usuario && rolesPermitidos.includes(usuario.rol);
 
   useEffect(() => {
-    // Todavía cargando — no redirigir aún
-    if (usuario === null) return
-    if (!permitido) {
-      router.replace('/sin-acceso')
+    if (usuario && !permitido) {
+      router.replace('/sin-acceso');
     }
-  }, [usuario, permitido, router])
+  }, [usuario, permitido, router]);
 
-  // Evita render de contenido sensible mientras se resuelve sesión/rol
-  return permitido
+  return permitido;
 }

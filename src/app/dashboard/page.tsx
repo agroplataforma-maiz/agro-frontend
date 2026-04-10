@@ -7,20 +7,13 @@ import React from 'react';
 import AdminShell from '@/components/dashboard/AdminShell';
 import { useQuery } from '@tanstack/react-query'
 import { GET } from '@/lib/api'
-import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import type { Productor, Usuario } from '@/types'
 
-
 export default function DashboardPage() {
+
   const router = useRouter();
   const usuario = useAppStore(s => s.usuario);
-
-  const handleNavigate = (page: string) => {
-    if (page.startsWith('/')) router.push(page)
-    else router.push(`/${page}`)
-  }
-
-  // Queries para KPIs
+  // Queries para KPIs (deben ir antes de cualquier return)
   const { data: productores = [] } = useQuery<Productor[]>({
     queryKey: ['productores-count'],
     queryFn:  () => GET('/social/productor') as Promise<Productor[]>,
@@ -37,11 +30,23 @@ export default function DashboardPage() {
       return Array.isArray(data) ? data : (data.items ?? data.results ?? [])
     },
   })
-
   // Días transcurridos desde inicio del proyecto
   const diasProyecto = Math.floor((Date.now() - new Date('2025-12-09').getTime()) / 86400000)
 
-  if (!usuario) return <AccessGuardScreen message="Cargando dashboard..." />
+  // Si no hay usuario, no renderizar nada (pantalla en blanco) y redirigir
+  React.useEffect(() => {
+    if (!usuario) {
+      router.replace('/');
+    }
+  }, [usuario, router]);
+  if (!usuario) return null;
+
+  const handleNavigate = (page: string) => {
+    if (page.startsWith('/')) router.push(page)
+    else router.push(`/${page}`)
+  }
+
+
 
   // Nombre para saludo
   const NOMBRE_ROL: Record<string, string> = {
@@ -49,17 +54,22 @@ export default function DashboardPage() {
     investigador:   'investigador/a',
     tecnico_campo:  'técnico/a de campo',
     visualizador:   'visualizador/a',
-    productor:      'productor/a',
-    invitado:       'invitado/a',
+    productor:      'productor/a'
   }
-  const nombreRol = NOMBRE_ROL[usuario.rol] ?? usuario.rol
+  // Si es visualizador y username es 'invitado', mostrar 'invitado/a' en el saludo
+  const nombreRol = (usuario.rol === 'visualizador' && usuario.username === 'invitado')
+    ? 'invitado/a'
+    : (NOMBRE_ROL[usuario.rol] ?? usuario.rol)
 
   // Permisos de navegación según rol
-  const puedeCapturar     = ['administrador', 'investigador', 'tecnico_campo'].includes(usuario.rol)
-  const puedeVerCatalogos = ['administrador', 'investigador'].includes(usuario.rol)
-  const puedeVerUsuarios  = usuario.rol === 'administrador'
-  const esInvitado        = usuario.rol === 'invitado'
-  const esVisualizador    = usuario.rol === 'visualizador'
+  const puedeCapturar       = ['administrador', 'investigador', 'tecnico_campo'].includes(usuario.rol)
+  const puedeVerComunidades = ['administrador', 'investigador', 'tecnico_campo', 'visualizador', 'productor'].includes(usuario.rol)
+  const puedeVerCatalogos   = ['administrador', 'investigador'].includes(usuario.rol)
+  const puedeVerUsuarios    = usuario.rol === 'administrador'
+  const esVisualizador      = usuario.rol === 'visualizador';
+  const esSoloConsultaMapa  = ['visualizador', 'productor'].includes(usuario.rol);
+  // Mostrar banner si el usuario es visualizador o si el username es 'invitado'
+  const mostrarBannerInvitado = esVisualizador || usuario.username === 'invitado';
 
   return (
     <AdminShell>
@@ -80,27 +90,29 @@ export default function DashboardPage() {
               {!esVisualizador && (
               <div className={styles['dash-prog-wrap']} aria-label="Progreso de la etapa 1">
                 <div className={styles['dash-prog-label']}>Progreso Etapa 1</div>
-                <div className={styles['dash-prog-track']} role="progressbar" aria-valuenow={38} aria-valuemin={0} aria-valuemax={100} aria-label="38% completado">
-                  <div className={styles['dash-prog-fill']} style={{ width: '38%' }}></div>
+                <div className={styles['dash-prog-track']} role="progressbar" aria-valuenow={68} aria-valuemin={0} aria-valuemax={100} aria-label="68% completado">
+                  <div className={styles['dash-prog-fill']} style={{ width: '68%' }}></div>
                 </div>
-                <div className={styles['dash-prog-pct']}>38%</div>
+                <div className={styles['dash-prog-pct']}>68%</div>
               </div>
               )}
             </div>
           </div>
-          {/* Banner bienvenida invitado */}
-          {esInvitado && (
-            <div style={{
-              background: 'linear-gradient(135deg, var(--verde-pal) 0%, var(--crema) 100%)',
-              border: '1.5px solid var(--verde)',
-              borderRadius: 16,
-              padding: '28px 32px',
-              marginBottom: 28,
-              display: 'flex',
-              gap: 24,
-              alignItems: 'flex-start',
-              flexWrap: 'wrap',
-            }}>
+          {/* Banner bienvenida invitado/visualizador */}
+          {mostrarBannerInvitado && (
+            <div
+              style={{
+                background: 'linear-gradient(135deg, var(--verde-pal) 0%, var(--crema) 100%)',
+                border: '1.5px solid var(--verde)',
+                borderRadius: 16,
+                padding: '28px 32px',
+                marginBottom: 28,
+                display: 'flex',
+                gap: 24,
+                alignItems: 'flex-start',
+                flexWrap: 'wrap',
+              }}
+            >
               <div style={{ fontSize: 44, lineHeight: 1 }}>👁️</div>
               <div style={{ flex: 1, minWidth: 240 }}>
                 <p style={{ fontFamily: 'DM Mono, monospace', fontSize: 10, fontWeight: 700, color: 'var(--verde)', letterSpacing: '0.1em', textTransform: 'uppercase', margin: '0 0 6px' }}>
@@ -110,24 +122,37 @@ export default function DashboardPage() {
                   Bienvenido/a a AgroPlataforma Maíz 🌽
                 </h2>
                 <p style={{ fontSize: 13.5, color: 'var(--cafe)', lineHeight: 1.65, margin: '0 0 16px' }}>
-                  Esta plataforma documenta la diversidad del maíz nativo en la Huasteca Veracruzana. Registra productores,
-                  variedades criollas, saberes tradicionales, datos culturales y evaluaciones fenotípicas de 30+ variedades.
+                  Esta plataforma documenta la diversidad del maíz nativo en la Huasteca Potosina. Registra productores,
+                  variedades criollas, saberes tradicionales, datos culturales y evaluaciones fenotípicas.
                   En este modo de invitado puedes explorar la estructura del proyecto y sus estadísticas generales.
                 </p>
                 <div style={{ display: 'flex', flexWrap: 'wrap', gap: 10 }}>
                   {[
-                    { ico: '🌍', txt: 'Huasteca Veracruzana' },
+                    { ico: '🌍', txt: 'Huasteca Potosina' },
                     { ico: '🧑‍🌾', txt: 'Productores & comunidades' },
                     { ico: '🔬', txt: 'Análisis fenotípico' },
                     { ico: '📖', txt: 'Saberes tradicionales' },
                     { ico: '📋', txt: '15+ catálogos territoriales' },
                   ].map(({ ico, txt }) => (
-                    <span key={txt} style={{
-                      display: 'inline-flex', alignItems: 'center', gap: 6,
-                      background: 'rgba(255,255,255,0.7)', border: '1px solid var(--borde-dark)',
-                      borderRadius: 99, padding: '5px 12px', fontSize: 12,
-                      fontWeight: 600, color: 'var(--tierra)',
-                    }}>
+                    <span
+                      key={txt}
+                      style={{
+                        display: 'inline-flex',
+                        alignItems: 'center',
+                        gap: 6,
+                        background: typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                          ? 'rgba(40,44,52,0.85)'
+                          : 'rgba(255,255,255,0.7)',
+                        border: '1px solid var(--borde-dark)',
+                        borderRadius: 99,
+                        padding: '5px 12px',
+                        fontSize: 12,
+                        fontWeight: 600,
+                        color: typeof window !== 'undefined' && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+                          ? '#f5f5f5'
+                          : 'var(--tierra)',
+                      }}
+                    >
                       {ico} {txt}
                     </span>
                   ))}
@@ -200,12 +225,16 @@ export default function DashboardPage() {
                 </div>
               </div>
               )}
-              {puedeCapturar ? (
-              <button className={styles['modulo-card']} role="listitem" onClick={() => handleNavigate('comunidades')} aria-label="Módulo Comunidades - Activo">
-                <span className={styles['mod-badge-nuevo']} aria-label="Módulo nuevo">Nuevo</span>
+              {puedeVerComunidades ? (
+              <button className={styles['modulo-card']} role="listitem" onClick={() => handleNavigate('comunidades')} aria-label={esSoloConsultaMapa ? 'Mapa de comunidades - Activo' : 'Módulo Comunidades - Activo'}>
+                <span className={styles['mod-badge-nuevo']} aria-label={esSoloConsultaMapa ? 'Mapa disponible' : 'Módulo nuevo'}>{esSoloConsultaMapa ? 'Mapa' : 'Nuevo'}</span>
                 <div className={`${styles['mod-ico-wrap']} ${styles['mod-ico-maiz']}`} aria-hidden="true">🏘️</div>
-                <div className={styles['mod-nombre']}>Comunidades</div>
-                <p className={styles['mod-desc']}>Gestión de las 15+ comunidades de la Huasteca: lengua indígena, población, municipio y productores asociados.</p>
+                <div className={styles['mod-nombre']}>{esSoloConsultaMapa ? 'Mapa de comunidades' : 'Comunidades'}</div>
+                <p className={styles['mod-desc']}>
+                  {esSoloConsultaMapa
+                    ? 'Consulta el mapa de comunidades de la Huasteca Potosina y sus ubicaciones georreferenciadas en esta etapa del proyecto.'
+                    : 'Gestión de las 15+ comunidades de la Huasteca: lengua indígena, población, municipio y productores asociados.'}
+                </p>
                 <div className={styles['mod-footer']}>
                   <span className={styles['mod-estado-activo']}>● Activo</span>
                   <span className={styles['mod-arrow']} aria-hidden="true">→</span>
@@ -396,11 +425,11 @@ export default function DashboardPage() {
                   <span className={styles['etapa-mini-nombre']}>Etapa 1 · Diagnóstico</span>
                   <span className={`${styles['etapa-mini-estado']} ${styles['est-activa']}`} role="status">En curso</span>
                 </div>
-                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={38} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 38% completado">
-                  <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '38%' }}></div>
+                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={68} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 68% completado">
+                  <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '68%' }}></div>
                 </div>
                 <div className={styles['prog-meta']} aria-hidden="true">
-                  <span>0%</span><span>38% completado</span><span>100%</span>
+                  <span>0%</span><span>68% completado</span><span>100%</span>
                 </div>
               </div>
               <div className={styles['etapa-mini']}>

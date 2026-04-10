@@ -13,16 +13,15 @@ const NO = () => <span className={`${styles.value} ${styles.no}`}>No</span>;
 const PARCIAL = ({ txt }: { txt: string }) => <span className={`${styles.value} ${styles.partial}`}>{txt}</span>;
 
 const FILAS: { accion: string; admin: React.ReactNode; inves: React.ReactNode; tecnico: React.ReactNode; consul: React.ReactNode; prod: React.ReactNode }[] = [
-  { accion: 'Ver todos los datos',    admin: <SI/>, inves: <SI/>, tecnico: <NO/>, consul: <SI/>, prod: <NO/> },
-  { accion: 'Crear productores',      admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Editar datos',           admin: <SI/>, inves: <SI/>, tecnico: <PARCIAL txt="Propios"/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Eliminar registros',     admin: <SI/>, inves: <NO/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Editar catálogos',       admin: <SI/>, inves: <NO/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Exportar datos',         admin: <SI/>, inves: <SI/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Gestionar usuarios',     admin: <SI/>, inves: <NO/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Ver gestión usuarios',   admin: <SI/>, inves: <SI/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
-  { accion: 'Acceder a mapas SIG',    admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <SI/>, prod: <NO/> },
-  { accion: 'Ver perfil propio',      admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <SI/>, prod: <SI/> },
+  { accion: 'Consultar dashboard y módulos asignados', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <SI/>, prod: <PARCIAL txt="Básico"/> },
+  { accion: 'Consultar registros de productores / comunidades', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Consultar registros socioculturales / fenotípicos', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Crear registros en módulos activos', admin: <NO/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Editar registros existentes', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Eliminar o depurar registros', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Gestionar catálogos', admin: <SI/>, inves: <SI/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Gestionar usuarios y roles', admin: <SI/>, inves: <NO/>, tecnico: <NO/>, consul: <NO/>, prod: <NO/> },
+  { accion: 'Ver perfil propio', admin: <SI/>, inves: <SI/>, tecnico: <SI/>, consul: <SI/>, prod: <SI/> },
 ];
 
 const PermisosModal: React.FC<PermisosModalProps> = ({ open, onClose }) => (
@@ -30,7 +29,9 @@ const PermisosModal: React.FC<PermisosModalProps> = ({ open, onClose }) => (
     footer={<Button variante="ghost" onClick={onClose}>Cerrar</Button>}
   >
     <p className={styles.desc}>
-      Resumen de acciones permitidas para cada rol en el sistema.
+      Resumen de acciones permitidas para cada rol en el sistema. Con la configuración actual,
+      <strong> el administrador consulta, edita y depura registros</strong>, mientras que las
+      <strong> altas nuevas en módulos activos</strong> corresponden a investigación y trabajo de campo.
     </p>
     <div className={styles.tableWrap}>
       <table className={styles.table}>

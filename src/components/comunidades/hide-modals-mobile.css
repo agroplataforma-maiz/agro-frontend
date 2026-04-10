@@ -1,0 +1,19 @@
+/* Oculta todos los modales en móviles para comunidades (sin tocar el código fuente TSX)
+   Solo aplica en pantallas <= 700px de ancho. */
+
+@media (max-width: 700px) {
+  /* Oculta cualquier overlay/modal por clase, rol o estructura */
+  [class*="overlay"],
+  [class*="modal"],
+  div[role="dialog"],
+  [aria-modal="true"],
+  .Modal_overlay,
+  .Modal_modal {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+    z-index: -1 !important;
+  }
+
+}

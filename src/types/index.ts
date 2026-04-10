@@ -121,14 +121,14 @@ export const ROL_RUTAS_PERMITIDAS: Record<Rol, string[]> = {
   administrador: ['*'],
   investigador:  ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/admin/catalogos', '/mi-perfil'],
   tecnico_campo: ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/mi-perfil'],
-  visualizador:  ['/dashboard', '/mi-perfil'],
-  productor:     ['/dashboard', '/mi-perfil'],
-  invitado:      ['/dashboard'],
+  visualizador:  ['/dashboard', '/mi-perfil', '/comunidades'],
+  productor:     ['/dashboard', '/mi-perfil', '/comunidades'],
+  invitado:      ['/dashboard', '/comunidades'],
 }
 
 // Página de inicio tras login según rol
 export const ROL_HOME: Record<Rol, string> = {
-  administrador: '/dashboard',
+  administrador: '/admin/dashboard',
   investigador:  '/dashboard',
   tecnico_campo: '/dashboard',
   visualizador:  '/dashboard',

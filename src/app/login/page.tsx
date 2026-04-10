@@ -7,7 +7,9 @@ import { getToken, getUsuario } from '@/lib/auth'
 import { ROL_HOME } from '@/types'
 import styles from './login.module.css'
 
+
 export default function LoginPage() {
+  const [mounted, setMounted] = useState(false)
   // Tabs: 'login' o 'registro'
   const [tab, setTab] = useState<'login'|'registro'>('login')
 
@@ -24,21 +26,21 @@ export default function LoginPage() {
     nombre: '', username: '', email: '', password: '', confirm: '', rol: 'investigador'
   })
 
-
   // Login real
   const { login, addToast } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [showRecoveryInfo, setShowRecoveryInfo] = useState(false)
-  const [showLoginTransition, setShowLoginTransition] = useState(false)
+  // Estado de transición de login/logout: 'none' | 'login' | 'logout'
+  const [showLoginTransition, setShowLoginTransition] = useState<'none' | 'login' | 'logout'>('none')
+
+  useEffect(() => { setMounted(true) }, [])
 
   useEffect(() => {
-    // Asegurar que el login siempre se vea en modo claro,
-    // independientemente de si el dark mode quedó activo de una sesión previa
-    document.documentElement.classList.remove('dark')
-
-    if (getToken() && getUsuario()) {
-      router.replace('/dashboard')
+    // El login no manipula el modo global, solo usa colores fijos propios
+    const usuarioActual = getUsuario()
+    if (getToken() && usuarioActual) {
+      router.replace(ROL_HOME[usuarioActual.rol] ?? '/dashboard')
     }
     // Mostrar aviso si el token expiró
     const params = new URLSearchParams(window.location.search)
@@ -62,18 +64,19 @@ export default function LoginPage() {
   async function handleLogin(e: React.FormEvent) {
     e.preventDefault()
     setLoading(true)
+    setShowLoginTransition('login')
     let loginExitoso = false
     try {
       const data = await login({ identificador, password })
       loginExitoso = true
       addToast('Sesión iniciada correctamente', 'ok')
       const destino = ROL_HOME[data.usuario.rol] ?? '/dashboard'
-      setShowLoginTransition(true)
       await new Promise(resolve => setTimeout(resolve, 2000))
       router.push(destino)
     } catch (err: unknown) {
       const msg = err instanceof Error ? err.message : 'Error al iniciar sesión'
       addToast(msg, 'err')
+      setShowLoginTransition('none')
     } finally {
       if (!loginExitoso) setLoading(false)
     }
@@ -81,7 +84,10 @@ export default function LoginPage() {
 
   return (
     <>
-      <div className={styles['login-root']}>
+      <div
+        className={styles['login-root']}
+        data-login
+      >
         <div className={styles['bg-deco']} />
         <svg className={styles['maiz-deco']} viewBox="0 0 120 200" xmlns="http://www.w3.org/2000/svg">
         <path d="M60 180 Q20 140 10 90 Q40 110 60 150 Z" fill="#4A8C64"/>
@@ -116,9 +122,18 @@ export default function LoginPage() {
         {/* Logo */}
         <div className={styles['logo-area']}>
           <span className={styles['logo-ico']}>🌽</span>
-          <div className={styles['logo-titulo']}>Agroplataforma<br/><em style={{fontStyle:'italic',fontWeight:700}}>Maíz Nativo</em></div>
-          <div className={styles['logo-sub']}>Huasteca Potosina · IT Ciudad Valles</div>
+          <span className={styles['logo-titulo']}>Agroplataforma<br/><em style={{fontStyle:'italic',fontWeight:700}}>Maíz Nativo</em></span>
+          <div className={styles['logo-sub'] + ' ' + styles['subtitleContrast']}>Huasteca Potosina · IT Ciudad Valles</div>
         </div>
+      {/* Botón flotante de inicio y modo */}
+      {mounted && (
+        <div className={styles['flotante-wrap']}>
+          <Link href="/productores" className={styles['btn-flotante']}>
+            <span aria-hidden="true" style={{fontSize:18}}>🏠</span>
+            Ir a la plataforma
+          </Link>
+        </div>
+      )}
 
         {/* Sesión activa (simulada) */}
         {sesionActiva && (
@@ -220,7 +235,22 @@ export default function LoginPage() {
               <div className={styles['divider']}>o</div>
               <button
                 type="button"
-                onClick={() => { setIdentificador('invitado'); setPassword('invitado'); }}
+                onClick={async () => {
+                  setLoading(true);
+                  try {
+                    const data = await login({ identificador: 'invitado', password: 'invitado' });
+                    addToast('Sesión iniciada como invitado', 'ok');
+                    const destino = ROL_HOME[data.usuario.rol] ?? '/dashboard';
+                    setShowLoginTransition('login');
+                    await new Promise(resolve => setTimeout(resolve, 2000));
+                    router.push(destino);
+                  } catch (err) {
+                    const msg = err instanceof Error ? err.message : 'Error al entrar como invitado';
+                    addToast(msg, 'err');
+                  } finally {
+                    setLoading(false);
+                  }
+                }}
                 style={{
                   width: '100%', padding: '9px 16px', border: '1.5px dashed var(--borde-dark, #ccc)',
                   borderRadius: 8, background: 'transparent', cursor: 'pointer',
@@ -229,6 +259,7 @@ export default function LoginPage() {
                   justifyContent: 'center', gap: 8, transition: 'border-color 0.15s',
                 }}
                 title="El acceso como invitado solo permite ver el panel principal"
+                disabled={loading}
               >
                 <span>👁️</span> Entrar como invitado
               </button>
@@ -352,15 +383,36 @@ export default function LoginPage() {
         </div>
       </footer>
 
-      {/* Botón flotante */}
-      <Link href="/" className={styles['btn-flotante']} title="Volver al inicio">
-        🌽 Inicio
-      </Link>
+      {/* Botón flotante eliminado para evitar duplicidad, solo debe haber los dos principales en la esquina */}
 
-      {showLoginTransition && (
-        <div className={styles['auth-transition-overlay']} aria-live="polite">
-          <div className={styles['auth-transition-maiz']} aria-hidden>🌽</div>
-          <div className={styles['auth-transition-label']}>Iniciando sesión...</div>
+      {showLoginTransition === 'login' && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(32,33,31,0.93)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span className={styles['maiz-spinner']} style={{fontSize: 54, marginBottom: 24, filter: 'drop-shadow(0 0 32px #ffe066) drop-shadow(0 0 12px #fffbe8)'}}>🌽</span>
+          <div style={{
+            color: '#fffbe8', fontSize: 22, fontWeight: 800, letterSpacing: '.04em', textAlign: 'center',
+            fontFamily: 'Nunito, Fraunces, Arial, sans-serif',
+            textShadow: '0 2px 12px #000, 0 0 24px #ffe066',
+          }}>
+            Iniciando sesión...
+          </div>
+        </div>
+      )}
+      {showLoginTransition === 'logout' && (
+        <div style={{
+          position: 'fixed', inset: 0, zIndex: 9999, background: 'rgba(32,33,31,0.93)',
+          display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+        }}>
+          <span className={styles['maiz-spinner']} style={{fontSize: 54, marginBottom: 24, filter: 'drop-shadow(0 0 32px #ffe066) drop-shadow(0 0 12px #fffbe8)'}}>🌽</span>
+          <div style={{
+            color: '#fffbe8', fontSize: 22, fontWeight: 800, letterSpacing: '.04em', textAlign: 'center',
+            fontFamily: 'Nunito, Fraunces, Arial, sans-serif',
+            textShadow: '0 2px 12px #000, 0 0 24px #ffe066',
+          }}>
+            Cerrando sesión...
+          </div>
         </div>
       )}
     </>

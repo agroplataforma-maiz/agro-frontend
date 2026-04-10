@@ -1,7 +1,7 @@
 // src/app/productores/page.tsx
 'use client'
 
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { GET, DEL } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
@@ -24,14 +24,25 @@ import { useRolGuard } from '@/hooks/useRolGuard'
 
 type Vista = 'lista' | 'perfil'
 
-export default function ProductoresPage() {
-  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
 
-  useCatalogos()
+import { useRouter } from 'next/navigation'
+
+export default function ProductoresPage() {
+  // ── Hooks y stores al inicio ──
+  const router = useRouter()
+  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
+  useCatalogos(accesoPermitido)
   const usuario = useAppStore(s => s.usuario)
   const addToast = useAppStore(s => s.addToast)
   const qc = useQueryClient()
   const municipios = useAppStore(s => s.municipios)
+
+  // Redirección automática si no hay usuario
+  useEffect(() => {
+    if (usuario === null) {
+      router.replace('/')
+    }
+  }, [usuario, router])
 
   const [vista, setVista] = useState<Vista>('lista')
   const [productorId, setProductorId] = useState<number | null>(null)
@@ -40,7 +51,6 @@ export default function ProductoresPage() {
   const [editando, setEditando] = useState<Productor | null>(null)
   const [confirmEliminar, setConfirmEliminar] = useState<Productor | null>(null)
 
-  // ── Fetch lista ───────────────────────────────────────────────────────────
   const { data: productores = [], isLoading } = useQuery<Productor[]>({
     queryKey: ['productores'],
     queryFn:  () => GET('/social/productor'),
@@ -51,7 +61,6 @@ export default function ProductoresPage() {
     },
   })
 
-  // ── Eliminar ──────────────────────────────────────────────────────────────
   const eliminar = useMutation({
     mutationFn: (id: number) => DEL(`/social/productor/${id}`),
     onSuccess: () => {
@@ -61,8 +70,12 @@ export default function ProductoresPage() {
     onError: (e: Error) => addToast(e.message, 'err'),
   })
 
+  // ── Returns condicionales después de los hooks ──
+  if (!usuario) return null
   if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
-  if (!usuario) return <AccessGuardScreen message="Cargando productores..." />
+
+  const esAdmin = usuario.rol === 'administrador'
+  const puedeCrear = !esAdmin
 
   function confirmarEliminar(p: Productor) {
     setConfirmEliminar(p)
@@ -123,7 +136,9 @@ export default function ProductoresPage() {
           <ModuleHero
             eyebrow="Social · Módulo de productores"
             title={<>Gestión de <em>Productores</em> 🌽</>}
-            description="Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma." 
+            description={esAdmin
+              ? 'Consulta, actualiza o depura productores existentes. Las altas iniciales están reservadas para investigadores y técnicos de campo.'
+              : 'Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma.'}
             stats={[
               { label: 'visibles', value: filtrados.length },
               { label: 'municipios', value: municipiosCubiertos || '—' },
@@ -132,7 +147,9 @@ export default function ProductoresPage() {
           <header className={styles.header}>
             <div>
               <h1 className={styles.titulo}>Productores</h1>
-              <p className={styles.subtitulo}>{filtrados.length} registros</p>
+              <p className={styles.subtitulo}>
+                {filtrados.length} registros{esAdmin ? ' · altas bloqueadas para administrador' : ''}
+              </p>
             </div>
             <div className={styles.headerActions}>
               <SearchInput
@@ -140,12 +157,14 @@ export default function ProductoresPage() {
                 onChange={e => setBusqueda(e.target.value)}
                 placeholder="Buscar por nombre…"
               />
-              <Button
-                variante="primario"
-                onClick={() => { setEditando(null); setModalAbierto(true) }}
-              >
-                + Nuevo productor
-              </Button>
+              {puedeCrear && (
+                <Button
+                  variante="primario"
+                  onClick={() => { setEditando(null); setModalAbierto(true) }}
+                >
+                  + Nuevo productor
+                </Button>
+              )}
             </div>
           </header>
 
@@ -164,7 +183,7 @@ export default function ProductoresPage() {
             )}
           />
 
-          {modalAbierto && (
+          {modalAbierto && (puedeCrear || Boolean(editando)) && (
             <ModalProductor
               productor={editando}
               onClose={() => setModalAbierto(false)}

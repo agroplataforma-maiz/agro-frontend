@@ -1,7 +1,34 @@
-"use client";
 
+"use client";
+import type { Usuario } from "@/types";
 import type { RegistroSociocultural, SeccionKey } from "@/hooks/useSociocultural";
 import styles from "./ResumenSocial.module.css";
+
+interface ProductorCat {
+  id: number;
+  nombres: string;
+  apellido_paterno: string;
+  apellido_materno?: string;
+}
+interface Props {
+  registro: RegistroSociocultural;
+  pasos: { key: string; label: string; icon: string }[];
+  progresos: Progreso[];
+  productores: ProductorCat[];
+  tecnicosCampo: Usuario[];
+}
+function getNombreProductor(id: string|number|undefined, productores?: ProductorCat[]): string {
+  if (!id) return "—";
+  const arr = Array.isArray(productores) ? productores : [];
+  const p = arr.find(p => String(p.id) === String(id));
+  return p ? [p.nombres, p.apellido_paterno, p.apellido_materno].filter(Boolean).join(' ') : `#${id}`;
+}
+function getNombreTecnico(id: string|number|undefined, tecnicos?: Usuario[]): string {
+  if (!id) return "—";
+  const arr = Array.isArray(tecnicos) ? tecnicos : [];
+  const t = arr.find(t => String(t.id) === String(id));
+  return t ? t.nombre_completo || t.username : `#${id}`;
+}
 
 interface Progreso {
   llenos: number;
@@ -81,7 +108,10 @@ function isLleno(v: unknown): boolean {
   return v !== "" && v !== null && v !== undefined;
 }
 
-export default function ResumenSocial({ registro, pasos, progresos }: Props) {
+import { useAppStore } from '@/store/useAppStore';
+
+export default function ResumenSocial({ registro, pasos, progresos, productores, tecnicosCampo }: Props) {
+  const usuario = typeof window !== 'undefined' ? useAppStore.getState().usuario : undefined;
   const totalLlenos = progresos.reduce((s, p) => s + p.llenos, 0);
   const totalCampos = progresos.reduce((s, p) => s + p.total, 0);
   const pctGlobal = totalCampos > 0 ? Math.round((totalLlenos / totalCampos) * 100) : 0;
@@ -151,14 +181,28 @@ export default function ResumenSocial({ registro, pasos, progresos }: Props) {
                 </span>
               </div>
               <div className={styles.grupoBody}>
-                {filas.map(([campo, val]) => (
-                  <div key={campo} className={styles.row}>
-                    <span className={styles.rowLabel}>
-                      {etiquetas[campo] ?? campo}
-                    </span>
-                    <span className={styles.rowValue}>{formatVal(val)}</span>
-                  </div>
-                ))}
+                {filas.map(([campo, val]) => {
+                  let mostrar = formatVal(val);
+                  if (paso.key === 'productor' && campo === 'productor_id') {
+                    mostrar = getNombreProductor(val as string, productores);
+                  }
+                  if (paso.key === 'productor' && campo === 'entrevistador') {
+                    // Si el usuario es técnico de campo, mostrar su propio nombre
+                    if (usuario?.rol === 'tecnico_campo') {
+                      mostrar = usuario.nombre_completo || usuario.username;
+                    } else {
+                      mostrar = getNombreTecnico(val as string, tecnicosCampo);
+                    }
+                  }
+                  return (
+                    <div key={campo} className={styles.row}>
+                      <span className={styles.rowLabel}>
+                        {etiquetas[campo] ?? campo}
+                      </span>
+                      <span className={styles.rowValue}>{mostrar}</span>
+                    </div>
+                  );
+                })}
               </div>
             </div>
           );

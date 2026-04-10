@@ -1,3 +1,57 @@
+/* ── Panel lateral agrupado ── */
+.municipioList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 8px;
+}
+
+.municipioGroup {
+  background: var(--blanco);
+  border-radius: 10px;
+  border: 1px solid rgba(61,34,8,0.07);
+  box-shadow: 0 2px 8px rgba(42,92,63,0.04);
+  padding: 0 0 6px 0;
+}
+
+.municipioHeader {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px 6px 14px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--tierra);
+  background: linear-gradient(90deg, var(--crema) 80%, #fff 100%);
+  border-radius: 10px 10px 0 0;
+  cursor: pointer;
+  outline: none;
+  transition: background .18s, color .18s;
+}
+.municipioHeader:hover, .municipioHeader:focus {
+  background: linear-gradient(90deg, var(--maiz-pal) 80%, #fff 100%);
+  color: var(--maiz);
+}
+.municipioHeaderActive {
+  background: linear-gradient(90deg, var(--verde) 80%, #fff 100%);
+  color: #fff;
+}
+.municipioBadge {
+  background: var(--maiz-pal);
+  color: var(--maiz);
+  border-radius: 999px;
+  padding: 2px 10px;
+  font-size: 12px;
+  font-weight: 700;
+  margin-right: 6px;
+}
+.municipioCount {
+  font-size: 11px;
+  color: var(--gris);
+  font-family: 'DM Mono', monospace;
+  margin-left: auto;
+}
 /* src/app/comunidades/comunidades.module.css */
 
 .page {
@@ -45,6 +99,295 @@
   margin-bottom: 4px;
 }
 
+.readOnlyNotice {
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 1px solid rgba(42, 92, 63, 0.18);
+  background: linear-gradient(135deg, rgba(232, 244, 236, 0.9), rgba(255, 255, 255, 0.96));
+  color: var(--verde-deep);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.filterPanel {
+  margin-top: 16px;
+  padding: 16px 18px;
+  border-radius: 14px;
+  border: 1px solid rgba(61, 34, 8, 0.08);
+  background: linear-gradient(135deg, rgba(255,255,255,.98), rgba(251,246,238,.96));
+  box-shadow: var(--sombra-sm);
+}
+
+.filterEyebrow {
+  margin: 0 0 4px;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  color: var(--verde);
+}
+
+.filterTitle {
+  margin: 0 0 12px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  color: var(--tierra);
+}
+
+.filterChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.filterChipBtn {
+  border: 1px solid rgba(61, 34, 8, 0.08);
+  background: var(--blanco);
+  color: var(--cafe);
+  border-radius: 999px;
+  padding: 7px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all .18s ease;
+}
+
+.filterChipBtn:hover {
+  border-color: rgba(42, 92, 63, 0.22);
+  transform: translateY(-1px);
+}
+
+.filterChipBtnActive {
+  background: var(--verde);
+  color: #fff;
+  border-color: var(--verde);
+}
+
+.mapSection {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 16px;
+  margin-bottom: 6px;
+}
+
+.mapCard,
+.mapAside {
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: 12px;
+  padding: 16px 18px;
+  box-shadow: var(--sombra);
+}
+
+.mapCard {
+  width: 100%;
+}
+
+.mapHead {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  align-items: flex-start;
+  flex-wrap: wrap;
+  margin-bottom: 12px;
+}
+
+.mapHead h2 {
+  margin: 0 0 4px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 20px;
+  color: var(--tierra);
+}
+
+.mapHead p {
+  margin: 0;
+  font-size: 13px;
+  color: var(--gris);
+  line-height: 1.55;
+}
+
+.mapLegend {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.mapChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: var(--crema);
+  border: 1px solid rgba(61, 34, 8, 0.08);
+  color: var(--cafe);
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.mapAsideTitle {
+  margin-bottom: 10px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 18px;
+  font-weight: 800;
+  color: var(--tierra);
+}
+
+.sideStats {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.sideStat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--crema);
+  border: 1px solid var(--borde);
+  box-shadow: var(--sombra-sm);
+}
+
+.sideStat strong {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--maiz);
+  line-height: 1;
+}
+
+.sideStat span {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--gris);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.infoBox {
+  margin-bottom: 12px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--crema-dark);
+  border: 1px solid var(--borde);
+  box-shadow: var(--sombra-sm);
+}
+
+.infoBox h4 {
+  margin: 0 0 6px;
+  font-size: 14px;
+  color: var(--tierra);
+}
+
+.infoBox p {
+  margin: 0;
+  font-size: 12px;
+  color: var(--cafe);
+  line-height: 1.6;
+}
+
+.activeCard {
+  margin-bottom: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 14px 18px;
+  border-radius: 10px;
+  background: var(--maiz-pal);
+  border: 1px solid var(--borde);
+  box-shadow: var(--sombra-sm);
+}
+
+.activeBadge {
+  display: inline-flex;
+  width: fit-content;
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--maiz);
+  background: var(--blanco);
+  border-radius: 999px;
+  padding: 3px 8px;
+  border: 1px solid var(--maiz);
+  margin-bottom: 2px;
+}
+
+.activeCard span {
+  color: var(--cafe);
+  font-size: 12px;
+}
+
+.activeCard small {
+  color: var(--gris);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+}
+
+.siteList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 8px;
+  max-height: none;
+  overflow: visible;
+}
+
+
+.siteItem {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px 14px;
+  border-radius: 10px;
+  background: var(--crema);
+  border: 1.5px solid rgba(61, 34, 8, 0.08);
+  cursor: pointer;
+  transition: all .18s;
+  position: relative;
+  min-height: 44px;
+}
+.siteItem:hover, .siteItem:focus {
+  border-color: var(--verde);
+  background: linear-gradient(90deg, var(--crema) 80%, #fff 100%);
+  outline: none;
+}
+.siteItemActive {
+  background: linear-gradient(90deg, var(--maiz-pal) 80%, #fff 100%);
+  border-color: var(--maiz);
+  box-shadow: 0 4px 16px rgba(200,130,10,.10);
+}
+.siteItemIcon {
+  font-size: 18px;
+  color: var(--verde);
+  margin-right: 2px;
+  flex-shrink: 0;
+}
+.siteItem strong {
+  font-size: 14px;
+  color: var(--tierra);
+  font-weight: 800;
+  margin-right: 4px;
+}
+.siteItem span {
+  font-size: 12px;
+  color: var(--cafe);
+  margin-right: 8px;
+}
+.siteItem small {
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--gris);
+  margin-left: auto;
+}
+
 .kpiItem {
   background: var(--blanco);
   border: 1px solid rgba(61, 34, 8, 0.09);
@@ -83,6 +426,55 @@
   }
 }
 
+html.dark .readOnlyNotice {
+  border-color: rgba(77, 160, 107, 0.28);
+  background: linear-gradient(135deg, rgba(29, 63, 44, 0.78), rgba(31, 30, 28, 0.96));
+}
+
+html.dark .filterPanel,
+html.dark .mapCard,
+html.dark .mapAside,
+html.dark .kpiItem,
+html.dark .sideStat,
+html.dark .siteItem {
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+html.dark .filterPanel {
+  background: linear-gradient(135deg, rgba(31, 30, 28, 0.98), rgba(40, 38, 31, 0.94));
+}
+
+html.dark .filterChipBtn {
+  background: rgba(31, 30, 28, 0.9);
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+html.dark .filterChipBtn:hover {
+  border-color: rgba(77, 160, 107, 0.42);
+}
+
+html.dark .mapChip,
+html.dark .sideStat,
+html.dark .siteItem {
+  background: rgba(40, 38, 31, 0.9);
+}
+
+html.dark .infoBox {
+  background: linear-gradient(135deg, rgba(29, 63, 44, 0.34), rgba(31, 30, 28, 0.96));
+  border-color: rgba(77, 160, 107, 0.22);
+}
+
+html.dark .activeCard {
+  background: linear-gradient(135deg, rgba(191, 128, 18, 0.18), rgba(31, 30, 28, 0.98));
+  border-color: rgba(240, 180, 41, 0.26);
+}
+
+html.dark .siteItemActive {
+  background: linear-gradient(135deg, rgba(29, 63, 44, 0.5), rgba(31, 30, 28, 0.98));
+  border-color: rgba(77, 160, 107, 0.3);
+}
+
 @media (max-width: 768px) {
   .page {
     padding: 16px;
@@ -96,5 +488,124 @@
     width: 100%;
     flex-direction: column;
     align-items: stretch;
+  }
+
+  .filterPanel {
+    padding: 14px;
+  }
+
+  .sideStats,
+  .siteList {
+    grid-template-columns: 1fr;
+  }
+
+  .municipioList {
+    gap: 8px;
+  }
+
+  .municipioGroup {
+    padding: 0 0 4px 0;
+    border-radius: 8px;
+  }
+
+  .municipioHeader {
+    font-size: 13px;
+    padding: 8px 10px 5px 10px;
+    border-radius: 8px 8px 0 0;
+  }
+
+  .municipioBadge {
+    font-size: 11px;
+    padding: 2px 8px;
+    margin-right: 4px;
+  }
+
+  .municipioCount {
+    font-size: 10px;
+    margin-left: auto;
+  }
+
+  .siteList {
+    gap: 6px;
+  }
+
+  .siteItem {
+    padding: 8px 10px;
+    min-height: 38px;
+    font-size: 13px;
+    border-radius: 8px;
+  }
+  .siteItem strong {
+    font-size: 13px;
+  }
+  .siteItem span {
+    font-size: 11px;
+  }
+  .siteItem small {
+    font-size: 9px;
+  }
+
+  .kpiItem {
+    padding: 12px 10px;
+    border-radius: 10px;
+  }
+  .kpiNum {
+    font-size: 22px;
+  }
+  .kpiLbl {
+    font-size: 11px;
+  }
+
+  /* Panel informativo y leyenda del mapa */
+  .mapCard,
+  .mapAside {
+    padding: 10px 6px;
+    border-radius: 10px;
+  }
+  .mapHead h2 {
+    font-size: 15px;
+  }
+  .mapHead p {
+    font-size: 11px;
+  }
+  .mapLegend {
+    gap: 4px;
+  }
+  .mapChip {
+    font-size: 10px;
+    padding: 4px 7px;
+  }
+  .infoBox {
+    padding: 8px 8px;
+    border-radius: 8px;
+  }
+  .activeCard {
+    padding: 8px 8px;
+    border-radius: 8px;
+  }
+  .activeCard strong {
+    font-size: 12px;
+  }
+  .activeCard span {
+    font-size: 10px;
+  }
+  .activeCard small {
+    font-size: 8px;
+  }
+
+  /* Mejorar scroll en listas largas */
+  .municipioList,
+  .siteList {
+    max-height: 38vh;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Botones y elementos táctiles más grandes */
+  .filterChipBtn,
+  .municipioHeader,
+  .siteItem {
+    min-height: 38px;
+    touch-action: manipulation;
   }
 }

@@ -1,8 +1,13 @@
 // src/lib/api.ts
 // Helper centralizado de HTTP para toda la aplicación.
-// Producción: https://agromaiz.mx — nginx proxia /api/* al backend
+// Lee la URL base desde `.env.local` / `.env.production` con `NEXT_PUBLIC_API_URL`.
 
-const API_BASE = 'https://agromaiz.mx'
+const DEFAULT_API_BASE =
+  process.env.NODE_ENV === 'production'
+    ? 'https://agromaiz.mx'
+    : 'http://localhost:8000'
+
+export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_BASE).replace(/\/$/, '')
 
 function normalizePath(path: string): string {
   const raw = path.trim()
@@ -45,6 +50,7 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
   const hadAuthToken = Boolean(reqHeaders['Authorization'])
 
   const normalizedPath = normalizePath(path)
+  //const normalizedPath = path.trim() // No forzar prefijo /api, lo maneja el backend QUITAR CUANDO SE VAYA A PRODUCCIÓN
   const url = /^https?:\/\//i.test(normalizedPath)
     ? normalizedPath
     : `${API_BASE}${normalizedPath}`

@@ -15,7 +15,6 @@ const ROLES_VALIDOS: Rol[] = [
   'tecnico_campo',
   'visualizador',
   'productor',
-  'invitado',
 ]
 
 function normalizarRol(rol: string): Rol {
@@ -33,7 +32,8 @@ function normalizarRol(rol: string): Rol {
     return base as Rol
   }
 
-  return 'invitado'
+  // Si no es válido, regresa 'visualizador' como fallback
+  return 'visualizador'
 }
 
 function normalizarUsuario(usuario: Usuario): Usuario {
@@ -70,41 +70,53 @@ export function useAuth() {
   function mostrarOverlayTransicion(texto: string) {
     if (typeof document === 'undefined') return () => {}
 
-    if (!document.getElementById('agro-auth-transition-style')) {
-      const style = document.createElement('style')
-      style.id = 'agro-auth-transition-style'
-      style.textContent = `
-        @keyframes agroMaizSpin { to { transform: rotate(360deg); } }
-      `
-      document.head.appendChild(style)
-    }
+    // Elimina estilos previos si existen
+    const prevStyle = document.getElementById('agro-auth-transition-style')
+    if (prevStyle) prevStyle.remove()
+
+    // Estilos globales para animación y brillo
+    const style = document.createElement('style')
+    style.id = 'agro-auth-transition-style'
+    style.textContent = `
+      @keyframes agroMaizSpin { to { transform: rotate(360deg); } }
+      @keyframes agroMaizGlow {
+        0% { filter: drop-shadow(0 0 8px #ffe066) drop-shadow(0 0 2px #fffbe8); }
+        100% { filter: drop-shadow(0 0 32px #ffe066) drop-shadow(0 0 12px #fffbe8); }
+      }
+    `
+    document.head.appendChild(style)
 
     const overlay = document.createElement('div')
     overlay.setAttribute('data-auth-transition', 'true')
     overlay.style.position = 'fixed'
     overlay.style.inset = '0'
     overlay.style.zIndex = '11000'
-    overlay.style.background = 'rgba(42, 27, 11, 0.78)'
+    overlay.style.background = 'rgba(32,33,31,0.93)'
     overlay.style.backdropFilter = 'blur(4px)'
     overlay.style.display = 'flex'
     overlay.style.flexDirection = 'column'
     overlay.style.alignItems = 'center'
     overlay.style.justifyContent = 'center'
-    overlay.style.gap = '12px'
-    overlay.style.color = '#fff'
-    overlay.style.fontFamily = 'Nunito, sans-serif'
+    overlay.style.gap = '24px'
+    overlay.style.color = '#fffbe8'
+    overlay.style.fontFamily = 'Nunito, Fraunces, Arial, sans-serif'
 
     const icono = document.createElement('div')
     icono.textContent = '🌽'
-    icono.style.fontSize = '58px'
+    icono.style.fontSize = '54px'
     icono.style.lineHeight = '1'
-    icono.style.animation = 'agroMaizSpin 0.9s linear infinite'
+    icono.style.animation = 'agroMaizSpin 1.1s linear infinite, agroMaizGlow 1.2s ease-in-out infinite alternate'
+    icono.style.filter = 'drop-shadow(0 0 32px #ffe066) drop-shadow(0 0 12px #fffbe8)'
+    icono.style.marginBottom = '24px'
 
     const label = document.createElement('div')
     label.textContent = texto
-    label.style.fontSize = '15px'
-    label.style.fontWeight = '700'
-    label.style.letterSpacing = '0.02em'
+    label.style.fontSize = '22px'
+    label.style.fontWeight = '800'
+    label.style.letterSpacing = '.04em'
+    label.style.textAlign = 'center'
+    label.style.fontFamily = 'Nunito, Fraunces, Arial, sans-serif'
+    label.style.textShadow = '0 2px 12px #000, 0 0 24px #ffe066'
 
     overlay.appendChild(icono)
     overlay.appendChild(label)
@@ -138,7 +150,8 @@ export function useAuth() {
     setUsuario(null)
     await new Promise(resolve => setTimeout(resolve, 2000))
     limpiarOverlay()
-    router.push('/login')
+    // Redirigir a dashboard tras logout (evita bucle con /)
+    router.push('/dashboard')
   }
 
   // Inicializa el store desde localStorage al montar la app

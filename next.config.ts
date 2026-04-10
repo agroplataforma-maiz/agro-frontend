@@ -29,7 +29,6 @@ const config: NextConfig = {
   // ── Compilación ──────────────────────────────────────────────────
   // Silencia warnings de paquetes de terceros en producción
   typescript: { ignoreBuildErrors: false },
-  eslint:     { ignoreDuringBuilds: false },
 }
 
 export default config

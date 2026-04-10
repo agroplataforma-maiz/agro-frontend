@@ -1,3 +1,29 @@
+/* ==== DEBUG MAPLIBRE CONTROLS ==== */
+.maplibregl-ctrl, .maplibregl-ctrl-top-right, .maplibregl-ctrl-top-left, .maplibregl-ctrl-bottom-right, .maplibregl-ctrl-bottom-left {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 99999 !important;
+  pointer-events: auto !important;
+}
+.maplibregl-ctrl {
+  border: 2px solid red !important;
+  background: #fff !important;
+}
+.maplibregl-canvas, .maplibregl-map {
+  overflow: visible !important;
+}
+.mapa-huasteca-maplibre-container {
+  overflow: visible !important;
+  z-index: 1000 !important;
+}
+/* Forzar visibilidad del panel de capas */
+.mapa-huasteca-maplibre-container > div[style*="position: absolute"] {
+  display: block !important;
+  opacity: 1 !important;
+  visibility: visible !important;
+  z-index: 99999 !important;
+}
 /* === STAT CARDS GLOBAL === */
 .stats-row {
   display: grid;
@@ -135,44 +161,46 @@
 
 /* ── MODO OSCURO ── */
 html.dark {
-  /* Fondos: gris oscuro con toque cálido muy sutil — no café/sepia */
-  --blanco:      #1F1E1C;
-  --crema:       #28261F;
-  --crema-dark:  #1A1917;
+  /* Fondos principales: azul-verde profundo, sin saturación excesiva */
+  --blanco:      #1B2320;
+  --crema:       #202624;
+  --crema-dark:  #181C1A;
 
-  /* Texto: crema cálido legible, no blanco duro */
-  --tierra:      #EDE0C8;
-  --tierra-cl:   #C8AA82;
-  --cafe:        #B89B72;
+  /* Texto: crema cálido, buen contraste */
+  --tierra:      #E3D6C2;
+  --tierra-cl:   #BBAA8C;
+  --cafe:        #A08B6B;
 
   /* Texto muted: contraste mínimo 3.5:1 sobre fondo oscuro */
-  --gris:        #A8B0BC;
-  --gris-cl:     #8C9AAA;
+  --gris:        #A0A8B0;
+  --gris-cl:     #7C868F;
 
-  /* Bordes: 0.11 da estructura visible sin ser agresivo */
-  --borde:       rgba(255,255,255,0.11);
-  --borde-dark:  rgba(255,255,255,0.20);
+  /* Bordes: sutiles y suaves */
+  --borde:       rgba(255,255,255,0.08);
+  --borde-dark:  rgba(255,255,255,0.14);
 
   /* Sombras */
-  --sombra-sm:   0 2px 8px  rgba(0,0,0,0.40);
-  --sombra:      0 4px 20px rgba(0,0,0,0.45);
-  --sombra-lg:   0 12px 40px rgba(0,0,0,0.55);
+  --sombra-sm:   0 2px 8px  rgba(0,0,0,0.28);
+  --sombra:      0 4px 20px rgba(0,0,0,0.32);
+  --sombra-lg:   0 12px 40px rgba(0,0,0,0.38);
 
-  /* Verde más brillante para que sea visible sobre fondo oscuro */
-  --verde:       #4DA06B;
-  --verde-cl:    #68C48A;
-  --verde-deep:  #2A6644;
-  --verde-pal:   rgba(77,160,107,0.16);
+  /* Verde profundo y suave */
+  --verde:       #2F6B4F;
+  --verde-cl:    #4FA87A;
+  --verde-deep:  #182B23;
+  --verde-pal:   rgba(60,120,90,0.13);
+  --verde-pal-dark: rgba(60,120,90,0.18);
 
-  /* Maíz: desaturar en dark para no calar la vista (amarillo brillante → ámbar cálido) */
-  --maiz:        #BF8012;
-  --maiz-cl:     #CF9820;
-  --maiz-pal:    rgba(200,130,10,0.20);
+  /* Maíz: ámbar cálido, menos saturado */
+  --maiz:        #B88A2A;
+  --maiz-cl:     #D1A84A;
+  --maiz-pal:    rgba(200,130,10,0.13);
 
-  /* Rojos / azules */
-  --rojo:        #E05A47;
-  --rojo-pal:    rgba(224,90,71,0.18);
-  --azul-pal:    rgba(96,165,250,0.18);
+  /* Rojos / azules menos saturados */
+  --rojo:        #C96A4A;
+  --rojo-pal:    rgba(201,106,74,0.13);
+  --rojo-pal-dark: rgba(201,106,74,0.18);
+  --azul-pal:    rgba(96,165,250,0.13);
 }
 
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -183,25 +211,80 @@ html,body{height:100%}
 html{scroll-behavior:smooth;background:var(--crema);}
 body{font-family:'Nunito',sans-serif;background:var(--crema)!important;color:var(--tierra);overflow-x:hidden}
 
+/* Leaflet / visor SIG en dark mode */
+html.dark .leaflet-container {
+  background: #171614;
+  color: var(--tierra);
+}
+html.dark .leaflet-bar a,
+html.dark .leaflet-control-layers-toggle,
+html.dark .leaflet-control-layers-expanded {
+  background: #211f1b;
+  color: var(--tierra);
+  border-color: rgba(255,255,255,.14);
+}
+html.dark .leaflet-bar a:hover {
+  background: #2a2722;
+  color: #fff;
+}
+html.dark .leaflet-control-layers-expanded {
+  box-shadow: 0 10px 24px rgba(0,0,0,.28);
+}
+html.dark .leaflet-control-layers label,
+html.dark .leaflet-control-attribution,
+html.dark .leaflet-control-scale-line {
+  color: var(--tierra);
+}
+html.dark .leaflet-control-attribution {
+  background: rgba(31,30,28,.88);
+}
+html.dark .leaflet-control-attribution a {
+  color: var(--maiz-cl);
+}
+html.dark .leaflet-popup-content-wrapper,
+html.dark .leaflet-popup-tip,
+html.dark .leaflet-tooltip {
+  background: #1f1e1c;
+  color: var(--tierra);
+  border: 1px solid rgba(255,255,255,.12);
+}
+html.dark .leaflet-tooltip {
+  box-shadow: 0 8px 18px rgba(0,0,0,.24);
+}
+
 /* ════════════════════════════════════
    NAVBAR
 ════════════════════════════════════ */
-.nav {
-  position: fixed;
-  top: 0; left: 0; right: 0;
-  z-index: 100;
-  padding: 0 5vw;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  transition: background .3s, box-shadow .3s;
+
+:root {
+  --crema: #fffdfa;
+  --crema-oscuro: #f5f0e6;
+  --marron: #3d2208;
+  --marron-claro: #a67c52;
+  --marron-medio: #7c5a36;
+  --verde: #4e7c59;
+  --verde-claro: #b7d7b0;
+  --gris: #e5e5e5;
+  --gris-medio: #bdbdbd;
+  --gris-oscuro: #757575;
+  --rojo: #e57373;
+  --amarillo: #ffe082;
+  --azul: #64b5f6;
+  /* Modal overlay y fondo para modo claro */
+  --modal-overlay-bg: rgba(61,34,8,0.32);
+  --modal-bg: rgba(255,255,255,0.92);
+  --modal-border: rgba(61,34,8,0.10);
+  --modal-shadow: rgba(61,34,8,0.18);
 }
-.nav.scrolled {
-  background: rgba(61,34,8,.97);
-  box-shadow: 0 2px 20px rgba(0,0,0,.2);
-  backdrop-filter: blur(8px);
+
+html.dark {
+  /* Modal overlay y fondo para modo oscuro */
+  --modal-overlay-bg: rgba(0,0,0,0.48);
+  --modal-bg: rgba(32,24,12,0.96);
+  --modal-border: rgba(255,255,255,0.08);
+  --modal-shadow: rgba(0,0,0,0.32);
 }
+
 .nav-logo {
   display: flex;
   align-items: center;

@@ -6,14 +6,18 @@ import { dash } from '@/lib/utils'
 import type { Comunidad, Productor } from '@/types'
 import styles from './PerfilComunidad.module.css'
 import Button from '@/components/ui/Button'
+import { useAppStore } from '@/store/useAppStore'
 import StateView from '@/components/ui/StateView'
 
 interface Props {
   id: number
   onVolver: () => void
+  onEdit?: (id: number) => void
 }
 
-export default function PerfilComunidad({ id, onVolver }: Props) {
+export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
+  const usuario = useAppStore(s => s.usuario);
+  const rol = usuario?.rol;
   const { data: comunidad, isLoading } = useQuery<Comunidad>({
     queryKey: ['comunidad', id],
     queryFn:  () => GET(`/social/comunidad/${id}`),
@@ -68,9 +72,16 @@ export default function PerfilComunidad({ id, onVolver }: Props) {
               )}
             </div>
           </div>
-          <Button variante="ghost" tamaño="sm" onClick={onVolver} className={styles.btnVolver}>
-            ← Volver
-          </Button>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: 8, marginLeft: 'auto' }}>
+            <Button variante="ghost" tamaño="sm" onClick={onVolver} className={styles.btnVolver}>
+              ← Volver
+            </Button>
+            {rol === 'administrador' && (
+              <Button variante="secundario" tamaño="sm" onClick={() => onEdit?.(comunidad.id)}>
+                ✏️ Editar
+              </Button>
+            )}
+          </div>
         </div>
       </div>
 

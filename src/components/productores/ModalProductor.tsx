@@ -1,6 +1,7 @@
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
+import { GET } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { POST, PUT } from '@/lib/api'
 import type { Productor } from '@/types'
@@ -22,9 +23,11 @@ const EMPTY: Partial<Productor> = {
   tipo_productor_id: undefined, comunidad_id: undefined,
 }
 
+type LocalidadesResponse = { items?: { id: number; nombre: string }[]; results?: { id: number; nombre: string }[] };
+
 export default function ModalProductor({ productor, onClose, onSaved }: Props) {
   const municipios     = useAppStore(s => s.municipios)
-  const localidades    = useAppStore(s => s.localidades)
+  const [localidadesFiltradas, setLocalidadesFiltradas] = useState([])
   const tiposProductor = useAppStore(s => s.tiposProductor)
 
   const [form,    setForm]    = useState<Partial<Productor>>(productor ?? EMPTY)
@@ -35,13 +38,78 @@ export default function ModalProductor({ productor, onClose, onSaved }: Props) {
     setForm(productor ?? EMPTY)
   }, [productor])
 
-  const update = (k: keyof Productor) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
-      setForm(f => ({ ...f, [k]: e.target.value }))
 
-  const locsFiltradas = localidades.filter(l =>
-    !form.municipio_id || l.municipio_id === Number(form.municipio_id)
-  )
+  // Cuando cambia el municipio, limpiar localidad y cargar localidades del municipio
+  const update = (k: keyof Productor) =>
+    async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      const value = e.target.value;
+      if (k === 'municipio_id') {
+        setForm(f => ({ ...f, municipio_id: Number(value), localidad_id: 0 }));
+        if (value) {
+          try {
+            const locs = await GET(`/geo/localidad?municipio_id=${value}`);
+            if (Array.isArray(locs)) {
+              setLocalidadesFiltradas(locs);
+            } else if (typeof locs === 'object' && locs !== null) {
+              const l = locs as LocalidadesResponse;
+              if (Array.isArray(l.items)) {
+                setLocalidadesFiltradas(l.items);
+              } else if (Array.isArray(l.results)) {
+                setLocalidadesFiltradas(l.results);
+              } else {
+                setLocalidadesFiltradas([]);
+              }
+            } else {
+              setLocalidadesFiltradas([]);
+            }
+          } catch {
+            setLocalidadesFiltradas([]);
+          }
+        } else {
+          setLocalidadesFiltradas([]);
+        }
+      } else if (k === 'localidad_id') {
+        setForm(f => ({ ...f, localidad_id: Number(value) }));
+      } else if (k === 'tipo_productor_id') {
+        setForm(f => ({ ...f, tipo_productor_id: Number(value) }));
+      } else {
+        setForm(f => ({ ...f, [k]: value }));
+      }
+    }
+
+  // Cargar localidades al abrir modal si ya hay municipio seleccionado (edición)
+  useEffect(() => {
+    if (form.municipio_id) {
+      (async () => {
+        try {
+          const locs = await GET(`/geo/localidad?municipio_id=${form.municipio_id}`);
+          if (Array.isArray(locs)) {
+            setLocalidadesFiltradas(locs);
+          } else if (typeof locs === 'object' && locs !== null) {
+            const l = locs as LocalidadesResponse;
+            if (Array.isArray(l.items)) {
+              setLocalidadesFiltradas(l.items);
+            } else if (Array.isArray(l.results)) {
+              setLocalidadesFiltradas(l.results);
+            } else {
+              setLocalidadesFiltradas([]);
+            }
+          } else {
+            setLocalidadesFiltradas([]);
+          }
+        } catch {
+          setLocalidadesFiltradas([]);
+        }
+      })();
+    } else {
+      setLocalidadesFiltradas([]);
+    }
+  }, [form.municipio_id]);
+
+
+
+
+
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -105,20 +173,20 @@ export default function ModalProductor({ productor, onClose, onSaved }: Props) {
           />
           <SelectField
             label="Municipio" name="municipio_id"
-            value={form.municipio_id ?? ''}
+            value={form.municipio_id !== undefined && form.municipio_id !== null ? String(form.municipio_id) : ''}
             onChange={update('municipio_id')}
             options={[
               { value: '', label: '— Selecciona —' },
-              ...municipios.map(m => ({ value: m.id, label: m.nombre })),
+              ...municipios.map(m => ({ value: String(m.id), label: m.nombre })),
             ]}
           />
           <SelectField
             label="Localidad" name="localidad_id"
-            value={form.localidad_id ?? ''}
+            value={form.localidad_id !== undefined && form.localidad_id !== null ? String(form.localidad_id) : ''}
             onChange={update('localidad_id')}
             options={[
               { value: '', label: '— Selecciona —' },
-              ...locsFiltradas.map(l => ({ value: l.id, label: l.nombre })),
+              ...localidadesFiltradas.map(l => ({ value: String(l.id), label: l.nombre })),
             ]}
           />
         </div>

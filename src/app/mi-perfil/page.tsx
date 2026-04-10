@@ -9,7 +9,7 @@ import { ROL_COLOR } from '@/types';
 import type { Usuario } from '@/types';
 import Button from '@/components/ui/Button';
 import Field from '@/components/ui/Field';
-import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
+import { useRouter } from 'next/navigation'
 import styles from './mi-perfil.module.css';
 
 const ROL_LABEL: Record<string, string> = {
@@ -29,6 +29,7 @@ type UsuarioExtendido = Usuario & {
 };
 
 export default function MiPerfilPage() {
+  const router = useRouter();
   const usuario   = useAppStore(s => s.usuario);
   const setUsuario = useAppStore(s => s.setUsuario);
   const addToast  = useAppStore(s => s.addToast);
@@ -81,7 +82,13 @@ export default function MiPerfilPage() {
     };
   }, [usuario, setUsuario]);
 
-  if (!usuario) return <AccessGuardScreen message="Cargando perfil..." />
+  // Si no hay usuario, redirige a inicio (evita pantalla de carga infinita tras logout)
+  if (!usuario) {
+    if (typeof window !== 'undefined') {
+      router.replace('/')
+    }
+    return null
+  }
 
   const ini   = iniciales(usuario.nombre_completo || usuario.username);
   const color = ROL_COLOR[usuario.rol] ?? '#888';

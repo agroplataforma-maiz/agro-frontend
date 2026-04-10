@@ -1,20 +1,21 @@
-import React from 'react';
+import React from 'react'
+import styles from './UserCard.module.css'
 
 interface UserCardProps {
-  initials: string;
-  name: string;
-  role: string;
-  color: string;
+  initials: string
+  name: string
+  role: string
+  color: string
 }
 
 export const UserCard: React.FC<UserCardProps> = ({ initials, name, role, color }) => (
-  <div className="user-card">
-    <div className="user-avatar" style={{ background: color }}>
+  <article className={styles.card}>
+    <div className={styles.avatar} style={{ background: color }} aria-hidden="true">
       {initials}
     </div>
-    <div className="user-info">
-      <span className="user-name">{name}</span>
-      <span className="user-role">{role}</span>
+    <div className={styles.info}>
+      <span className={styles.name}>{name}</span>
+      <span className={styles.role}>{role}</span>
     </div>
-  </div>
-);
+  </article>
+)

@@ -154,13 +154,46 @@ function StatPerfil({ emoji, label, valor }: { emoji: string; label: string; val
 
 // ── Sección individual (lazy fetch) ──────────────────────────────────────────
 function SeccionDatos({ sectionKey, emoji, label, path }: { sectionKey: string; emoji: string; label: string; path: string }) {
-  const { data, isLoading, isError } = useQuery({
+  const { data, isLoading, isError } = useQuery<unknown>({
     queryKey: ['seccion', path],
     queryFn:  () => GET(path),
-  })
+  });
 
-  const items = Array.isArray(data) ? data : (data as Record<string, unknown>)?.items ?? []
-  const tieneData = !isLoading && !isError && (items as unknown[]).length > 0
+  type Lengua = {
+    id: number;
+    nombre: string;
+    nombre_original?: string;
+    familia_linguistica?: string;
+    variante?: string;
+    clave_inali?: string;
+    [key: string]: unknown;
+  };
+
+  let items: Record<string, unknown>[] = [];
+  if (sectionKey === 'lenguas') {
+    if (
+      data &&
+      typeof data === 'object' &&
+      'results' in (data as Record<string, unknown>) &&
+      Array.isArray((data as { results?: unknown }).results)
+    ) {
+      items = (data as { results: Lengua[] }).results;
+    }
+  } else {
+    if (Array.isArray(data)) {
+      items = data as Record<string, unknown>[];
+    } else if (
+      data &&
+      typeof data === 'object' &&
+      'items' in data &&
+      Array.isArray((data as { items?: unknown }).items)
+    ) {
+      items = (data as { items: Record<string, unknown>[] }).items;
+    } else {
+      items = [];
+    }
+  }
+  const tieneData = !isLoading && !isError && items.length > 0;
 
   return (
     <details id={`sec-${sectionKey}`} className={styles.seccion}>
@@ -171,10 +204,33 @@ function SeccionDatos({ sectionKey, emoji, label, path }: { sectionKey: string; 
       <div className={styles.seccionBody}>
         {isLoading && <StateView variant="loading" size="sm" title="Cargando" message="Consultando datos de la sección..." />}
         {isError   && <StateView variant="error" size="sm" title="Error al cargar" message="No pudimos obtener esta sección por ahora." />}
-        {!isLoading && !isError && (items as unknown[]).length === 0 && (
+        {!isLoading && !isError && items.length === 0 && (
           <StateView variant="empty" size="sm" title="Sin datos registrados" message="Todavía no hay información capturada en esta sección." />
         )}
-        {tieneData && (items as Record<string, unknown>[]).map((item, i) => (
+        {tieneData && sectionKey === 'lenguas' && (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+            {(items as Lengua[]).map((l, i) => (
+              <div key={String(l.id) || i} style={{
+                background: '#fffbe6',
+                border: '1px solid #ffe066',
+                borderRadius: 10,
+                padding: '12px 18px',
+                marginBottom: 4,
+                boxShadow: '0 1px 4px #ffe06633',
+                fontSize: 15
+              }}>
+                <div style={{ fontWeight: 700, fontSize: 16, color: '#C8820A' }}>{String(l.nombre_original || l.nombre)}</div>
+                <div style={{ color: '#7c5c1a', fontSize: 13, marginBottom: 2 }}>{String(l.nombre)}</div>
+                <div style={{ fontSize: 12, color: '#8d7b4a' }}>
+                  {l.familia_linguistica && <span><b>Familia:</b> {String(l.familia_linguistica)} &nbsp; </span>}
+                  {l.variante && <span><b>Variante:</b> {String(l.variante)} &nbsp; </span>}
+                  {l.clave_inali && <span><b>Clave INALI:</b> {String(l.clave_inali)}</span>}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+        {tieneData && sectionKey !== 'lenguas' && (items as Record<string, unknown>[]).map((item, i) => (
           <div key={i} className={styles.seccionItem}>
             {Object.entries(item)
               .filter(([k]) => !['id', 'productor_id', 'created_at', 'updated_at'].includes(k))

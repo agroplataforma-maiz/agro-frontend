@@ -1,228 +1,275 @@
 // src/app/comunidades/page.tsx
 'use client'
 
-import { useState } from 'react'
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
-import { GET, DEL } from '@/lib/api'
-import { useAppStore } from '@/store/useAppStore'
-import { useCatalogos } from '@/hooks/useCatalogos'
-import { dash } from '@/lib/utils'
-import Tabla, { type Columna } from '@/components/ui/Tabla'
-import ModalComunidad from '@/components/comunidades/ModalComunidad'
-import PerfilComunidad from '../../components/comunidades/PerfilComunidad'
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAppStore } from '@/store/useAppStore';
+import { GET } from '@/lib/api';
+import ModalComunidad from '@/components/comunidades/ModalComunidad';
 
-import type { Comunidad } from '@/types'
-import styles from './comunidades.module.css'
-import AdminShell from '@/components/dashboard/AdminShell'
-import Button from '@/components/ui/Button'
-import ModuleHero from '@/components/ui/ModuleHero'
-import SearchInput from '@/components/ui/SearchInput'
-import Modal from '@/components/ui/Modal'
-import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
-import { useRolGuard } from '@/hooks/useRolGuard'
+import AdminShell from '@/components/dashboard/AdminShell';
+import SidebarComunidades from '@/components/comunidades/SidebarComunidades';
 
-type Vista = 'lista' | 'perfil'
+import MapaHuasteca, { type PuntoMapaHuasteca } from '@/components/ui/MapaHuasteca';
+import TablaComunidades from '@/components/comunidades/TablaComunidades';
+import PerfilComunidad from '@/components/comunidades/PerfilComunidad';
+import type { Comunidad, Municipio } from '@/types';
+
+import '@/components/comunidades/hide-modals-mobile.css'
+
+const COMUNIDADES_HUASTECA: PuntoMapaHuasteca[] = [
+  { id: 1, comunidad: 'Ébano', municipio: 'Ébano', latitud: 22.265697, longitud: -98.625804 },
+  { id: 2, comunidad: 'San José el Viejo', municipio: 'Tamasopo', latitud: 21.7018753, longitud: -99.228642 },
+  { id: 3, comunidad: 'Nuevo Jomté', municipio: 'San Vicente Tancuayalab', latitud: 21.855922, longitud: -98.576321 },
+  { id: 4, comunidad: 'Ponciano Arriaga', municipio: 'Ébano', latitud: 22.2386708, longitud: -98.5673783 },
+  { id: 5, comunidad: 'Tanluche', municipio: 'Ciudad Valles', latitud: 22.143333, longitud: -99.115833 },
+  { id: 6, comunidad: 'Ponciano Arriaga', municipio: 'Ébano', latitud: 22.2386708, longitud: -98.5673783 },
+  { id: 7, comunidad: 'Ejido La Lima', municipio: 'Ciudad Valles', latitud: 21.927849, longitud: -99.100947 },
+  { id: 8, comunidad: 'Ejido Palo de Arco', municipio: 'Aquismón', latitud: 21.925571, longitud: -99.191220 },
+  { id: 9, comunidad: 'Ojo de Agua', municipio: 'Ciudad Valles', latitud: 21.991583, longitud: -99.123659 },
+  { id: 10, comunidad: 'Ejido La Lima', municipio: 'Ciudad Valles', latitud: 21.9244445, longitud: -99.099959 },
+  { id: 11, comunidad: 'Zopope', municipio: 'Aquismón', latitud: 21.57856, longitud: -99.0818169 },
+  { id: 12, comunidad: 'Puerto Rancho Nuevo', municipio: 'Tamasopo', latitud: 21.783778, longitud: -99.490611 },
+  { id: 13, comunidad: 'Puerto Rancho Nuevo', municipio: 'Tamasopo', latitud: 21.7829745, longitud: -99.4894382 },
+  { id: 14, comunidad: 'Puerto Rancho Nuevo', municipio: 'Tamasopo', latitud: 21.7834602, longitud: -99.4901064 },
+  { id: 15, comunidad: 'Agua Puerca', municipio: 'Tamasopo', latitud: 21.762768, longitud: -99.481854 },
+  { id: 16, comunidad: 'Cuéchod', municipio: 'San Antonio', latitud: 21.6240087, longitud: -98.9107526 },
+  { id: 17, comunidad: 'El Chuche', municipio: 'Tanlajás', latitud: 21.6836592, longitud: -98.9109448 },
+  { id: 18, comunidad: 'Aldzulup', municipio: 'Tancanhuitz', latitud: 21.6169203, longitud: -98.927553 },
+  { id: 19, comunidad: 'El Chuche', municipio: 'Tanlajás', latitud: 21.6864942, longitud: -98.9120133 },
+  { id: 20, comunidad: 'Río Verdito', municipio: 'Ciudad Valles', latitud: 22.214776, longitud: -99.260781 },
+  { id: 21, comunidad: 'Ejido Santa Rosa', municipio: 'Tanlajás', latitud: 21.73898688, longitud: -98.8701427 },
+  { id: 22, comunidad: 'Coromohom', municipio: 'Tanlajás', latitud: 21.6770912, longitud: -98.8884554 },
+];
+
+// Hook para detectar si es móvil
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 700);
+    check();
+    window.addEventListener('resize', check);
+    return () => window.removeEventListener('resize', check);
+  }, []);
+  return isMobile;
+}
 
 export default function ComunidadesPage() {
-  const accesoPermitido = useRolGuard(['administrador', 'investigador', 'tecnico_campo'])
 
-  useCatalogos()
+  const isMobile = useIsMobile();
 
-  const usuario  = useAppStore(s => s.usuario)
-  const addToast = useAppStore(s => s.addToast)
-  const qc       = useQueryClient()
+  // Usuario y protección de ruta
+  const usuario = useAppStore(s => s.usuario);
+  const rol = usuario?.rol;
+  const [mounted, setMounted] = useState(false);
+  const setMunicipios = useAppStore(s => s.setMunicipios);
+  const municipiosStore = useAppStore(s => s.municipios);
+  const router = useRouter();
 
-  const [vista,          setVista]          = useState<Vista>('lista')
-  const [comunidadId,    setComunidadId]    = useState<number | null>(null)
-  const [busqueda,       setBusqueda]       = useState('')
-  const [modalAbierto,   setModalAbierto]   = useState(false)
-  const [editando,       setEditando]       = useState<Comunidad | null>(null)
-  const [confirmEliminar, setConfirmEliminar] = useState<Comunidad | null>(null)
+  // Estados y lógica para filtros y selección
+  const [busqueda, setBusqueda] = useState('');
+  const [municipioFiltro, setMunicipioFiltro] = useState('todos');
+  // Modal de nueva comunidad o edición
+  const [modalNuevaOpen, setModalNuevaOpen] = useState(false);
+  const [comunidadEdit, setComunidadEdit] = useState<Comunidad | null>(null);
+  const [comunidadPerfilId, setComunidadPerfilId] = useState<number | null>(null);
+  const [comunidades, setComunidades] = useState(COMUNIDADES_HUASTECA.map(c => ({
+    id: Number(c.id),
+    nombre: c.comunidad,
+    municipio_nombre: c.municipio,
+    localidad_nombre: '',
+    lengua_indigena: '',
+    poblacion: undefined,
+    num_productores: undefined,
+    latitud: c.latitud,
+    longitud: c.longitud,
+  })));
+  const [puntoActivoId, setPuntoActivoId] = useState<number | string | null>(null);
 
-  // ── Fetch lista ───────────────────────────────────────────────────────────
-  const { data: comunidades = [], isLoading } = useQuery<Comunidad[]>({
-    queryKey: ['comunidades'],
-    queryFn:  () => GET('/social/comunidad'),
-    enabled: accesoPermitido,
-    select:   (d: unknown) => {
-      const data = d as Comunidad[] | { items?: Comunidad[]; results?: Comunidad[] }
-      return Array.isArray(data) ? data : data.items ?? data.results ?? []
-    },
-  })
+    // Cierra el panel de perfil si se entra a móvil
+  useEffect(() => {
+    if (isMobile && comunidadPerfilId) {
+      setComunidadPerfilId(null);
+    }
+  }, [isMobile, comunidadPerfilId]);
 
-  // ── Eliminar ──────────────────────────────────────────────────────────────
-  const eliminar = useMutation({
-    mutationFn: (id: number) => DEL(`/social/comunidad/${id}`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['comunidades'] })
-      addToast('Comunidad eliminada', 'ok')
-    },
-    onError: (e: Error) => addToast(e.message, 'err'),
-  })
 
-  if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
-  if (!usuario) return <AccessGuardScreen message="Cargando comunidades..." />
+  useEffect(() => {
+    setMounted(true);
+    // Guardar la última ruta visitada
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('agro_last_path', window.location.pathname);
+    }
+    // Esperar 80ms para permitir la hidratación del usuario desde localStorage
+    if (!usuario) {
+      const timeout = setTimeout(() => {
+        if (!useAppStore.getState().usuario) {
+          router.replace('/');
+        }
+      }, 80);
+      return () => clearTimeout(timeout);
+    }
+    // Cargar municipios si no hay
+    if (municipiosStore.length === 0) {
+      GET('/geo/municipio')
+        .then((data: unknown) => {
+          let lista: unknown[] = [];
+          if (Array.isArray(data)) {
+            lista = data;
+          } else if (typeof data === 'object' && data !== null) {
+            const d = data as { items?: unknown[]; results?: unknown[] };
+            lista = d.items ?? d.results ?? [];
+          }
+          function isMunicipio(m: unknown): m is Municipio {
+            return (
+              typeof m === 'object' &&
+              m !== null &&
+              'id' in m &&
+              typeof (m as { id?: unknown }).id === 'number' &&
+              'nombre' in m &&
+              typeof (m as { nombre?: unknown }).nombre === 'string'
+            );
+          }
+          const municipiosValidos = (lista as unknown[]).filter(isMunicipio);
+          setMunicipios(municipiosValidos);
+        })
+        .catch(() => {});
+    }
+  }, [usuario, router, municipiosStore.length, setMunicipios]);
 
-  // ── Filtro ────────────────────────────────────────────────────────────────
-  const filtradas = comunidades.filter(c =>
-    c.nombre.toLowerCase().includes(busqueda.toLowerCase()) ||
-    (c.municipio_nombre ?? '').toLowerCase().includes(busqueda.toLowerCase())
-  )
-  const municipiosCubiertos = new Set(comunidades.map(c => c.municipio_nombre).filter(Boolean)).size
-  const totalProductores = comunidades.reduce((sum, c) => sum + (c.num_productores ?? 0), 0)
+  // Si no hay usuario, no renderizar nada (ni pantalla de cargando)
+  if (!usuario) return null;
+  if (!mounted) return null;
 
-  // ── Columnas ──────────────────────────────────────────────────────────────
-  const columnas: Columna<Comunidad>[] = [
-    { key: 'id',     header: 'ID',        width: '60px', hideOnMobile: true, hideOnTablet: true },
-    { key: 'nombre', header: 'Comunidad', render: c => c.nombre },
-    {
-      key: 'municipio_nombre',
-      header: 'Municipio',
-      render: c => dash(c.municipio_nombre),
-    },
-    {
-      key: 'lengua_indigena',
-      header: 'Lengua indígena',
-      hideOnMobile: true,
-      hideOnTablet: true,
-      render: c => dash(c.lengua_indigena),
-    },
-    {
-      key: 'poblacion',
-      header: 'Población',
-      width: '100px',
-      hideOnMobile: true,
-      hideOnTablet: true,
-      render: c => c.poblacion ? c.poblacion.toLocaleString() : '—',
-    },
-    {
-      key: 'num_productores',
-      header: 'Productores',
-      width: '110px',
-      render: c => c.num_productores != null ? String(c.num_productores) : '—',
-    },
-  ]
+  // Filtrar comunidades según búsqueda y municipio
+  const ubicacionesFiltradas = COMUNIDADES_HUASTECA.filter(p => {
+    const coincideBusqueda =
+      p.comunidad.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.municipio.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideMunicipio = municipioFiltro === 'todos' || p.municipio === municipioFiltro;
+    return coincideBusqueda && coincideMunicipio;
+  });
 
-  // ── Vista perfil ──────────────────────────────────────────────────────────
-  if (vista === 'perfil' && comunidadId) {
-    return (
-      <AdminShell contentPadding="0">
-        <PerfilComunidad
-          id={comunidadId}
-          onVolver={() => { setVista('lista'); setComunidadId(null) }}
-        />
-      </AdminShell>
-    )
-  }
+  // Municipios únicos para los filtros
+  const municipiosMapa = Array.from(new Set(COMUNIDADES_HUASTECA.map(p => p.municipio)));
 
-  // ── Vista lista ───────────────────────────────────────────────────────────
+  // Adaptar datos para la tabla (admin)
+  const comunidadesTabla = comunidades;
+
+
+  // Datos de usuario para overlays
   return (
-    <AdminShell contentPadding="0">
-      <div className={styles.page}>
-        <ModuleHero
-          eyebrow="Social · Territorio comunitario"
-          title={<>Mapa de <em>Comunidades</em> 🏘️</>}
-          description="Organiza comunidades, municipios y referencias territoriales para conectar productores, lengua y contexto local." 
-          stats={[
-            { label: 'comunidades', value: comunidades.length },
-            { label: 'municipios', value: municipiosCubiertos || '—' },
-            { label: 'productores', value: totalProductores || '—' },
-          ]}
-        />
-        <header className={styles.header}>
-          <div>
-            <h1 className={styles.titulo}>Comunidades</h1>
-            <p className={styles.subtitulo}>{filtradas.length} registros · Huasteca Potosina</p>
-          </div>
-          <div className={styles.headerActions}>
-            <SearchInput
-              value={busqueda}
-              onChange={e => setBusqueda(e.target.value)}
-              placeholder="Buscar comunidad o municipio…"
+    <AdminShell contentPadding="0" defaultSidebarCollapsed={true}>
+      {/* Vista para administrador: tabla */}
+      {rol === 'administrador' ? (
+        <div style={{ padding: 32, maxWidth: 1200, margin: '0 auto' }}>
+          <h2 style={{ fontFamily: 'Fraunces,Georgia,serif', fontSize: 22, fontWeight: 900, color: '#C8820A', marginBottom: 18 }}>Comunidades registradas</h2>
+          {comunidadPerfilId ? (
+            <>
+              {!isMobile && (
+                <PerfilComunidad
+                  id={comunidadPerfilId}
+                  onVolver={() => setComunidadPerfilId(null)}
+                  onEdit={id => {
+                    setComunidadEdit(comunidades.find(c => c.id === id) ?? null);
+                    setModalNuevaOpen(true);
+                  }}
+                />
+              )}
+              {modalNuevaOpen && !isMobile && (
+                <ModalComunidad
+                  comunidad={comunidadEdit}
+                  onClose={() => {
+                    setModalNuevaOpen(false);
+                    setComunidadEdit(null);
+                  }}
+                  onSaved={() => {
+                    setModalNuevaOpen(false);
+                    setComunidadEdit(null);
+                    // Aquí podrías recargar la lista desde el backend si fuera necesario
+                  }}
+                />
+              )}
+            </>
+          ) : (
+            <TablaComunidades
+              comunidades={comunidadesTabla}
+              onEdit={comunidad => {
+                setComunidadPerfilId(comunidad.id);
+              }}
+              onDelete={id => {
+                setComunidades(prev => prev.filter(c => c.id !== id));
+              }}
             />
-            <Button
-              variante="primario"
-              onClick={() => { setEditando(null); setModalAbierto(true) }}
-            >
-              + Nueva comunidad
-            </Button>
-          </div>
-        </header>
-
-        <div className={styles.kpiBand}>
-          <div className={styles.kpiItem}>
-            <span className={styles.kpiNum}>{comunidades.length}</span>
-            <span className={styles.kpiLbl}>Comunidades registradas</span>
-          </div>
-          <div className={styles.kpiItem}>
-            <span className={styles.kpiNum}>
-              {comunidades.reduce((s, c) => s + (c.num_productores ?? 0), 0)}
-            </span>
-            <span className={styles.kpiLbl}>Productores totales</span>
-          </div>
-          <div className={styles.kpiItem}>
-            <span className={styles.kpiNum}>
-              {new Set(comunidades.map(c => c.municipio_nombre).filter(Boolean)).size || '—'}
-            </span>
-            <span className={styles.kpiLbl}>Municipios cubiertos</span>
-          </div>
-          <div className={styles.kpiItem}>
-            <span className={styles.kpiNum}>
-              {new Set(comunidades.map(c => c.lengua_indigena).filter(Boolean)).size || '—'}
-            </span>
-            <span className={styles.kpiLbl}>Lenguas indígenas</span>
-          </div>
-        </div>
-
-        <div style={{ marginTop: 16 }} />
-        <Tabla
-          datos={filtradas}
-          columnas={columnas}
-          cargando={isLoading}
-          vacio="No hay comunidades registradas"
-          onRowClick={c => { setComunidadId(c.id); setVista('perfil') }}
-          acciones={c => (
-            <div className={styles.acciones}>
-              <Button variante="ghost" tamaño="sm" onClick={e => { e.stopPropagation(); setEditando(c); setModalAbierto(true) }}>✏️</Button>
-              <Button variante="peligro" tamaño="sm" onClick={e => { e.stopPropagation(); setConfirmEliminar(c) }}>🗑</Button>
-            </div>
           )}
-        />
-
-        {modalAbierto && (
-          <ModalComunidad
-            comunidad={editando}
-            onClose={() => setModalAbierto(false)}
-            onSaved={() => {
-              setModalAbierto(false)
-              qc.invalidateQueries({ queryKey: ['comunidades'] })
-              addToast(editando ? 'Comunidad actualizada' : 'Comunidad creada', 'ok')
+        </div>
+      ) : (
+        // Vista para otros roles: mapa y sidebar
+        <div
+          style={{
+            position: 'relative',
+            width: '100%',
+            height: isMobile ? 'calc(100dvh - var(--topbar-h,64px))' : 'calc(100vh - 64px)',
+            minHeight: 0,
+            margin: 0,
+            padding: 0,
+            background: '#f8fafc',
+            overflow: 'hidden',
+            boxSizing: 'border-box',
+          }}
+        >
+          {/* Mapa ocupa todo el fondo */}
+          <div
+            style={{
+              width: '100%',
+              height: '100%',
+              minHeight: 320,
+              margin: 0,
+              padding: 0,
+              position: 'relative',
+              zIndex: 1,
+              boxSizing: 'border-box',
+              display: 'flex',
+              flexDirection: 'column',
             }}
-          />
-        )}
-
-        {confirmEliminar && (
-          <Modal
-            titulo="Eliminar comunidad"
-            ancho="sm"
-            onClose={() => setConfirmEliminar(null)}
-            footer={
-              <>
-                <Button variante="ghost" onClick={() => setConfirmEliminar(null)}>Cancelar</Button>
-                <Button
-                  variante="peligro"
-                  onClick={() => { eliminar.mutate(confirmEliminar.id); setConfirmEliminar(null) }}
-                >
-                  Eliminar
-                </Button>
-              </>
-            }
           >
-            <p>¿Eliminar la comunidad <strong>{confirmEliminar.nombre}</strong>?</p>
-            <p style={{ color: 'var(--rojo)', fontSize: '0.875rem' }}>Esta acción no se puede deshacer.</p>
-          </Modal>
-        )}
-      </div>
+            <MapaHuasteca
+              puntos={ubicacionesFiltradas}
+              height={undefined}
+              selectedId={puntoActivoId}
+              onSelectPoint={setPuntoActivoId}
+              isMobile={isMobile}
+            />
+          </div>
+          {/* Panel lateral flotante (sidebar de comunidades) */}
+          {rol === 'visualizador' && usuario?.username !== 'invitado' && (
+            <SidebarComunidades
+              rol={rol}
+              busqueda={busqueda}
+              setBusqueda={setBusqueda}
+              municipioFiltro={municipioFiltro}
+              setMunicipioFiltro={setMunicipioFiltro}
+              municipiosMapa={municipiosMapa}
+              ubicacionesFiltradas={ubicacionesFiltradas}
+              COMUNIDADES_HUASTECA={COMUNIDADES_HUASTECA}
+              puntoActivoId={puntoActivoId}
+              setPuntoActivoId={setPuntoActivoId}
+              setModalNuevaOpen={setModalNuevaOpen}
+            />
+          )}
+        </div>
+      )}
+      {/* Modal para nueva comunidad (no admin) */}
+      {modalNuevaOpen && rol !== 'administrador' && !isMobile && (
+        <ModalComunidad
+          comunidad={null}
+          onClose={() => setModalNuevaOpen(false)}
+          onSaved={() => {
+            setModalNuevaOpen(false);
+            // Aquí podrías recargar la lista si fuera necesario
+          }}
+        />
+      )}
     </AdminShell>
-  )
+  );
 }

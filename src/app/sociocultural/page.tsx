@@ -1,6 +1,6 @@
 "use client";
 
-import React, { Fragment, useMemo } from "react";
+import React, { Fragment, useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import AdminShell from "@/components/dashboard/AdminShell";
 import { useSociocultural } from "@/hooks/useSociocultural";
@@ -8,8 +8,11 @@ import { useCatalogos } from "@/hooks/useCatalogos";
 import { useAppStore } from "@/store/useAppStore";
 import ResumenSocial from "@/components/sociocultural/ResumenSocial";
 import { Button } from "@/components/ui";
+import Tabla, { type Columna } from '@/components/ui/Tabla'
 import ModuleHero from '@/components/ui/ModuleHero'
+import SearchInput from '@/components/ui/SearchInput'
 import SelectField from "@/components/ui/SelectField";
+import { useUsuariosTecnicos } from "@/hooks/useUsuariosTecnicos";
 import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { GET, POST } from "@/lib/api";
 import styles from "./sociocultural.module.css";
@@ -45,6 +48,22 @@ const STEPS = [
   { key: "saberes",    label: "Saberes",      icon: "📖" },
   { key: "economia",   label: "Economía",     icon: "💰" },
 ];
+
+interface SocioculturalListItem {
+  id: number;
+  productor?: {
+    productor_id?: string;
+    entrevistador?: string;
+    fecha?: string;
+  };
+  territorio?: {
+    comunidad?: string;
+    municipio_id?: string;
+  };
+  saberes?: {
+    nombre_local?: string;
+  };
+}
 
 // ── Pills helper ───────────────────────────────────────────────────────
 function Pills({
@@ -93,8 +112,14 @@ export default function Page() {
   const { registro, step, setStep, updateSeccion, toggleArray, clearAll, progreso } =
     useSociocultural();
   useCatalogos();
+  const usuario = useAppStore((s) => s.usuario);
+  const { tecnicos: tecnicosCampo, isLoading: cargandoTecnicos } = useUsuariosTecnicos();
+  const addToast = useAppStore((s) => s.addToast);
   const municipios = useAppStore((s) => s.municipios);
   const total = STEPS.length;
+  const esAdmin = usuario?.rol === 'administrador';
+  const puedeCrear = !esAdmin;
+  const [busqueda, setBusqueda] = useState("");
 
   // ── Catálogo productores ──────────────────────────────────────────────
   const { data: productoresRaw } = useQuery({
@@ -104,14 +129,14 @@ export default function Page() {
     staleTime: Infinity,
   });
   const productores = useMemo(
-    () => toArray<{ id: number; nombres: string; apellido_paterno: string }>(productoresRaw),
+    () => toArray<{ id: number; nombres: string; apellido_paterno: string; apellido_materno?: string }>(productoresRaw),
     [productoresRaw]
   );
   const productorOpts = useMemo(() => [
     { value: "", label: "Selecciona un productor…" },
     ...productores.map((p) => ({
       value: String(p.id),
-      label: `${p.nombres} ${p.apellido_paterno}`,
+      label: [p.nombres, p.apellido_paterno, p.apellido_materno].filter(Boolean).join(' '),
     })),
   ], [productores]);
 
@@ -160,9 +185,21 @@ export default function Page() {
     ...localidades.map((l) => ({ value: String(l.id), label: l.nombre })),
   ], [localidades, registro.territorio.municipio_id, cargandoLocalidades]);
 
+  const { data: registrosRaw = [], isLoading: cargandoRegistros } = useQuery<SocioculturalListItem[]>({
+    queryKey: ["sociocultural-registros"],
+    queryFn: () => GET("/social/registro_sociocultural") as Promise<SocioculturalListItem[]>,
+    enabled: accesoPermitido && esAdmin,
+    select: (d: unknown) => toArray<SocioculturalListItem>(d),
+  });
+
   if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   const handleSave = async () => {
+    if (!puedeCrear) {
+      addToast('Solo investigadores y técnicos de campo pueden crear registros socioculturales.', 'err');
+      return;
+    }
+
     await POST("/social/registro_sociocultural", registro);
     clearAll();
   };
@@ -170,24 +207,142 @@ export default function Page() {
   const hayDatos = Object.values(registro.productor).some((v) => v !== "");
   const pg = STEPS.map((s) => progreso(s.key as Parameters<typeof progreso>[0]));
 
+  const nombreProductor = (item: SocioculturalListItem) => {
+    const id = item.productor?.productor_id
+    const productor = productores.find((p) => String(p.id) === String(id))
+    return productor ? `${productor.nombres} ${productor.apellido_paterno}` : `#${id ?? '—'}`
+  }
+
+  const registrosFiltrados = registrosRaw.filter((item) => {
+    const texto = [
+      nombreProductor(item),
+      item.productor?.entrevistador ?? '',
+      item.territorio?.comunidad ?? '',
+      item.saberes?.nombre_local ?? '',
+    ].join(' ').toLowerCase()
+
+    return texto.includes(busqueda.toLowerCase())
+  })
+
+  const columnasAdmin: Columna<SocioculturalListItem>[] = [
+    { key: 'id', header: 'ID', width: '60px', hideOnMobile: true, hideOnTablet: true },
+    {
+      key: 'productor',
+      header: 'Productor',
+      render: (item) => nombreProductor(item),
+    },
+    {
+      key: 'fecha',
+      header: 'Fecha',
+      width: '120px',
+      render: (item) => item.productor?.fecha || '—',
+    },
+    {
+      key: 'comunidad',
+      header: 'Comunidad',
+      render: (item) => item.territorio?.comunidad || '—',
+    },
+    {
+      key: 'entrevistador',
+      header: 'Entrevistador',
+      hideOnTablet: true,
+      render: (item) => item.productor?.entrevistador || '—',
+    },
+    {
+      key: 'variedad_local',
+      header: 'Variedad local',
+      hideOnMobile: true,
+      render: (item) => item.saberes?.nombre_local || '—',
+    },
+  ]
+
+  if (esAdmin) {
+    return (
+      <AdminShell contentPadding="0">
+        <div className={styles.page}>
+          <ModuleHero
+            eyebrow="Sociocultural · Consulta administrativa"
+            title={<>Tabla de <em>Registros</em> 🎭</>}
+            description="Como administrador visualizas únicamente el listado consolidado de registros socioculturales, sin el flujo de captura por pasos."
+            stats={[
+              { label: 'registros', value: registrosRaw.length || '—' },
+              { label: 'productores', value: productores.length || '—' },
+              { label: 'municipios', value: municipios.length || '—' },
+            ]}
+          />
+
+          <div className={styles.readOnlyNotice}>
+            🔒 Vista administrativa: solo consulta de registros. La captura y altas nuevas pertenecen a investigación y trabajo de campo.
+          </div>
+
+          <header className={styles.header}>
+            <div>
+              <h2 className={styles.title}>Registros socioculturales</h2>
+              <p className={styles.subtitle}>{registrosFiltrados.length} registros visibles</p>
+            </div>
+            <div className={styles.headerActions}>
+              <SearchInput
+                value={busqueda}
+                onChange={(e) => setBusqueda(e.target.value)}
+                placeholder="Buscar por productor, comunidad o entrevistador…"
+              />
+            </div>
+          </header>
+
+          <div className={styles.kpiBand}>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{registrosRaw.length || '—'}</span>
+              <span className={styles.kpiLbl}>Registros</span>
+            </div>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{productores.length || '—'}</span>
+              <span className={styles.kpiLbl}>Productores vinculados</span>
+            </div>
+            <div className={styles.kpiItem}>
+              <span className={styles.kpiNum}>{municipios.length || '—'}</span>
+              <span className={styles.kpiLbl}>Municipios disponibles</span>
+            </div>
+          </div>
+
+          <div className={styles.adminTableWrap}>
+            <Tabla
+              datos={registrosFiltrados}
+              columnas={columnasAdmin}
+              cargando={cargandoRegistros}
+              vacio="No hay registros socioculturales disponibles"
+              infoText={`${registrosFiltrados.length} registros encontrados`}
+            />
+          </div>
+        </div>
+      </AdminShell>
+    )
+  }
+
   return (
     <AdminShell>
       <div className={styles.page}>
         <ModuleHero
           eyebrow="Sociocultural · Registro de campo"
           title={<>Registro <em>Sociocultural</em> 🎭</>}
-          description="Documenta prácticas, saberes, territorio y economía local para contextualizar el manejo tradicional del maíz." 
+          description={esAdmin
+            ? 'Consulta el flujo y el resumen del registro sociocultural. La creación de nuevas altas está reservada para investigadores y técnicos de campo.'
+            : 'Documenta prácticas, saberes, territorio y economía local para contextualizar el manejo tradicional del maíz.'}
           stats={[
             { label: 'sección', value: `${step + 1}/${total}` },
             { label: 'productores', value: productores.length || '—' },
             { label: 'municipios', value: municipios.length || '—' },
           ]}
-          actions={hayDatos ? (
+          actions={puedeCrear && hayDatos ? (
             <button type="button" className={styles.clearBtn} onClick={clearAll}>
               🗑 Limpiar
             </button>
           ) : undefined}
         />
+        {esAdmin && (
+          <div className={styles.readOnlyNotice}>
+            🔒 Como administrador puedes revisar la información, pero las nuevas altas solo las realiza personal de investigación y campo.
+          </div>
+        )}
         <div className={styles.layout}>
 
           {/* ── Panel izquierdo: formulario ── */}
@@ -265,12 +420,42 @@ export default function Page() {
                     </Campo>
 
                     <Campo label="Entrevistador / técnico responsable">
-                      <input
-                        className={styles.input}
-                        value={registro.productor.entrevistador}
-                        placeholder="Nombre del entrevistador"
-                        onChange={(e) => updateSeccion("productor", "entrevistador", e.target.value)}
-                      />
+                      {usuario?.rol === 'investigador' ? (
+                        <>
+                          <SelectField
+                            label=""
+                            name="entrevistador"
+                            value={registro.productor.entrevistador || ''}
+                            options={[
+                              { value: '', label: cargandoTecnicos ? 'Cargando…' : tecnicosCampo.length === 0 ? 'No hay técnicos disponibles' : 'Selecciona técnico responsable…' },
+                              ...tecnicosCampo.map((u) => ({
+                                value: String(u.id),
+                                label: u.nombre_completo || u.username
+                              }))
+                            ]}
+                            onChange={e => updateSeccion("productor", "entrevistador", e.target.value)}
+                            className={styles.selectLg}
+                          />
+                          {(!cargandoTecnicos && tecnicosCampo.length === 0) && (
+                            <div style={{color:'#b00',fontSize:'0.95em',marginTop:4}}>No hay técnicos de campo registrados.</div>
+                          )}
+                        </>
+                      ) : usuario?.rol === 'tecnico_campo' ? (
+                        <input
+                          className={styles.input}
+                          value={usuario.nombre_completo || usuario.username}
+                          placeholder="Nombre del entrevistador"
+                          readOnly
+                          disabled
+                        />
+                      ) : (
+                        <input
+                          className={styles.input}
+                          value={registro.productor.entrevistador}
+                          placeholder="Nombre del entrevistador"
+                          onChange={(e) => updateSeccion("productor", "entrevistador", e.target.value)}
+                        />
+                      )}
                     </Campo>
 
                     <Campo label="Fecha de la entrevista">
@@ -672,8 +857,8 @@ export default function Page() {
                     Siguiente →
                   </Button>
                 ) : (
-                  <Button variante="primario" onClick={handleSave}>
-                    💾 Guardar registro
+                  <Button variante={puedeCrear ? "primario" : "secundario"} onClick={handleSave} disabled={!puedeCrear}>
+                    {puedeCrear ? '💾 Guardar registro' : '🔒 Alta restringida para admin'}
                   </Button>
                 )}
               </div>
@@ -683,7 +868,14 @@ export default function Page() {
 
           {/* ── Panel derecho: resumen ── */}
           <div className={styles.summaryPanel}>
-            <ResumenSocial registro={registro} pasos={STEPS} progresos={pg} />
+            {/* Eliminado render duplicado de ResumenSocial */}
+            <ResumenSocial
+              registro={registro}
+              pasos={STEPS}
+              progresos={pg}
+              productores={productores ?? []}
+              tecnicosCampo={(tecnicosCampo ?? []).map(t => ({ ...t, id: typeof t.id === 'string' ? Number(t.id) : t.id }))}
+            />
           </div>
 
         </div>{/* /layout */}

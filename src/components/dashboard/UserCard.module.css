@@ -1,0 +1,98 @@
+.card {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  border: 1px solid rgba(61, 34, 8, 0.1);
+  background: linear-gradient(
+    180deg,
+    color-mix(in srgb, var(--blanco) 92%, transparent) 0%,
+    color-mix(in srgb, var(--crema) 58%, var(--blanco) 42%) 100%
+  );
+  box-shadow: var(--sombra-sm);
+  min-width: 0;
+  transition: transform .18s ease, box-shadow .18s ease, border-color .18s ease, background .18s ease;
+}
+
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--sombra);
+  border-color: rgba(42, 92, 63, 0.18);
+}
+
+.avatar {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 14px;
+  font-weight: 900;
+  color: #fff;
+  flex-shrink: 0;
+  border: 2px solid rgba(255, 255, 255, 0.7);
+  box-shadow: 0 8px 20px rgba(61, 34, 8, 0.12);
+}
+
+.info {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.name {
+  font-size: 13px;
+  font-weight: 800;
+  color: var(--tierra);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.role {
+  display: inline-flex;
+  align-items: center;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 8px;
+  border-radius: 999px;
+  background: var(--crema);
+  border: 1px solid rgba(42, 92, 63, 0.12);
+  font-family: 'DM Mono', monospace;
+  font-size: 10px;
+  color: var(--verde);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+:global(html.dark) .card {
+  border-color: rgba(255, 255, 255, 0.08);
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0.04) 0%, rgba(255, 255, 255, 0.025) 100%);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.22);
+}
+
+:global(html.dark) .avatar {
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.32);
+}
+
+:global(html.dark) .role {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(74, 140, 100, 0.24);
+  color: #d7eadb;
+}
+
+@media (max-width: 768px) {
+  .card {
+    padding: 12px 14px;
+  }
+
+  .role {
+    max-width: 180px;
+  }
+}

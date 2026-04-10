@@ -42,7 +42,7 @@ const REGLAS: { ruta: string; roles: string[] }[] = [
   { ruta: '/admin',            roles: ['administrador'] },
   // Módulos de captura: investigador y técnico también
   { ruta: '/productores',      roles: ['administrador', 'investigador', 'tecnico_campo'] },
-  { ruta: '/comunidades',      roles: ['administrador', 'investigador', 'tecnico_campo'] },
+  { ruta: '/comunidades',      roles: ['administrador', 'investigador', 'tecnico_campo', 'visualizador', 'productor', 'invitado'] },
   { ruta: '/sociocultural',    roles: ['administrador', 'investigador', 'tecnico_campo'] },
   { ruta: '/fenotipo',         roles: ['administrador', 'investigador', 'tecnico_campo'] },
   // Acceso general autenticado

@@ -7,6 +7,7 @@ import Head from 'next/head';
 import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { getToken, getUsuario, cerrarSesion } from '@/lib/auth';
+import { ROL_HOME } from '@/types';
 
 // Efecto reveal al hacer scroll (como en el HTML original)
 function useRevealOnScroll() {
@@ -35,12 +36,14 @@ export default function Home() {
   const [navScrolled, setNavScrolled] = useState(false);
 
   useEffect(() => {
+    document.documentElement.classList.remove('dark');
+
     const t = getToken();
     const u = getUsuario();
     setToken(t);
     setUsuario(u);
     if (t && u) {
-      router.replace('/dashboard');
+      router.replace(ROL_HOME[u.rol] ?? '/dashboard');
       return;
     }
     // Navbar scroll color

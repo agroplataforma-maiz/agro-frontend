@@ -27,11 +27,11 @@ type UsuarioPatchPayload = {
 };
 
 const ROLES = [
-  { value: 'administrador', emoji: '👑', label: 'Administrador', desc: 'Acceso total' },
-  { value: 'investigador',  emoji: '🔬', label: 'Investigador',  desc: 'Captura y edición' },
-  { value: 'tecnico_campo', emoji: '🌾', label: 'Técnico de campo', desc: 'Registro en campo' },
-  { value: 'visualizador',  emoji: '📊', label: 'Consultor',      desc: 'Solo lectura' },
-  { value: 'productor',     emoji: '🌽', label: 'Productor',      desc: 'Ver perfil propio' },
+  { value: 'administrador', emoji: '👑', label: 'Administrador', desc: 'Consulta, RUD y gestión general' },
+  { value: 'investigador',  emoji: '🔬', label: 'Investigador',  desc: 'Altas, edición y seguimiento' },
+  { value: 'tecnico_campo', emoji: '🌾', label: 'Técnico de campo', desc: 'Captura en campo y actualización' },
+  { value: 'visualizador',  emoji: '📊', label: 'Consultor',      desc: 'Solo lectura del tablero' },
+  { value: 'productor',     emoji: '🌽', label: 'Productor',      desc: 'Perfil propio y consulta básica' },
 ];
 
 const ROL_COLOR: Record<string, string> = {
@@ -47,11 +47,35 @@ const TABS = [
 ];
 
 const PERMISOS_ROL: Record<string, string[]> = {
-  administrador: ['Ver todos los datos', 'Crear productores', 'Editar datos', 'Eliminar registros', 'Editar catálogos', 'Exportar datos', 'Gestionar usuarios', 'Ver gestión usuarios', 'Acceder a mapas SIG', 'Ver perfil propio'],
-  investigador:  ['Ver todos los datos', 'Crear productores', 'Editar datos', 'Exportar datos', 'Ver gestión usuarios', 'Acceder a mapas SIG', 'Ver perfil propio'],
-  tecnico_campo: ['Crear productores', 'Editar datos (propios)', 'Acceder a mapas SIG', 'Ver perfil propio'],
-  visualizador:  ['Ver todos los datos', 'Acceder a mapas SIG', 'Ver perfil propio'],
-  productor:     ['Ver perfil propio'],
+  administrador: [
+    'Consultar módulos y registros',
+    'Editar y depurar registros existentes',
+    'Gestionar catálogos',
+    'Gestionar usuarios y roles',
+    'Sin altas nuevas en productores/comunidades/sociocultural/fenotipo',
+    'Ver perfil propio',
+  ],
+  investigador: [
+    'Consultar módulos activos',
+    'Crear nuevos registros',
+    'Editar y depurar registros',
+    'Gestionar catálogos',
+    'Ver perfil propio',
+  ],
+  tecnico_campo: [
+    'Consultar módulos activos',
+    'Crear nuevos registros',
+    'Editar y depurar registros',
+    'Ver perfil propio',
+  ],
+  visualizador: [
+    'Consultar dashboard',
+    'Ver perfil propio',
+  ],
+  productor: [
+    'Ver perfil propio',
+    'Consulta básica del tablero',
+  ],
 };
 
 const PerfilModal: React.FC<PerfilModalProps> = ({ open, onClose, usuario }) => {

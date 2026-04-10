@@ -21,6 +21,8 @@ import SelectField from '@/components/ui/SelectField'
 import Paginacion from '@/components/ui/Paginacion'
 import AccessGuardScreen from '@/components/ui/AccessGuardScreen'
 import { useRolGuard } from '@/hooks/useRolGuard'
+import { useRouter } from 'next/navigation'
+import { useCatalogos } from '@/hooks/useCatalogos'
 
 // Tipos de campo para el modal dinámico
 type CampoTexto     = { key: string; label: string; type: 'text' | 'textarea' | 'number'; required?: boolean }
@@ -378,46 +380,49 @@ const EJES: { eje: string; emoji: string; catalogos: CatDef[] }[] = [
 ]
 
 export default function CatalogosPage() {
-  const accesoPermitido = useRolGuard(['administrador', 'investigador'])
 
-  const qc       = useQueryClient()
-  const addToast = useAppStore(s => s.addToast)
+  // Siempre llama los hooks al inicio
+  const router = useRouter();
+  const accesoPermitido = useRolGuard(['administrador', 'investigador']);
+  useCatalogos();
+  const qc       = useQueryClient();
+  const addToast = useAppStore(s => s.addToast);
 
-  const [ejeActivo,    setEjeActivo]    = useState(EJES[0])
-  const [catActivo,    setCatActivo]    = useState(EJES[0].catalogos[0])
-  const [busqueda,     setBusqueda]     = useState('')
-  const [busquedaDB,   setBusquedaDB]   = useState('')
-  const [pagina,       setPagina]       = useState(1)
+  const [ejeActivo,    setEjeActivo]    = useState(EJES[0]);
+  const [catActivo,    setCatActivo]    = useState(EJES[0].catalogos[0]);
+  const [busqueda,     setBusqueda]     = useState('');
+  const [busquedaDB,   setBusquedaDB]   = useState('');
+  const [pagina,       setPagina]       = useState(1);
 
   // Debounce: solo lanza la query 400ms después del último keystroke
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null)
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => {
-    if (debounceRef.current) clearTimeout(debounceRef.current)
+    if (debounceRef.current) clearTimeout(debounceRef.current);
     debounceRef.current = setTimeout(() => {
-      setBusquedaDB(busqueda)
-      setPagina(1)
-    }, 400)
-    return () => { if (debounceRef.current) clearTimeout(debounceRef.current) }
-  }, [busqueda])
-  const PAG = 15
-  const [modalAbierto, setModalAbierto] = useState(false)
-  const [editando,     setEditando]     = useState<Catalogo | null>(null)
-  const [confirmItem,  setConfirmItem]  = useState<Catalogo | null>(null)
-  const [detalleItem,  setDetalleItem]  = useState<Catalogo | null>(null)
+      setBusquedaDB(busqueda);
+      setPagina(1);
+    }, 400);
+    return () => { if (debounceRef.current) clearTimeout(debounceRef.current); };
+  }, [busqueda]);
+  const PAG = 15;
+  const [modalAbierto, setModalAbierto] = useState(false);
+  const [editando,     setEditando]     = useState<Catalogo | null>(null);
+  const [confirmItem,  setConfirmItem]  = useState<Catalogo | null>(null);
+  const [detalleItem,  setDetalleItem]  = useState<Catalogo | null>(null);
 
-  type PaginatedResponse = { count?: number; total?: number; results?: Catalogo[]; items?: Catalogo[] }
+  type PaginatedResponse = { count?: number; total?: number; results?: Catalogo[]; items?: Catalogo[] };
 
   const { data: respuesta, isLoading } = useQuery<PaginatedResponse | Catalogo[]>({
     queryKey: ['catalogo', catActivo.key, pagina, busquedaDB],
     queryFn: () => {
-      const params = new URLSearchParams()
-      params.set('limit',  String(PAG))
-      params.set('offset', String((pagina - 1) * PAG))
-      if (busquedaDB) params.set('search', busquedaDB)
-      return GET(`${catActivo.path}?${params.toString()}`)
+      const params = new URLSearchParams();
+      params.set('limit',  String(PAG));
+      params.set('offset', String((pagina - 1) * PAG));
+      if (busquedaDB) params.set('search', busquedaDB);
+      return GET(`${catActivo.path}?${params.toString()}`);
     },
     placeholderData: (prev) => prev,
-  })
+  });
 
   const data: Catalogo[] = Array.isArray(respuesta)
     ? respuesta
@@ -436,6 +441,14 @@ export default function CatalogosPage() {
     onError: (e: Error) => addToast(e.message, 'err'),
   })
 
+  // Si no hay usuario, redirige a inicio (evita pantalla de permisos infinita tras logout)
+  const usuario = useAppStore(s => s.usuario);
+  if (!usuario) {
+    if (typeof window !== 'undefined') {
+      router.replace('/')
+    }
+    return null
+  }
   if (!accesoPermitido) return <AccessGuardScreen message="Verificando permisos..." />
 
   const totalPaginas = Math.ceil(totalItems / PAG) || 1

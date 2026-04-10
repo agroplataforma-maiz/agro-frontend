@@ -12,21 +12,23 @@ import { useAuth } from '@/hooks/useAuth'
 import { iniciales } from '@/lib/auth'
 import { Sidebar } from './Sidebar'
 import { Topbar } from './Topbar'
-import StateView from '@/components/ui/StateView'
 
 interface AdminShellProps {
   children: React.ReactNode
   /** Padding interior del área de contenido (default: '32px 24px') */
   contentPadding?: string
+  defaultSidebarCollapsed?: boolean
+  breadcrumb?: string
+  forceShowShell?: boolean // Evita redirect si true
 }
 
-export default function AdminShell({ children, contentPadding = '32px 40px' }: AdminShellProps) {
+export default function AdminShell({ children, contentPadding = '32px 40px', defaultSidebarCollapsed = false, breadcrumb, forceShowShell = false }: AdminShellProps) {
   const router = useRouter()
   const { logout } = useAuth()
   const usuario = useAppStore(s => s.usuario)
   const addToast = useAppStore(s => s.addToast)
   const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
-  const [collapsed, setCollapsed] = useState(false)
+  const [collapsed, setCollapsed] = useState(defaultSidebarCollapsed)
 
   // En pantallas pequeñas inicia colapsado
   useEffect(() => {
@@ -36,36 +38,43 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [])
+  }, [defaultSidebarCollapsed])
 
   // Mantiene --sidebar-w sincronizado para que Topbar (position:fixed) se reposicione
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', collapsed ? '64px' : '260px')
   }, [collapsed])
 
+  // Si no hay usuario, redirige a inicio (evita pantalla de carga infinita tras logout),
+  // EXCEPTO en la página not-found para permitir mostrar el 404 con shell
+
+  let userSidebar, rolActual;
   if (!usuario) {
-    return (
-      <div style={{ minHeight: '100vh', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 24 }}>
-        <StateView
-          variant="loading"
-          title="Cargando usuario"
-          message="Verificando tu sesión en Maíz Nativo..."
-        />
-      </div>
-    )
+    if (!forceShowShell) {
+      if (typeof window !== 'undefined') {
+        router.replace('/')
+      }
+      return null
+    }
+    // Shell genérica para not-found o uso forzado
+    userSidebar = {
+      initials: '?',
+      name: 'Desconocido',
+      role: 'Desconocido',
+      color: '#888',
+    };
+    rolActual = 'visualizador';
+  } else {
+    const ini = iniciales(usuario.nombre_completo || usuario.username)
+    const color = ROL_COLOR[usuario.rol] ?? '#888'
+    userSidebar = {
+      initials: ini,
+      name: usuario.nombre_completo || usuario.username,
+      role: ROL_LABELS[usuario.rol] ?? usuario.rol,
+      color,
+    }
+    rolActual = usuario.rol as Rol
   }
-
-  const ini = iniciales(usuario.nombre_completo || usuario.username)
-  const color = ROL_COLOR[usuario.rol] ?? '#888'
-
-  const userSidebar = {
-    initials: ini,
-    name: usuario.nombre_completo || usuario.username,
-    role: ROL_LABELS[usuario.rol] ?? usuario.rol,
-    color,
-  }
-
-  const rolActual = usuario.rol as Rol
 
   const handleNavigate = (page: string) => {
     if (page.startsWith('/')) router.push(page)
@@ -98,7 +107,8 @@ export default function AdminShell({ children, contentPadding = '32px 40px' }: A
         }}
       >
         <Topbar
-          user={{ initials: ini, name: userSidebar.name.split(' ')[0], color }}
+          user={{ initials: userSidebar.initials, name: userSidebar.name.split(' ')[0], color: userSidebar.color }}
+          breadcrumb={breadcrumb}
           onNavigate={handleNavigate}
           onSidebarToggle={() => setCollapsed(v => !v)}
           onLogout={handleLogout}

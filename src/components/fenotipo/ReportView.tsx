@@ -1,11 +1,12 @@
 import type { DatosGenerales } from "@/hooks/useFenotipo";
 import { descriptors, grupos } from "@/data/descriptor";
 import Badge from "@/components/ui/Badge";
+import ResumenFenotipo from "./ResumenFenotipo";
 import styles from "./ReportView.module.css";
 
 const DG_LABELS: { k: keyof DatosGenerales; label: string }[] = [
   { k: "tipo",         label: "Tipo" },
-  { k: "colector",     label: "Colector" },
+  // { k: "colector",     label: "Colector" }, // Se maneja aparte
   { k: "temporada",    label: "Temporada" },
   { k: "altitud",      label: "Altitud (msnm)" },
   { k: "plantas",      label: "N° plantas" },
@@ -42,6 +43,8 @@ export default function ReportView({ data, dg, razaLabel }: Props) {
               <span className={styles.dgSummaryValue}>{razaLabel || dg.raza_id}</span>
             </div>
           )}
+          {/* Colector personalizado para mostrar nombre */}
+          <ResumenFenotipo dg={dg} />
           {DG_LABELS.map(({ k, label }) =>
             dg[k] ? (
               <div key={k} className={styles.dgSummaryItem}>

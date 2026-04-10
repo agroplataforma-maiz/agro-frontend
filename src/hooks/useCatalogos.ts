@@ -16,7 +16,7 @@ function toArray<T>(data: unknown): T[] {
   return (d?.items ?? d?.results ?? []) as T[]
 }
 
-export function useCatalogos() {
+export function useCatalogos(enabled = true) {
   const setMunicipios     = useAppStore(s => s.setMunicipios)
   const setLocalidades    = useAppStore(s => s.setLocalidades)
   const setTiposProductor = useAppStore(s => s.setTiposProductor)
@@ -25,18 +25,21 @@ export function useCatalogos() {
     queryKey: ['municipios'],
     queryFn:  () => GET('/geo/municipio'),
     staleTime: Infinity,  // catálogos no cambian frecuentemente
+    enabled,
   })
 
   const localidades = useQuery({
     queryKey: ['localidades'],
     queryFn:  () => GET('/geo/localidad'),
     staleTime: Infinity,
+    enabled,
   })
 
   const tiposProductor = useQuery({
     queryKey: ['tipos-productor'],
     queryFn:  () => GET('/social/tipo_productor'),
     staleTime: Infinity,
+    enabled,
   })
 
   // Sincroniza al store cuando cargan

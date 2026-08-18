@@ -1,0 +1,30 @@
+.logo-area {
+  text-align: center;
+  margin-bottom: 32px;
+  animation: up .6s ease forwards;
+}
+
+.logo-ico {
+  font-size: 40px;
+  display: block;
+  margin-bottom: 10px;
+  filter: drop-shadow(0 4px 12px rgba(240,180,41,.3));
+}
+
+.logo-titulo {
+  font-family: 'Fraunces', serif;
+  font-size: 28px;
+  font-weight: 900;
+  color: var(--maiz-cl);
+  line-height: 1.1;
+}
+
+.logo-sub {
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: rgb(255, 255, 255);
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  margin-top: 6px;
+
+}

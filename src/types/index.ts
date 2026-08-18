@@ -1,6 +1,3 @@
-// src/types/index.ts
-// Tipos del dominio — agro-frontend
-
 export type Rol =
   | 'administrador'
   | 'investigador'
@@ -9,20 +6,54 @@ export type Rol =
   | 'productor'
   | 'invitado'
 
+type UUID = string;
+
 export interface Usuario {
-  id: number
+  id: UUID 
   username: string
   nombre_completo?: string
   email?: string
   rol: Rol
   activo: boolean
-  ultimo_acceso?: string
-  last_login?: string        // alias Django REST Framework
-  fecha_registro?: string
+  ultimo_acceso?: string | null
+  last_login?: string | null       
+  fecha_registro?: string | null
+}
+
+export interface Ubicacion {
+  id: UUID 
+  // Tipo de geometría (clave para SIG)
+  tipo: 'punto' | 'poligono'
+  // Coordenadas
+  latitud?: number
+  longitud?: number
+  // Para mapas más avanzados (GeoJSON)
+  geojson?: unknown
+  // Metadatos
+  referencia?: string // ej: "Centro de la comunidad"
+}
+
+export interface Comunidad {
+  id: UUID 
+  nombre: string
+  nombre_lengua_orig?: string
+  tipo?: 'indigena' | 'campesina' | 'ejidal' | 'mestiza' | 'mixta' | 'urbana' | 'rancheria' | 'otro'
+  municipio_id: number
+  municipio_nombre?: string
+  ubicacion_id?: string // UUID relación
+  presencia_maiz_nativo?: boolean
+  presencia_historica_maiz?: boolean
+  diversidad_ecologica_score?: number // 1-5
+  riqueza_cultural_score?: number // 1-5
+  prioridad_muestreo?: 'alta' | 'media' | 'baja'
+  poblacion_total?: number
+  num_localidades?: number
+  fuente?: string
+  activo?: boolean
 }
 
 export interface Productor {
-  id: number
+  id: UUID
   nombres: string
   apellido_paterno: string
   apellido_materno?: string
@@ -56,20 +87,7 @@ export interface TipoProductor {
   nombre: string
 }
 
-export interface Comunidad {
-  id: number
-  nombre: string
-  municipio_id?: number
-  municipio_nombre?: string
-  localidad_id?: number
-  localidad_nombre?: string
-  lengua_indigena?: string
-  poblacion?: number
-  num_productores?: number
-  latitud?: number
-  longitud?: number
-  notas?: string
-}
+
 
 export interface Catalogo {
   id: number

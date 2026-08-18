@@ -1,6 +1,5 @@
 'use client'
 
-
 import { useRouter } from 'next/navigation'
 import AdminShell from '@/components/dashboard/AdminShell'
 import styles from './not-found.module.css'

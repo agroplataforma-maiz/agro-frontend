@@ -78,7 +78,7 @@ export default function DashboardPage() {
   // Obtener comunidades desde el backend
   const { data: comunidades = [] } = useQuery<Comunidad[]>({
     queryKey: ['comunidades'],
-    queryFn: () => GET('/social/comunidad'),
+    queryFn: () => GET('/core/comunidad'),
     select: (d: unknown) => {
       if (Array.isArray(d)) return d as Comunidad[];
       if (d && typeof d === 'object' && 'items' in d) return (d as { items: Comunidad[] }).items;
@@ -89,7 +89,7 @@ export default function DashboardPage() {
   // Obtener productores desde el backend
   const { data: productores = [] } = useQuery<Productor[]>({
     queryKey: ['productores'],
-    queryFn: () => GET('/social/productor'),
+    queryFn: () => GET('/core/productor'),
     select: (d: unknown) => {
       if (Array.isArray(d)) return d as Productor[];
       if (d && typeof d === 'object' && 'items' in d) return (d as { items: Productor[] }).items;

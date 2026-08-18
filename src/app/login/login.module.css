@@ -112,15 +112,6 @@ html.dark .login-root[data-login],
   bottom: -80px; left: -80px;
 }
 
-/* Mazorca decorativa */
-.maiz-deco {
-  position: fixed;
-  right: -40px; bottom: -20px;
-  width: 320px;
-  opacity: .04;
-  pointer-events: none;
-  z-index: 0;
-}
 
 /* Animación de giro para el maíz al iniciar sesión */
 .maiz-spinner {
@@ -148,35 +139,6 @@ html.dark .login-root[data-login],
   max-width: 480px;
 }
 
-.logo-area {
-  text-align: center;
-  margin-bottom: 32px;
-  animation: up .6s ease forwards;
-}
-
-.logo-ico {
-  font-size: 40px;
-  display: block;
-  margin-bottom: 10px;
-  filter: drop-shadow(0 4px 12px rgba(240,180,41,.3));
-}
-
-.logo-titulo {
-  font-family: 'Fraunces', serif;
-  font-size: 28px;
-  font-weight: 900;
-  color: var(--maiz-cl);
-  line-height: 1.1;
-}
-
-.logo-sub {
-  font-family: 'DM Mono', monospace;
-  font-size: 11px;
-  color: rgba(255,255,255,.3);
-  letter-spacing: .14em;
-  text-transform: uppercase;
-  margin-top: 6px;
-}
 
 .card {
   background: var(--blanco);
@@ -191,34 +153,7 @@ html.dark .login-root[data-login],
   to   { opacity: 1; transform: translateY(0); }
 }
 
-/* ── TABS ── */
-.card-tabs {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  background: var(--verde-pal);
-  border-bottom: 1px solid var(--borde);
-}
 
-.tab-btn {
-  font-family: 'Nunito', sans-serif;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 16px;
-  border: none;
-  background: transparent;
-  color: var(--gris);
-  cursor: pointer;
-  border-bottom: 3px solid transparent;
-  transition: all .2s;
-  letter-spacing: .02em;
-}
-
-.tab-btn:hover { color: var(--verde); }
-.tab-btn.active {
-  color: var(--verde);
-  border-bottom-color: var(--verde);
-  background: var(--blanco);
-}
 
 /* ── PANELES ── */
 .panel { display: none; padding: 28px 32px 32px; }
@@ -599,115 +534,4 @@ html.dark .login-root[data-login],
     padding: 9px 14px;
   }
   .maiz-deco { display: none; }
-}
-
-/* === DARK MODE OVERRIDES (unificado, 2026-04-08) === */
-body.dark .login-root, html.dark .login-root, :root.dark .login-root {
-  background: linear-gradient(135deg, rgba(34,54,44,0.98) 0%, rgba(32,60,44,0.93) 100%), var(--verde-deep) !important;
-}
-body.dark .card, html.dark .card, :root.dark .card {
-  background: var(--panel-dark, #202624);
-  box-shadow: 0 32px 80px rgba(0,0,0,.55);
-  border-radius: 18px;
-  border: 1.5px solid var(--borde-dark);
-}
-body.dark .card-tabs, html.dark .card-tabs, :root.dark .card-tabs {
-  background: var(--verde-pal-dark, rgba(60,120,90,0.18));
-  border-bottom: 1.5px solid var(--borde-dark);
-}
-body.dark .tab-btn, html.dark .tab-btn, :root.dark .tab-btn {
-  color: var(--gris-dark, #A0A8B0);
-  background: transparent;
-}
-body.dark .tab-btn.active, html.dark .tab-btn.active, :root.dark .tab-btn.active {
-  color: var(--verde);
-  border-bottom-color: var(--verde);
-  background: var(--panel-dark, #202624);
-}
-body.dark .panel, html.dark .panel, :root.dark .panel {
-  background: transparent;
-  color: var(--blanco);
-}
-body.dark .form-group label, html.dark .form-group label, :root.dark .form-group label {
-  color: var(--verde-pal, #4FA87A);
-}
-body.dark .input-wrap input,
-body.dark .input-wrap select,
-html.dark .input-wrap input,
-html.dark .input-wrap select,
-:root.dark .input-wrap input,
-:root.dark .input-wrap select {
-  border: 1.5px solid var(--borde-dark);
-  background: var(--panel-dark, #202624);
-  color: var(--blanco);
-}
-body.dark .input-wrap input:focus,
-body.dark .input-wrap select:focus,
-html.dark .input-wrap input:focus,
-html.dark .input-wrap select:focus,
-:root.dark .input-wrap input:focus,
-:root.dark .input-wrap select:focus {
-  border-color: var(--verde);
-  background: var(--panel-dark, #202624);
-  box-shadow: 0 0 0 3px rgba(74,140,100,.13);
-}
-body.dark .rol-card, html.dark .rol-card, :root.dark .rol-card {
-  border: 1.5px solid var(--borde-dark);
-  background: var(--panel-dark, #202624);
-}
-body.dark .rol-card:hover, html.dark .rol-card:hover, :root.dark .rol-card:hover {
-  border-color: var(--verde);
-  background: var(--verde-pal-dark, rgba(60,120,90,0.18));
-}
-body.dark .rol-card.selected, html.dark .rol-card.selected, :root.dark .rol-card.selected {
-  background: var(--verde-pal-dark, rgba(60,120,90,0.18));
-  box-shadow: 0 0 0 3px rgba(42,92,63,.13);
-}
-body.dark .rol-nombre, html.dark .rol-nombre, :root.dark .rol-nombre {
-  color: var(--verde-pal, #4FA87A);
-}
-body.dark .rol-desc, html.dark .rol-desc, :root.dark .rol-desc {
-  color: var(--gris-dark, #A0A8B0);
-}
-body.dark .btn-submit, html.dark .btn-submit, :root.dark .btn-submit {
-  background: var(--verde);
-  color: #fffbe8;
-  border: none;
-}
-body.dark .divider, html.dark .divider, :root.dark .divider {
-  color: rgba(255,255,255,.18);
-}
-body.dark .divider::before, body.dark .divider::after,
-html.dark .divider::before, html.dark .divider::after,
-:root.dark .divider::before, :root.dark .divider::after {
-  background: var(--borde-dark);
-}
-body.dark .alerta-err, html.dark .alerta-err, :root.dark .alerta-err {
-  background: var(--rojo-pal-dark, rgba(201,106,74,0.18));
-  color: var(--rojo);
-  border: 1px solid rgba(168,50,32,.22);
-}
-body.dark .alerta-ok, html.dark .alerta-ok, :root.dark .alerta-ok {
-  background: var(--verde-pal-dark, rgba(60,120,90,0.18));
-  color: var(--verde);
-  border: 1px solid rgba(42,92,63,.22);
-}
-body.dark .pwd-bar-track, html.dark .pwd-bar-track, :root.dark .pwd-bar-track {
-  background: var(--borde-dark);
-}
-body.dark .btn-flotante, html.dark .btn-flotante, :root.dark .btn-flotante {
-  background: var(--panel-dark, #202624);
-  color: var(--maiz);
-  border: 2px solid rgba(240,180,41,0.18);
-  box-shadow: 0 4px 20px rgba(0,0,0,0.32);
-}
-body.dark .modeBtn, html.dark .modeBtn, :root.dark .modeBtn {
-  background: var(--panel-dark, #202624);
-  color: var(--tierra);
-  border: 1.5px solid var(--borde-dark);
-}
-body.dark .modeBtn:hover, html.dark .modeBtn.activeMode, :root.dark .modeBtn:hover, :root.dark .modeBtn.activeMode {
-  background: var(--verde-pal-dark, rgba(60,120,90,0.18));
-  color: var(--verde);
-  border-color: var(--verde);
 }

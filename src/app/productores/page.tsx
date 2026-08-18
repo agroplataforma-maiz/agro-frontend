@@ -53,7 +53,7 @@ export default function ProductoresPage() {
 
   const { data: productores = [], isLoading } = useQuery<Productor[]>({
     queryKey: ['productores'],
-    queryFn:  () => GET('/social/productor'),
+    queryFn:  () => GET('/core/productor'),
     enabled: accesoPermitido,
     select:   (d: unknown) => {
       const data = d as Productor[] | { items?: Productor[]; results?: Productor[] }
@@ -62,7 +62,7 @@ export default function ProductoresPage() {
   })
 
   const eliminar = useMutation({
-    mutationFn: (id: number) => DEL(`/social/productor/${id}`),
+    mutationFn: (id: number) => DEL(`/core/productor/${id}`),
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ['productores'] })
       addToast('Productor eliminado', 'ok')

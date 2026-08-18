@@ -20,7 +20,7 @@ function iniciales(nombre: string) {
 
 // Secciones del perfil — cada una consume su propio endpoint
 const SECCIONES: { key: string; emoji: string; label: string; path: (id: number) => string }[] = [
-  { key: 'lenguas',     emoji: '🗣️',  label: 'Lenguas',                path: id => `/social/lengua?productor_id=${id}` },
+  { key: 'lenguas',     emoji: '🗣️',  label: 'Lenguas',                path: id => `/catalogo/lengua?productor_id=${id}` },
   { key: 'geo',         emoji: '🌐',  label: 'Geografía',              path: id => `/social/geo?productor_id=${id}` },
   { key: 'socio',       emoji: '👥',  label: 'Datos socioeconómicos',  path: id => `/social/socioeconomico?productor_id=${id}` },
   { key: 'practicas',   emoji: '🌱',  label: 'Prácticas agrícolas',    path: id => `/social/practica_agricola?productor_id=${id}` },
@@ -37,7 +37,7 @@ const SECCIONES: { key: string; emoji: string; label: string; path: (id: number)
 export default function PerfilProductor({ id, onVolver }: Props) {
   const { data: productor, isLoading } = useQuery<Productor>({
     queryKey: ['productor', id],
-    queryFn:  () => GET(`/social/productor/${id}`),
+    queryFn:  () => GET(`/core/productor/${id}`),
   })
 
   if (isLoading) return (

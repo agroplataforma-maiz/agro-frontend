@@ -1,0 +1,664 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem}
+.hdr{padding-bottom:1rem;margin-bottom:1.5rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdr h1{font-size:19px;font-weight:500;color:var(--color-text-primary);margin:0}
+.hdr p{font-size:12px;color:var(--color-text-secondary);margin:4px 0 0;line-height:1.5}
+.method-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;border:0.5px solid;font-weight:500}
+.pill-purple{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.pill-teal{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.pill-coral{background:#FAECE7;color:#712B13;border-color:#F0997B}
+.prog-wrap{margin-bottom:1.5rem}
+.prog-bar{height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:#534AB7;transition:width .4s}
+.prog-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px;display:flex;justify-content:space-between}
+.nav{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:1.5rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:4px}
+.nav-btn{flex:1;min-width:80px;padding:7px 6px;font-size:12px;font-weight:400;background:transparent;color:var(--color-text-secondary);border:none;border-radius:var(--border-radius-md);cursor:pointer;transition:all .12s;text-align:center}
+.nav-btn.on{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500;border:0.5px solid var(--color-border-tertiary)}
+.sec{display:none}.sec.on{display:block}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sec-bar{width:4px;height:20px;border-radius:2px;flex-shrink:0}
+.sec-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sec-sub{font-size:11px;color:var(--color-text-tertiary);margin-bottom:1rem;padding-left:12px}
+.note-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:1rem;border-left:3px solid #7F77DD;border-top-left-radius:0;border-bottom-left-radius:0}
+.note-box p{font-size:11px;color:var(--color-text-secondary);line-height:1.6;margin:0}
+.desc-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:12px}
+.desc-table thead tr{background:var(--color-background-secondary)}
+.desc-table th{padding:8px 10px;text-align:left;font-size:11px;font-weight:500;color:var(--color-text-secondary);white-space:nowrap;border-bottom:0.5px solid var(--color-border-tertiary)}
+.desc-table td{padding:0;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.desc-table tr:hover td{background:var(--color-background-secondary)}
+.d-num{width:28px;height:28px;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.d-num-purple{background:#EEEDFE;color:#3C3489}
+.d-num-teal{background:#E1F5EE;color:#085041}
+.d-num-coral{background:#FAECE7;color:#712B13}
+.d-num-amber{background:#FAEEDA;color:#633806}
+.d-num-pink{background:#FBEAF0;color:#72243E}
+.cell-pad{padding:8px 10px}
+.d-name{font-weight:500;color:var(--color-text-primary);font-size:12px;line-height:1.3}
+.d-method{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.d-ref{font-size:10px;font-style:italic;color:var(--color-text-tertiary)}
+.tipo-badge{display:inline-block;padding:2px 7px;border-radius:var(--border-radius-md);font-size:10px;font-weight:500;white-space:nowrap}
+.t-cual{background:#EEEDFE;color:#3C3489}
+.t-cuant{background:#E6F1FB;color:#0C447C}
+.t-escala{background:#FAEEDA;color:#633806}
+.t-nominal{background:#FAECE7;color:#712B13}
+.t-disco{background:#E1F5EE;color:#085041}
+.t-textual{background:#FBEAF0;color:#72243E}
+.options-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px}
+.opt{padding:4px 9px;font-size:11px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .1s}
+.opt.sel-purple{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:500}
+.opt.sel-teal{background:#E1F5EE;border-color:#1D9E75;color:#085041;font-weight:500}
+.opt.sel-coral{background:#FAECE7;border-color:#D85A30;color:#712B13;font-weight:500}
+.opt.sel-amber{background:#FAEEDA;border-color:#BA7517;color:#633806;font-weight:500}
+.opt.sel-pink{background:#FBEAF0;border-color:#D4537E;color:#72243E;font-weight:500}
+.num-inp{width:90px;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary)}
+.text-inp{width:100%;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary)}
+.text-area{width:100%;padding:6px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);resize:vertical;min-height:60px}
+.likert-row{display:flex;gap:4px;align-items:center;padding:8px 10px;flex-wrap:wrap}
+.likert-lbl{font-size:10px;color:var(--color-text-tertiary);width:72px;flex-shrink:0}
+.lk-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:transparent;font-size:12px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.lk-btn.sel{background:#534AB7;border-color:#534AB7;color:#EEEDFE}
+.lk-end{font-size:10px;color:var(--color-text-tertiary);width:56px;flex-shrink:0;text-align:right}
+.action-row{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
+.btn-p{padding:8px 18px;font-size:12px;font-weight:500;background:#534AB7;color:#EEEDFE;border:none;border-radius:var(--border-radius-md);cursor:pointer}
+.btn-s{padding:8px 16px;font-size:12px;background:transparent;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer}
+.star{color:#BA7517;font-size:11px;margin-left:2px}
+.cod-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:6px;padding:8px 10px}
+.cod-item{display:flex;align-items:center;gap:6px;padding:5px 8px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);cursor:pointer;transition:all .1s;background:transparent}
+.cod-item.sel-cod{border-color:currentColor}
+.cod-dot{width:9px;height:9px;border-radius:50%;flex-shrink:0}
+.cod-label{font-size:11px;color:var(--color-text-secondary);line-height:1.3}
+.cod-item.sel-cod .cod-label{font-weight:500;color:var(--color-text-primary)}
+.frag-box{padding:8px 10px}
+.frag-box textarea{width:100%;padding:7px 9px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary);resize:vertical;min-height:70px}
+.report-row{display:flex;justify-content:space-between;align-items:flex-start;padding:7px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;gap:8px}
+.report-key{color:var(--color-text-secondary);flex:1}
+.report-val{color:var(--color-text-primary);font-weight:500;text-align:right;max-width:55%}
+.r-empty{color:var(--color-text-tertiary);font-style:italic;font-weight:400}
+.sec-divider{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px;margin-top:4px}
+.cit-wrap{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px;margin-top:6px;border-left:3px solid #7F77DD;border-top-left-radius:0;border-bottom-left-radius:0}
+.cit-wrap p{font-size:11px;color:var(--color-text-secondary);font-style:italic;line-height:1.6;margin:0}
+</style>
+
+<div class="app">
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <h1>Módulo Cultural — Descriptores etnobotánicos y del discurso</h1>
+      <p>Variedades locales · Prácticas tradicionales · Saberes etnoecológicos · Análisis cualitativo</p>
+      <div class="method-pills">
+        <span class="pill pill-purple">Taxonomía folk — Spradley (2016)</span>
+        <span class="pill pill-teal">Análisis del discurso — Hammersley (2007)</span>
+        <span class="pill pill-coral">Etnobotánica — Cotton (1996)</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start">
+      <button class="btn-s" style="font-size:11px">Guardar borrador</button>
+      <button class="btn-p" style="font-size:11px" onclick="gotoReport()">Ver ficha ↗</button>
+    </div>
+  </div>
+  <div class="prog-wrap" style="margin-top:14px;margin-bottom:0">
+    <div class="prog-label"><span id="prog-step">Paso 1 / 5</span><span id="prog-pct">0% completado</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn on" id="nb-0" onclick="goSec(0)">C1 — Variedad local</button>
+  <button class="nav-btn" id="nb-1" onclick="goSec(1)">C2 — Práctica trad.</button>
+  <button class="nav-btn" id="nb-2" onclick="goSec(2)">C3 — Saber etnoec.</button>
+  <button class="nav-btn" id="nb-3" onclick="goSec(3)">C4 — Análisis discurso</button>
+  <button class="nav-btn" id="nb-4" onclick="goSec(4)">C5 — Ficha cultural</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C1 — VARIEDAD LOCAL (Taxonomía folk)
+═══════════════════════════════════════════════════════ -->
+<div class="sec on" id="sec-0">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#534AB7"></div><span class="sec-title">Sección 1 — Variedad local documentada</span></div>
+  <p class="sec-sub">Taxonomía folk · Conocimiento etnobotánico local (Spradley, 2016; Cotton, 1996)</p>
+  <div class="note-box"><p>La documentación de variedades locales sigue la <strong>taxonomía folk</strong> (Spradley, 2016): se registra el nombre nativo, las categorías cognitivas del agricultor y los criterios locales de distinción entre variedades, complementando los descriptores fenotípicos con el conocimiento emic.</p></div>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:34%">Descriptor</th><th style="width:13%">Tipo</th><th style="width:11%">Marco</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">1</div></td>
+        <td class="cell-pad"><div class="d-name">Nombre local de la variedad<span class="star">★</span></div><div class="d-method">Nomenclatura folk · dominio semántico</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Nombre en español" id="v1" oninput="reg('v1',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">2</div></td>
+        <td class="cell-pad"><div class="d-name">Nombre en lengua originaria</div><div class="d-method">Taxonomía folk indígena</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnobotánica</div></td>
+        <td><div class="options-wrap" style="flex-direction:column;gap:4px">
+          <input class="text-inp" placeholder="Nombre en lengua indígena" id="v2a" oninput="reg('v2a',this.value)" style="margin-bottom:4px">
+          <input class="text-inp" placeholder="Lengua (ej: Zapoteca, Tzotzil)" id="v2b" oninput="reg('v2b',this.value)">
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">3</div></td>
+        <td class="cell-pad"><div class="d-name">Sinónimos locales</div><div class="d-method">Variación terminológica regional</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Otros nombres conocidos, separados por coma" id="v3" oninput="reg('v3',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">4</div></td>
+        <td class="cell-pad"><div class="d-name">Uso principal<span class="star">★</span></div><div class="d-method">Función cultural asignada</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnobotánica</div></td>
+        <td><div class="options-wrap" id="v4">
+          <button class="opt" onclick="selMulti('v4',this,'Alimenticio (consumo diario)','sel-purple')">Alimenticio</button>
+          <button class="opt" onclick="selMulti('v4',this,'Ceremonial/ritual','sel-purple')">Ceremonial</button>
+          <button class="opt" onclick="selMulti('v4',this,'Medicinal','sel-purple')">Medicinal</button>
+          <button class="opt" onclick="selMulti('v4',this,'Ofrendas/altares','sel-purple')">Ofrendas</button>
+          <button class="opt" onclick="selMulti('v4',this,'Bebidas tradicionales','sel-purple')">Bebidas trad.</button>
+          <button class="opt" onclick="selMulti('v4',this,'Comercialización','sel-purple')">Comercial</button>
+          <button class="opt" onclick="selMulti('v4',this,'Forraje/animal','sel-purple')">Forraje</button>
+          <button class="opt" onclick="selMulti('v4',this,'Artesanal','sel-purple')">Artesanal</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">5</div></td>
+        <td class="cell-pad"><div class="d-name">Importancia cultural<span class="star">★</span></div><div class="d-method">Valor simbólico asignado por la comunidad</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Hammersley (2007)</div></td>
+        <td><div class="options-wrap" id="v5">
+          <button class="opt" onclick="sel('v5',this,'1 — Baja (puede sustituirse)','sel-purple')">1 — Baja</button>
+          <button class="opt" onclick="sel('v5',this,'2 — Media (preferida)','sel-purple')">2 — Media</button>
+          <button class="opt" onclick="sel('v5',this,'3 — Alta (patrimonio local)','sel-purple')">3 — Alta</button>
+          <button class="opt" onclick="sel('v5',this,'4 — Crítica (identidad/ritual)','sel-purple')">4 — Crítica</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">6</div></td>
+        <td class="cell-pad"><div class="d-name">Estado de conservación<span class="star">★</span></div><div class="d-method">Disponibilidad de semilla en la comunidad</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">UICN adapt.</div></td>
+        <td><div class="options-wrap" id="v6">
+          <button class="opt" onclick="sel('v6',this,'1 — Abundante (muchos agricultores)','sel-teal')">1 — Abundante</button>
+          <button class="opt" onclick="sel('v6',this,'2 — Común (acceso fácil)','sel-teal')">2 — Común</button>
+          <button class="opt" onclick="sel('v6',this,'3 — Escasa (pocos la guardan)','sel-amber')">3 — Escasa</button>
+          <button class="opt" onclick="sel('v6',this,'4 — Muy escasa (1-2 custodios)','sel-coral')">4 — Muy escasa</button>
+          <button class="opt" onclick="sel('v6',this,'5 — En riesgo de pérdida','sel-coral')">5 — En riesgo</button>
+          <button class="opt" onclick="sel('v6',this,'6 — Perdida en la comunidad','sel-coral')">6 — Perdida</button>
+          <button class="opt" onclick="sel('v6',this,'7 — En proceso de recuperación','sel-teal')">7 — Recuperación</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">7</div></td>
+        <td class="cell-pad"><div class="d-name">Descripción local de la variedad<span class="star">★</span></div><div class="d-method">Etnodescripción — voz del informante</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="frag-box"><textarea placeholder="Transcripción de cómo el/la informante describe esta variedad con sus propias palabras..." id="v7" oninput="reg('v7',this.value)"></textarea></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">8</div></td>
+        <td class="cell-pad"><div class="d-name">¿Se encuentra en custodia?<span class="star">★</span></div><div class="d-method">Gestión comunitaria de semillas</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Dicotómico</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="v8">
+          <button class="opt" onclick="sel('v8',this,'Sí, custodio identificado','sel-teal')">Sí, con custodio</button>
+          <button class="opt" onclick="sel('v8',this,'Sí, custodia colectiva','sel-teal')">Sí, colectiva</button>
+          <button class="opt" onclick="sel('v8',this,'No hay custodia formal','sel-coral')">Sin custodia</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row"><button class="btn-p" onclick="goSec(1)">Siguiente: práctica tradicional →</button></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C2 — PRÁCTICA TRADICIONAL
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-1">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#0F6E56"></div><span class="sec-title">Sección 2 — Práctica tradicional de cultivo</span></div>
+  <p class="sec-sub">Documentación etnográfica de prácticas · Vigencia y transmisión (Hammersley &amp; Atkinson, 2007)</p>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:34%">Descriptor</th><th style="width:13%">Tipo</th><th style="width:11%">Marco</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">9</div></td>
+        <td class="cell-pad"><div class="d-name">Nombre de la práctica<span class="star">★</span></div><div class="d-method">Identificación emic</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnográfico</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Ej: Selección masal de semilla, Sistema milpa..." id="p9" oninput="reg('p9',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">10</div></td>
+        <td class="cell-pad"><div class="d-name">Categoría de la práctica<span class="star">★</span></div><div class="d-method">Dominio cultural — Spradley</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="options-wrap" id="p10">
+          <button class="opt" onclick="sel('p10',this,'Selección y conservación de semilla','sel-teal')">Selección semilla</button>
+          <button class="opt" onclick="sel('p10',this,'Preparación del suelo','sel-teal')">Prep. suelo</button>
+          <button class="opt" onclick="sel('p10',this,'Siembra','sel-teal')">Siembra</button>
+          <button class="opt" onclick="sel('p10',this,'Fertilización orgánica','sel-teal')">Fertilización</button>
+          <button class="opt" onclick="sel('p10',this,'Control de plagas tradicional','sel-teal')">Control plagas</button>
+          <button class="opt" onclick="sel('p10',this,'Cosecha','sel-teal')">Cosecha</button>
+          <button class="opt" onclick="sel('p10',this,'Almacenamiento','sel-teal')">Almacenamiento</button>
+          <button class="opt" onclick="sel('p10',this,'Sistema milpa / policultivo','sel-teal')">Milpa</button>
+          <button class="opt" onclick="sel('p10',this,'Ritual / ceremonial','sel-teal')">Ritual</button>
+          <button class="opt" onclick="sel('p10',this,'Intercambio de semillas','sel-teal')">Intercambio</button>
+          <button class="opt" onclick="sel('p10',this,'Calendario agrícola tradicional','sel-teal')">Calendario</button>
+          <button class="opt" onclick="sel('p10',this,'Gastronomía tradicional','sel-teal')">Gastronomía</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">11</div></td>
+        <td class="cell-pad"><div class="d-name">Estado de vigencia<span class="star">★</span></div><div class="d-method">Continuidad de la práctica</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Hammersley (2007)</div></td>
+        <td><div class="options-wrap" id="p11">
+          <button class="opt" onclick="sel('p11',this,'1 — Vigente (toda la comunidad)','sel-teal')">1 — Vigente</button>
+          <button class="opt" onclick="sel('p11',this,'2 — Vigente (mayoría)','sel-teal')">2 — Mayoría</button>
+          <button class="opt" onclick="sel('p11',this,'3 — En declive (minorías)','sel-amber')">3 — En declive</button>
+          <button class="opt" onclick="sel('p11',this,'4 — Solo adultos mayores','sel-amber')">4 — Adultos mayores</button>
+          <button class="opt" onclick="sel('p11',this,'5 — Prácticamente perdida','sel-coral')">5 — Casi perdida</button>
+          <button class="opt" onclick="sel('p11',this,'6 — En proceso de recuperación','sel-teal')">6 — Recuperación</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">12</div></td>
+        <td class="cell-pad"><div class="d-name">Género de la práctica<span class="star">★</span></div><div class="d-method">Roles de género en el manejo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Género y etnia</div></td>
+        <td><div class="options-wrap" id="p12">
+          <button class="opt" onclick="sel('p12',this,'Masculina (principalmente hombres)','sel-teal')">Masculina</button>
+          <button class="opt" onclick="sel('p12',this,'Femenina (principalmente mujeres)','sel-teal')">Femenina</button>
+          <button class="opt" onclick="sel('p12',this,'Mixta (sin distinción de género)','sel-teal')">Mixta</button>
+          <button class="opt" onclick="sel('p12',this,'Comunitaria (toda la comunidad)','sel-teal')">Comunitaria</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">13</div></td>
+        <td class="cell-pad"><div class="d-name">Modo de transmisión<span class="star">★</span></div><div class="d-method">Canal de aprendizaje y reproducción</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="options-wrap" id="p13">
+          <button class="opt" onclick="selMulti('p13',this,'Oral (narración/relato)','sel-teal')">Oral</button>
+          <button class="opt" onclick="selMulti('p13',this,'Práctica (observación y hacer)','sel-teal')">Práctica directa</button>
+          <button class="opt" onclick="selMulti('p13',this,'Ritual (ceremonial)','sel-teal')">Ritual</button>
+          <button class="opt" onclick="selMulti('p13',this,'Escrita (cuadernos/documentos)','sel-teal')">Escrita</button>
+          <button class="opt" onclick="selMulti('p13',this,'Mixta','sel-teal')">Mixta</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">14</div></td>
+        <td class="cell-pad"><div class="d-name">Estacionalidad / temporalidad</div><div class="d-method">Anclaje en el calendario agrícola</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="p14">
+          <button class="opt" onclick="selMulti('p14',this,'Enero-Febrero','sel-teal')">Ene-Feb</button>
+          <button class="opt" onclick="selMulti('p14',this,'Marzo-Abril','sel-teal')">Mar-Abr</button>
+          <button class="opt" onclick="selMulti('p14',this,'Mayo-Junio','sel-teal')">May-Jun</button>
+          <button class="opt" onclick="selMulti('p14',this,'Julio-Agosto','sel-teal')">Jul-Ago</button>
+          <button class="opt" onclick="selMulti('p14',this,'Septiembre-Octubre','sel-teal')">Sep-Oct</button>
+          <button class="opt" onclick="selMulti('p14',this,'Noviembre-Diciembre','sel-teal')">Nov-Dic</button>
+          <button class="opt" onclick="selMulti('p14',this,'Todo el año','sel-teal')">Todo el año</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">15</div></td>
+        <td class="cell-pad"><div class="d-name">Descripción etnográfica<span class="star">★</span></div><div class="d-method">Registro detallado de la práctica</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Hammersley (2007)</div></td>
+        <td><div class="frag-box"><textarea placeholder="Descripción detallada de cómo se realiza la práctica, actores, materiales, pasos, variantes..." id="p15" oninput="reg('p15',this.value)" style="min-height:80px"></textarea></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">16</div></td>
+        <td class="cell-pad"><div class="d-name">Amenazas identificadas</div><div class="d-method">Factores de pérdida cultural</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="p16">
+          <button class="opt" onclick="selMulti('p16',this,'Migración de jóvenes','sel-coral')">Migración</button>
+          <button class="opt" onclick="selMulti('p16',this,'Pérdida de interés generacional','sel-coral')">Sin relevo</button>
+          <button class="opt" onclick="selMulti('p16',this,'Influencia religiosa externa','sel-coral')">Religión externa</button>
+          <button class="opt" onclick="selMulti('p16',this,'Agroquímicos sustituyendo práctica','sel-coral')">Agroquímicos</button>
+          <button class="opt" onclick="selMulti('p16',this,'Cambio climático','sel-coral')">Cambio climático</button>
+          <button class="opt" onclick="selMulti('p16',this,'Reducción de superficie','sel-coral')">Menos tierra</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(0)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(2)">Siguiente: saber etnoecológico →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C3 — SABER ETNOECOLÓGICO
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-2">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#993C1D"></div><span class="sec-title">Sección 3 — Saber etnoecológico</span></div>
+  <p class="sec-sub">Conocimiento ecológico tradicional (TEK) · Interfaz saber local / ciencia occidental</p>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:34%">Descriptor</th><th style="width:13%">Tipo</th><th style="width:11%">Marco</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">17</div></td>
+        <td class="cell-pad"><div class="d-name">Título del saber<span class="star">★</span></div><div class="d-method">Identificación del conocimiento TEK</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnoec.</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Ej: Uso del humo de ocote para conservar semillas" id="e17" oninput="reg('e17',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">18</div></td>
+        <td class="cell-pad"><div class="d-name">Tipo de saber<span class="star">★</span></div><div class="d-method">Dominio del conocimiento ecológico</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">TEK</div></td>
+        <td><div class="options-wrap" id="e18">
+          <button class="opt" onclick="sel('e18',this,'Indicadores naturales de clima','sel-coral')">Indicadores clima</button>
+          <button class="opt" onclick="sel('e18',this,'Plantas compañeras / asociaciones','sel-coral')">Plantas compañeras</button>
+          <button class="opt" onclick="sel('e18',this,'Control biológico tradicional','sel-coral')">Control biológico</button>
+          <button class="opt" onclick="sel('e18',this,'Manejo del agua y suelo','sel-coral')">Agua y suelo</button>
+          <button class="opt" onclick="sel('e18',this,'Predicción del tiempo','sel-coral')">Predicción tiempo</button>
+          <button class="opt" onclick="sel('e18',this,'Manejo de plagas y enfermedades','sel-coral')">Plagas</button>
+          <button class="opt" onclick="sel('e18',this,'Conocimiento alimentario','sel-coral')">Alimentario</button>
+          <button class="opt" onclick="sel('e18',this,'Conocimiento medicinal','sel-coral')">Medicinal</button>
+          <button class="opt" onclick="sel('e18',this,'Conocimiento ritual','sel-coral')">Ritual</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">19</div></td>
+        <td class="cell-pad"><div class="d-name">Descripción del saber<span class="star">★</span></div><div class="d-method">Descripción emic completa</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnográfico</div></td>
+        <td><div class="frag-box"><textarea placeholder="Describa el saber tal como fue referido por el/la informante, incluyendo procedimientos, materiales y contexto de aplicación..." id="e19" oninput="reg('e19',this.value)"></textarea></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">20</div></td>
+        <td class="cell-pad"><div class="d-name">Validación científica<span class="star">★</span></div><div class="d-method">Contraste con literatura científica</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Ciencia</div></td>
+        <td><div class="options-wrap" id="e20">
+          <button class="opt" onclick="sel('e20',this,'1 — Confirmado científicamente','sel-teal')">1 — Confirmado</button>
+          <button class="opt" onclick="sel('e20',this,'2 — Parcialmente confirmado','sel-amber')">2 — Parcial</button>
+          <button class="opt" onclick="sel('e20',this,'3 — Sin evaluar aún','sel-amber')">3 — Sin evaluar</button>
+          <button class="opt" onclick="sel('e20',this,'4 — Contradictorio con ciencia','sel-coral')">4 — Contradictorio</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">21</div></td>
+        <td class="cell-pad"><div class="d-name">Relevancia para la conservación<span class="star">★</span></div><div class="d-method">Importancia para biodiversidad agrícola</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Conservación</div></td>
+        <td><div class="likert-row"><span class="likert-lbl">Baja</span>
+          <button class="lk-btn" id="e21-1" onclick="likert('e21',1,'coral')">1</button>
+          <button class="lk-btn" id="e21-2" onclick="likert('e21',2,'coral')">2</button>
+          <button class="lk-btn" id="e21-3" onclick="likert('e21',3,'coral')">3</button>
+          <button class="lk-btn" id="e21-4" onclick="likert('e21',4,'coral')">4</button>
+          <button class="lk-btn" id="e21-5" onclick="likert('e21',5,'coral')">5</button>
+          <span class="lk-end">Crítica</span></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-coral">22</div></td>
+        <td class="cell-pad"><div class="d-name">¿Hay riesgo de pérdida?</div><div class="d-method">Urgencia de documentación</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="e22">
+          <button class="opt" onclick="sel('e22',this,'1 — No, ampliamente difundido','sel-teal')">1 — Sin riesgo</button>
+          <button class="opt" onclick="sel('e22',this,'2 — Riesgo bajo','sel-amber')">2 — Bajo</button>
+          <button class="opt" onclick="sel('e22',this,'3 — Riesgo medio','sel-amber')">3 — Medio</button>
+          <button class="opt" onclick="sel('e22',this,'4 — Riesgo alto (solo 1-2 portadores)','sel-coral')">4 — Alto</button>
+          <button class="opt" onclick="sel('e22',this,'5 — Urgente (portador anciano único)','sel-coral')">5 — Urgente</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(1)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(3)">Siguiente: análisis del discurso →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C4 — ANÁLISIS CUALITATIVO DEL DISCURSO
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-3">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#854F0B"></div><span class="sec-title">Sección 4 — Análisis cualitativo del discurso</span></div>
+  <p class="sec-sub">Codificación analítica de fragmentos del discurso etnográfico (Spradley, 2016 · Hammersley &amp; Atkinson, 2007)</p>
+
+  <div class="note-box" style="border-left-color:#BA7517"><p>El análisis cualitativo del discurso identifica <strong>dominios semánticos</strong> (Spradley, 2016): categorías cognitivas que los informantes usan para clasificar su mundo. Se codifican fragmentos del discurso con los códigos analíticos emergentes de la teoría fundamentada.</p></div>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:34%">Descriptor</th><th style="width:13%">Tipo</th><th style="width:11%">Marco</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">23</div></td>
+        <td class="cell-pad"><div class="d-name">Fragmento de discurso<span class="star">★</span></div><div class="d-method">Cita textual del informante</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="frag-box"><textarea placeholder='Transcripción textual de la cita del informante entre comillas. Ej: "El maíz negro es quien somos, no solo comida..."' id="d23" oninput="reg('d23',this.value)" style="min-height:80px"></textarea></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">24</div></td>
+        <td class="cell-pad"><div class="d-name">Códigos analíticos asignados<span class="star">★</span></div><div class="d-method">Categorías emergentes del análisis</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="cod-grid" id="d24">
+          <div class="cod-item" onclick="togCod(this,'IDENT_CULT')"><div class="cod-dot" style="background:#7C3AED"></div><div class="cod-label" style="color:#3C3489">IDENT_CULT<br><span style="font-size:9px;font-weight:400">Identidad cultural</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'SABER_TRAD')"><div class="cod-dot" style="background:#059669"></div><div class="cod-label" style="color:#085041">SABER_TRAD<br><span style="font-size:9px;font-weight:400">Saber tradicional</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'PRACTICA_RITO')"><div class="cod-dot" style="background:#DC2626"></div><div class="cod-label" style="color:#712B13">PRACTICA_RITO<br><span style="font-size:9px;font-weight:400">Práctica ritual</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'AMENAZA_EXT')"><div class="cod-dot" style="background:#EA580C"></div><div class="cod-label" style="color:#712B13">AMENAZA_EXT<br><span style="font-size:9px;font-weight:400">Amenaza externa</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'RESILIENCIA')"><div class="cod-dot" style="background:#0284C7"></div><div class="cod-label" style="color:#085041">RESILIENCIA<br><span style="font-size:9px;font-weight:400">Resiliencia</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'CUSTOD_SEMI')"><div class="cod-dot" style="background:#0D9488"></div><div class="cod-label" style="color:#085041">CUSTOD_SEMI<br><span style="font-size:9px;font-weight:400">Custodia semillas</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'INTERG_TRANS')"><div class="cod-dot" style="background:#65A30D"></div><div class="cod-label" style="color:#27500A">INTERG_TRANS<br><span style="font-size:9px;font-weight:400">Transmisión intergeneracional</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'MILPA_SISTEM')"><div class="cod-dot" style="background:#854D0E"></div><div class="cod-label" style="color:#633806">MILPA_SISTEM<br><span style="font-size:9px;font-weight:400">Sistema milpa</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'INTERCAMB')"><div class="cod-dot" style="background:#4338CA"></div><div class="cod-label" style="color:#3C3489">INTERCAMB<br><span style="font-size:9px;font-weight:400">Red de intercambio</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'SOBERAN_ALIM')"><div class="cod-dot" style="background:#BE123C"></div><div class="cod-label" style="color:#72243E">SOBERAN_ALIM<br><span style="font-size:9px;font-weight:400">Soberanía alimentaria</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'GENERO_ROL')"><div class="cod-dot" style="background:#DB2777"></div><div class="cod-label" style="color:#72243E">GENERO_ROL<br><span style="font-size:9px;font-weight:400">Roles de género</span></div></div>
+          <div class="cod-item" onclick="togCod(this,'CAMBIO_CLIM')"><div class="cod-dot" style="background:#1D4ED8"></div><div class="cod-label" style="color:#0C447C">CAMBIO_CLIM<br><span style="font-size:9px;font-weight:400">Cambio climático</span></div></div>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">25</div></td>
+        <td class="cell-pad"><div class="d-name">Temas emergentes</div><div class="d-method">Categorías inductivas no previstas</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Grounded theory</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Temas emergentes no contemplados, separados por coma..." id="d25" oninput="reg('d25',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">26</div></td>
+        <td class="cell-pad"><div class="d-name">Memo interpretativo<span class="star">★</span></div><div class="d-method">Interpretación analítica del investigador</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-textual">Textual</span></td>
+        <td class="cell-pad"><div class="d-ref">Hammersley (2007)</div></td>
+        <td><div class="frag-box"><textarea placeholder="Interpretación del investigador sobre el fragmento: ¿qué revela sobre la relación cultural con el maíz?, ¿qué tensiones o contradicciones aparecen?..." id="d26" oninput="reg('d26',this.value)"></textarea></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">27</div></td>
+        <td class="cell-pad"><div class="d-name">¿Indica saturación teórica?</div><div class="d-method">Criterio de cierre del muestreo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Dicotómico</span></td>
+        <td class="cell-pad"><div class="d-ref">Grounded theory</div></td>
+        <td><div class="options-wrap" id="d27">
+          <button class="opt" onclick="sel('d27',this,'Sí — confirma categorías existentes','sel-amber')">Sí, satura</button>
+          <button class="opt" onclick="sel('d27',this,'No — emerge información nueva','sel-amber')">No, novedad</button>
+          <button class="opt" onclick="sel('d27',this,'Parcial — confirma y aporta nuevo','sel-amber')">Parcial</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">28</div></td>
+        <td class="cell-pad"><div class="d-name">Dominio semántico identificado<span class="star">★</span></div><div class="d-method">Taxonomía folk (Spradley, 2016)</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Spradley (2016)</div></td>
+        <td><div class="options-wrap" id="d28">
+          <button class="opt" onclick="sel('d28',this,'Identidad y pertenencia','sel-amber')">Identidad</button>
+          <button class="opt" onclick="sel('d28',this,'Conocimiento productivo','sel-amber')">Conocimiento prod.</button>
+          <button class="opt" onclick="sel('d28',this,'Espiritualidad y cosmos','sel-amber')">Espiritualidad</button>
+          <button class="opt" onclick="sel('d28',this,'Relaciones sociales','sel-amber')">Relaciones sociales</button>
+          <button class="opt" onclick="sel('d28',this,'Memoria e historia','sel-amber')">Memoria</button>
+          <button class="opt" onclick="sel('d28',this,'Resistencia y agencia','sel-amber')">Resistencia</button>
+          <button class="opt" onclick="sel('d28',this,'Vulnerabilidad y pérdida','sel-amber')">Vulnerabilidad</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(2)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(4);buildReport()">Ver ficha cultural →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     C5 — FICHA CULTURAL
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-4">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#534AB7"></div><span class="sec-title">Ficha cultural — Resumen de descriptores</span></div>
+  <p class="sec-sub">Resumen automático de todos los descriptores culturales capturados</p>
+  <div id="report-body-c"></div>
+  <div class="action-row" style="margin-top:1.5rem">
+    <button class="btn-s" onclick="goSec(3)">← Editar</button>
+    <button class="btn-p" onclick="sendPrompt('Con estos descriptores culturales de maíz nativo capturados en el formulario, genera un análisis de dominios semánticos según Spradley (2016) e identifica los principales códigos analíticos que emergen del discurso según la metodología de Hammersley & Atkinson (2007)')">Análisis IA ↗</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+var D={};
+var multiSel={};
+var codSel={};
+
+function reg(k,v){D[k]=v;calcProg()}
+function goSec(n){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});
+  document.getElementById('sec-'+n).classList.add('on');
+  document.getElementById('nb-'+n).classList.add('on');
+  calcProg();
+}
+function gotoReport(){goSec(4);buildReport()}
+
+function sel(grp,btn,val,cls){
+  document.getElementById(grp).querySelectorAll('.opt').forEach(function(b){
+    b.classList.remove('sel-purple','sel-teal','sel-coral','sel-amber','sel-pink');
+  });
+  btn.classList.add(cls);
+  D[grp]=val;calcProg();
+}
+
+function selMulti(grp,btn,val,cls){
+  if(!multiSel[grp])multiSel[grp]=[];
+  var idx=multiSel[grp].indexOf(val);
+  if(idx===-1){multiSel[grp].push(val);btn.classList.add(cls);}
+  else{multiSel[grp].splice(idx,1);btn.classList.remove('sel-purple','sel-teal','sel-coral','sel-amber','sel-pink');}
+  D[grp]=multiSel[grp].join(', ')||undefined;
+  calcProg();
+}
+
+var likertV={};
+function likert(grp,v,color){
+  likertV[grp]=v;
+  for(var i=1;i<=5;i++){
+    var b=document.getElementById(grp+'-'+i);
+    if(b)b.classList.toggle('sel',i===v);
+  }
+  D[grp]=v;calcProg();
+}
+
+function togCod(el,cod){
+  if(codSel[cod]){
+    codSel[cod]=false;
+    el.style.background='transparent';
+    el.style.borderColor='var(--color-border-tertiary)';
+    el.querySelector('.cod-label').style.fontWeight='400';
+  } else {
+    codSel[cod]=true;
+    el.style.background='var(--color-background-secondary)';
+    el.style.borderColor='var(--color-border-primary)';
+    el.querySelector('.cod-label').style.fontWeight='500';
+  }
+  D['d24']=Object.keys(codSel).filter(function(k){return codSel[k]}).join(', ')||undefined;
+  calcProg();
+}
+
+var TOTAL_KEYS=['v1','v2a','v4','v5','v6','v7','v8',
+  'p9','p10','p11','p12','p13','p14','p15','p16',
+  'e17','e18','e19','e20','e21','e22',
+  'd23','d24','d26','d27','d28'];
+
+function calcProg(){
+  var filled=TOTAL_KEYS.filter(function(k){return D[k]!==undefined&&D[k]!==''}).length;
+  var pct=Math.round(filled/TOTAL_KEYS.length*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'% completado';
+  var secs=['Variedad local','Práctica trad.','Saber etnoec.','Análisis discurso','Ficha cultural'];
+  var curSec=0;
+  document.querySelectorAll('.sec').forEach(function(s,i){if(s.classList.contains('on'))curSec=i});
+  document.getElementById('prog-step').textContent='Paso '+(curSec+1)+' / 5 — '+secs[curSec];
+}
+
+var LABELS={
+  v1:'Nombre local de la variedad',v2a:'Nombre en lengua originaria',
+  v4:'Uso principal',v5:'Importancia cultural',v6:'Estado de conservación',
+  v7:'Descripción local (voz informante)',v8:'¿En custodia?',
+  p9:'Nombre de la práctica',p10:'Categoría de práctica',p11:'Estado de vigencia',
+  p12:'Género de la práctica',p13:'Modo de transmisión',p14:'Estacionalidad',
+  p15:'Descripción etnográfica',p16:'Amenazas identificadas',
+  e17:'Título del saber etnoecológico',e18:'Tipo de saber',
+  e19:'Descripción del saber',e20:'Validación científica',
+  e21:'Relevancia conservación (1-5)',e22:'Riesgo de pérdida',
+  d23:'Fragmento de discurso',d24:'Códigos analíticos',
+  d25:'Temas emergentes',d26:'Memo interpretativo',d27:'Saturación teórica',d28:'Dominio semántico'
+};
+
+var SECCIONES_C=[
+  {title:'Variedad local (descriptores 1-8)',keys:['v1','v2a','v4','v5','v6','v7','v8']},
+  {title:'Práctica tradicional (descriptores 9-16)',keys:['p9','p10','p11','p12','p13','p14','p15','p16']},
+  {title:'Saber etnoecológico (descriptores 17-22)',keys:['e17','e18','e19','e20','e21','e22']},
+  {title:'Análisis del discurso (descriptores 23-28)',keys:['d23','d24','d25','d26','d27','d28']}
+];
+
+function buildReport(){
+  var filled=TOTAL_KEYS.filter(function(k){return D[k]!==undefined&&D[k]!==''}).length;
+  var pct=Math.round(filled/TOTAL_KEYS.length*100);
+  var html='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:1;min-width:100px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Descriptores</div><div style="font-size:20px;font-weight:500;color:var(--color-text-primary)">'+filled+' / '+TOTAL_KEYS.length+'</div></div>'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:1;min-width:100px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Completitud</div><div style="font-size:20px;font-weight:500;color:'+(pct>70?'#534AB7':pct>40?'#BA7517':'#A32D2D')+'">'+pct+'%</div></div>'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:2;min-width:120px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Variedad</div><div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">'+(D.v1||'—')+'<span style="font-size:11px;font-style:italic;color:var(--color-text-tertiary)"> '+(D.v2a||'')+'</span></div></div>'
+    +'</div>';
+
+  SECCIONES_C.forEach(function(sec){
+    html+='<div style="font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.6px;padding:10px 0 5px;margin-top:4px">'+sec.title+'</div>';
+    sec.keys.forEach(function(k){
+      var v=D[k];
+      var isTxt=(k==='v7'||k==='p15'||k==='e19'||k==='d23'||k==='d26');
+      html+='<div class="report-row">';
+      if(isTxt){
+        html='<div style="margin-bottom:8px"><div style="font-size:12px;color:var(--color-text-secondary);margin-bottom:4px">'+LABELS[k]+'</div>';
+        if(v&&v!==''){
+          html+='<div class="cit-wrap"><p>'+v+'</p></div></div>';
+        } else {
+          html+='<div style="font-size:11px;color:var(--color-text-tertiary);font-style:italic">sin datos</div></div>';
+        }
+        document.getElementById('report-body-c').innerHTML+=(html);
+        html='';
+        return;
+      }
+      html+='<span class="report-key">'+LABELS[k]+'</span>';
+      if(v!==undefined&&v!==''){html+='<span class="report-val">'+v+'</span>';}
+      else{html+='<span class="report-val r-empty">sin datos</span>';}
+      html+='</div>';
+    });
+  });
+  document.getElementById('report-body-c').innerHTML=html;
+}
+</script>

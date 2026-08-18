@@ -17,12 +17,18 @@ interface SidebarProps {
   onCollapseToggle?: () => void;
   collapsed?: boolean;
   className?: string;
+  mobileOpen?: boolean
+  onMobileClose?: () => void
 }
 
 import { usePathname } from 'next/navigation';
 
-export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigate, onCollapseToggle, collapsed, className }) => {
-  const navClass = [className ? className : styles.sidebar, collapsed ? styles.collapsed : ''].filter(Boolean).join(' ');
+export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigate, onCollapseToggle, collapsed, className, mobileOpen, onMobileClose }) => {
+  const navClass = [
+    className ? className : styles.sidebar,
+    collapsed ? styles.collapsed : '',
+    mobileOpen ? styles.open : ''  
+  ].filter(Boolean).join(' ')
   const pathname = usePathname();
 
   // Flags de permiso para mostrar/ocultar items del menú
@@ -80,10 +86,13 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
             aria-current={pathname === '/dashboard' || pathname === '/admin/dashboard' ? 'page' : undefined}
             aria-label="Dashboard - Inicio"
             data-tooltip="Dashboard"
-            onClick={() => onNavigate(dashboardHref)}
+            onClick={() => {
+              onNavigate(dashboardHref)
+              if (onMobileClose) onMobileClose()
+            }}
           >
             <span className={styles['sb-item-ico']} aria-hidden="true">🏠</span>
-            <span className={styles['sb-item-txt']}>Dashboard</span>
+            <span className={styles['sb-item-txt']}>Inicio</span>
           </button>
           {/* Productores */}
           {['administrador','investigador','tecnico_campo'].includes(rol) && (
@@ -92,7 +101,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-current={pathname.startsWith('/admin/productores') ? 'page' : undefined}
               aria-label="Productores"
               data-tooltip="Productores"
-              onClick={() => onNavigate('/admin/productores')}
+              onClick={() => {
+                onNavigate('/admin/productores')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🌾</span>
               <span className={styles['sb-item-txt']}>Productores</span>
@@ -106,7 +118,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-current={pathname.startsWith('/admin/comunidades') ? 'page' : undefined}
               aria-label="Comunidades"
               data-tooltip="Comunidades"
-              onClick={() => onNavigate('/admin/comunidades')}
+              onClick={() => {
+                onNavigate('/admin/comunidades')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
               <span className={styles['sb-item-txt']}>Comunidades</span>
@@ -120,7 +135,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-current={pathname.startsWith('/admin/sociocultural') ? 'page' : undefined}
               aria-label="Sociocultural"
               data-tooltip="Sociocultural"
-              onClick={() => onNavigate('/admin/sociocultural')}
+              onClick={() => {
+                onNavigate('/admin/sociocultural')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">🎭</span>
               <span className={styles['sb-item-txt']}>Sociocultural</span>
@@ -134,7 +152,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-current={pathname.startsWith('/admin/fenotipo') ? 'page' : undefined}
               aria-label="Fenotípico"
               data-tooltip="Fenotípico"
-              onClick={() => onNavigate('/admin/fenotipo')}
+              onClick={() => {
+                onNavigate('/admin/fenotipo')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">🔬</span>
               <span className={styles['sb-item-txt']}>Fenotípico</span>
@@ -151,7 +172,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-current={pathname.startsWith('/admin/catalogos') ? 'page' : undefined}
               aria-label="Catálogos"
               data-tooltip="Catálogos"
-              onClick={() => onNavigate('/admin/catalogos')}
+              onClick={() => {
+                onNavigate('/admin/catalogos')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">📋</span>
               <span className={styles['sb-item-txt']}>Catálogos</span>
@@ -167,7 +191,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               aria-label="Inventario de Usuarios"
               data-tooltip="Usuarios"
               aria-current={pathname === '/admin/usuarios' ? 'page' : undefined}
-              onClick={() => onNavigate('/admin/usuarios')}
+              onClick={() => {
+                onNavigate('/admin/usuarios')
+                if (onMobileClose) onMobileClose()
+              }}
             >
               <span className={styles['sb-item-ico']} aria-hidden="true">⚙️</span>
               <span className={styles['sb-item-txt']}>Usuarios</span>
@@ -188,7 +215,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
             onClick={() => onNavigate(dashboardHref)}
           >
             <span className={styles['sb-item-ico']} aria-hidden="true">🏠</span>
-            <span className={styles['sb-item-txt']}>Dashboard</span>
+            <span className={styles['sb-item-txt']}>Inicio</span>
           </button>
           {/* Solo para roles permitidos, no consultor */}
           {['administrador','investigador','tecnico_campo'].includes(rol) && (
@@ -202,7 +229,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 aria-current={pathname.startsWith('/productores') ? 'page' : undefined}
                 aria-label="Productores"
                 data-tooltip="Productores"
-                onClick={() => onNavigate('/productores')}
+                onClick={() => {
+                  onNavigate('/productores')
+                  if (onMobileClose) onMobileClose()
+                }}
               >
                 <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🌾</span>
                 <span className={styles['sb-item-txt']}>Productores</span>
@@ -217,10 +247,28 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 aria-current={pathname.startsWith('/comunidades') ? 'page' : undefined}
                 aria-label="Comunidades"
                 data-tooltip="Comunidades"
-                onClick={() => onNavigate('/comunidades')}
+                onClick={() => {
+                  onNavigate('/comunidades')
+                  if (onMobileClose) onMobileClose()
+                }}
               >
                 <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
                 <span className={styles['sb-item-txt']}>Comunidades</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+              </button>
+              {/* Parcelas */}
+              <button
+                className={styles['sb-item'] + (pathname.startsWith('/admin/parcelas') ? ' ' + styles['active'] : '')}
+                aria-current={pathname.startsWith('/parcelas') ? 'page' : undefined}
+                aria-label="Parcelas"
+                data-tooltip="Parcelas"
+                onClick={() => {
+                  onNavigate('/admin/parcelas')
+                  if (onMobileClose) onMobileClose()
+                }}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🌾</span>
+                <span className={styles['sb-item-txt']}>Parcelas</span>
                 <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
               </button>
               {/* Sociocultural */}
@@ -232,7 +280,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 aria-current={pathname.startsWith('/sociocultural') ? 'page' : undefined}
                 aria-label="Sociocultural"
                 data-tooltip="Sociocultural"
-                onClick={() => onNavigate('/sociocultural')}
+                onClick={() => {
+                  onNavigate('/sociocultural')
+                  if (onMobileClose) onMobileClose()
+                }}
               >
                 <span className={styles['sb-item-ico']} aria-hidden="true">🎭</span>
                 <span className={styles['sb-item-txt']}>Sociocultural</span>
@@ -247,7 +298,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 aria-current={pathname.startsWith('/fenotipo') ? 'page' : undefined}
                 aria-label="Fenotípico"
                 data-tooltip="Fenotípico"
-                onClick={() => onNavigate('/fenotipo')}
+                onClick={() => {
+                  onNavigate('/fenotipo')
+                  if (onMobileClose) onMobileClose()
+                }}
               >
                 <span className={styles['sb-item-ico']} aria-hidden="true">🔬</span>
                 <span className={styles['sb-item-txt']}>Fenotípico</span>
@@ -269,7 +323,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
           aria-current={pathname.startsWith('/comunidades') ? 'page' : undefined}
           aria-label="Mapa de comunidades"
           data-tooltip="Mapa de comunidades"
-          onClick={() => onNavigate('/comunidades')}
+          onClick={() => {
+            onNavigate('/comunidades')
+            if (onMobileClose) onMobileClose()
+          }}
         >
           <span className={styles['sb-item-ico']} aria-hidden="true">🏘️</span>
           <span className={styles['sb-item-txt']}>Mapa de comunidades</span>
@@ -304,7 +361,10 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
         aria-label="Mi perfil"
         data-tooltip="Mi perfil"
         aria-current={pathname.startsWith('/mi-perfil') ? 'page' : undefined}
-        onClick={() => onNavigate('/mi-perfil')}
+        onClick={() => {
+          onNavigate('/mi-perfil')
+          if (onMobileClose) onMobileClose()
+        }}
       >
         <span className={styles['sb-item-ico']} aria-hidden="true">👤</span>
         <span className={styles['sb-item-txt']}>Mi perfil</span>

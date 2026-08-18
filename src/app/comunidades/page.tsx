@@ -111,7 +111,7 @@ export default function ComunidadesPage() {
     }
     // Cargar municipios si no hay
     if (municipiosStore.length === 0) {
-      GET('/geo/municipio')
+      GET('/catalogo/municipio')
         .then((data: unknown) => {
           let lista: unknown[] = [];
           if (Array.isArray(data)) {
@@ -156,6 +156,7 @@ export default function ComunidadesPage() {
   // Adaptar datos para la tabla (admin)
   const comunidadesTabla = comunidades;
 
+  const mostrarSidebarComunidades = ['investigador', 'tecnico_campo', 'administrador'].includes(rol ?? '')
 
   // Datos de usuario para overlays
   return (
@@ -242,7 +243,7 @@ export default function ComunidadesPage() {
             />
           </div>
           {/* Panel lateral flotante (sidebar de comunidades) */}
-          {rol === 'visualizador' && usuario?.username !== 'invitado' && (
+          { mostrarSidebarComunidades  && (
             <SidebarComunidades
               rol={rol}
               busqueda={busqueda}

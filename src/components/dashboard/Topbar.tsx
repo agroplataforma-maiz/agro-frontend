@@ -121,6 +121,15 @@ export const Topbar: React.FC<TopbarProps> = ({
   const notifRef  = useRef<HTMLDivElement>(null);
   const userRef   = useRef<HTMLDivElement>(null);
 
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth <= 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
+
   useEffect(() => {
     const close = (e: MouseEvent) => {
       if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
@@ -156,12 +165,14 @@ export const Topbar: React.FC<TopbarProps> = ({
   return (
     <header className={className ?? styles.topbar} role="banner">
       {/* Hamburger */}
-      <button
-        className={styles['topbar-hamburger']}
-        aria-label="Abrir menú de navegación"
-        aria-controls="sidebar"
-        onClick={onSidebarToggle}
-      >≡</button>
+      {isMobile && (
+        <button
+          className={styles['topbar-hamburger']}
+          aria-label="Abrir menú de navegación"
+          aria-controls="sidebar"
+          onClick={onSidebarToggle}
+        >≡</button>
+      )}
 
       {/* Breadcrumb dinámico multi-nivel */}
       <nav className={styles['topbar-breadcrumb']} aria-label="Ruta de navegación">
@@ -197,7 +208,12 @@ export const Topbar: React.FC<TopbarProps> = ({
                     key={item.page}
                     className={styles['search-result']}
                     role="option"
-                    onClick={() => { onNavigate(item.page); setQuery(''); setSearchOpen(false); setSearchPanelOpen(false); }}
+                    onClick={() => { 
+                      onNavigate(item.page); 
+                      setQuery(''); 
+                      setSearchOpen(false); 
+                      setSearchPanelOpen(false); 
+                    }}
                   >
                     <span>{item.icon}</span>
                     <span>{item.label}</span>

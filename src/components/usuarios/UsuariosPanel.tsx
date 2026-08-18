@@ -18,19 +18,19 @@ import PermisosModal from './PermisosModal';
 import PerfilModal from './PerfilModal';
 
 const ROL_INFO: Record<string, { badge: string; emoji: string; label: string }> = {
-  administrador: { badge: 'b-admin',        emoji: '👑',  label: 'Admin' },
-  investigador:  { badge: 'b-investigador', emoji: '🔬', label: 'Investigador' },
-  tecnico_campo: { badge: 'b-tecnico',      emoji: '🌾', label: 'Técnico' },
-  visualizador:  { badge: 'b-visualizador', emoji: '📊', label: 'Consultor' },
-  productor:     { badge: 'b-productor',    emoji: '🌽', label: 'Productor' },
+  administrador: { badge: 'b-admin', emoji: '👑', label: 'Admin' },
+  investigador: { badge: 'b-investigador', emoji: '🔬', label: 'Investigador' },
+  tecnico_campo: { badge: 'b-tecnico', emoji: '🌾', label: 'Técnico' },
+  visualizador: { badge: 'b-visualizador', emoji: '📊', label: 'Consultor' },
+  productor: { badge: 'b-productor', emoji: '🌽', label: 'Productor' },
 };
 
 const ROL_COLOR: Record<string, string> = {
   administrador: '#3D2208',
-  investigador:  '#2A5C3F',
+  investigador: '#2A5C3F',
   tecnico_campo: '#C8820A',
-  visualizador:  '#1D4ED8',
-  productor:     '#6B3D1E',
+  visualizador: '#1D4ED8',
+  productor: '#6B3D1E',
 };
 
 export default function UsuariosPanel() {
@@ -94,7 +94,7 @@ export default function UsuariosPanel() {
   // Queries y mutaciones
   const { data: usuarios = [], isLoading, isError, error, refetch } = useQuery<Usuario[]>({
     queryKey: ['usuarios'],
-    queryFn: () => GET('/auth/usuarios'),
+    queryFn: () => GET('/auth/usuario'),
     retry: 1,
     select: (d: unknown) => {
       const data = d as Usuario[] | { count?: number; items?: Usuario[]; results?: Usuario[] };
@@ -104,7 +104,7 @@ export default function UsuariosPanel() {
 
   const guardarUsuario = useMutation({
     mutationFn: async (data: UsuarioSavePayload) => {
-      if (modalUsuario.usuario) return PUT(`/auth/usuarios/${modalUsuario.usuario.id}`, data);
+      if (modalUsuario.usuario) return PUT(`/auth/usuario/${modalUsuario.usuario.id}`, data);
       return POST('/auth/register', data);
     },
     onSuccess: () => { cerrarModalUsuario(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario guardado', 'ok'); },
@@ -112,19 +112,19 @@ export default function UsuariosPanel() {
   });
 
   const activarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/activar`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuario/${id}/activar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario activado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al activar usuario', 'err'),
   });
 
   const desactivarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuarios/${id}/desactivar`, {}),
+    mutationFn: (id: number) => PUT(`/auth/usuario/${id}/desactivar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario desactivado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al desactivar usuario', 'err'),
   });
 
   const eliminarUsuario = useMutation({
-    mutationFn: (id: number) => DEL(`/auth/usuarios/${id}`),
+    mutationFn: (id: number) => DEL(`/auth/usuario/${id}`),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario eliminado', 'ok'); },
     onError: () => addToast('Error al eliminar usuario', 'err'),
   });
@@ -195,7 +195,7 @@ export default function UsuariosPanel() {
       <div className={styles['sec-header']}>
         <div>
           <h2 className={styles['sec-titulo']}>Usuarios del sistema</h2>
-          <p className={styles['sec-sub']}>Gestión de cuentas, roles y permisos · /auth/usuarios/</p>
+          <p className={styles['sec-sub']}>Gestión de cuentas, roles y permisos</p>
         </div>
         <div className={styles['sec-acciones']}>
           <Button variante="ghost" onClick={() => refetch()}>↺ Recargar</Button>
@@ -260,7 +260,21 @@ export default function UsuariosPanel() {
             onSort={handleSort}
             infoText={`${filtrados.length} usuario${filtrados.length !== 1 ? 's' : ''}`}
             columnas={[
-              { key: 'id', header: '#', nowrap: true, sortable: true, hideOnMobile: true },
+              {
+                key: 'index',
+                header: '#',
+                nowrap: true,
+                sortable: false,
+                hideOnMobile: true,
+                render: (_: Usuario, index?: number) => {
+                  const page = Number(pagina) || 1;
+                  const perPage = Number(PAG) || 10;
+                  const i = index ?? 0;
+
+                  return i + 1 + (page - 1) * perPage;
+                }
+
+              },
               {
                 key: 'usuario', header: 'Usuario', width: '220px',
                 render: (u: Usuario) => {
@@ -379,8 +393,8 @@ export default function UsuariosPanel() {
           <div style={{ fontSize: 36, marginBottom: 12 }}>⚠️</div>
           <div style={{ fontSize: 14, color: 'var(--cafe)', lineHeight: 1.6 }}>
             {modalConfirm.accion === 'activar' ? '¿Activar usuario?' :
-             modalConfirm.accion === 'desactivar' ? '¿Desactivar usuario?' :
-             `¿Estás seguro que vas a eliminar al usuario ${modalConfirm.nombre ?? ''}?`}
+              modalConfirm.accion === 'desactivar' ? '¿Desactivar usuario?' :
+                `¿Estás seguro que vas a eliminar al usuario ${modalConfirm.nombre ?? ''}?`}
           </div>
         </div>
       </Modal>

@@ -24,7 +24,7 @@ const ROL_LABEL: Record<string, string> = {
 type Tab = 'info' | 'password';
 type UsuarioExtendido = Usuario & {
   date_joined?: string;
-  created_at?: string;
+  creado_en?: string;
   fecha_creacion?: string;
 };
 
@@ -96,7 +96,7 @@ export default function MiPerfilPage() {
   const fechaRegistroRaw =
     usuario.fecha_registro ??
     usuarioExt?.date_joined ??
-    usuarioExt?.created_at ??
+    usuarioExt?.creado_en ??
     usuarioExt?.fecha_creacion ??
     null;
 

@@ -1,25 +1,17 @@
 'use client'
 
-import { useState, useEffect, FormEvent } from 'react'
-import { GET } from '@/lib/api'
+import React, { useState } from 'react'
 import { POST, PUT } from '@/lib/api'
 import type { Comunidad } from '@/types'
-import Modal from '@/components/ui/Modal'
 
-// Hook para detectar si es móvil
-function useIsMobile() {
-  const [isMobile, setIsMobile] = useState(false);
-  useEffect(() => {
-    const check = () => setIsMobile(window.innerWidth <= 700);
-    check();
-    window.addEventListener('resize', check);
-    return () => window.removeEventListener('resize', check);
-  }, []);
-  return isMobile;
-}
+import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
 import SelectField from '@/components/ui/SelectField'
 import Button from '@/components/ui/Button'
+import MapPicker from '@/components/mapa/MapPicker'
+
+import { useMunicipios } from '@/hooks/useMunicipios'
+import { useLenguas } from '@/hooks/useLenguas'
 
 interface Props {
   comunidad: Comunidad | null
@@ -27,228 +19,323 @@ interface Props {
   onSaved: () => void
 }
 
-const EMPTY: Partial<Comunidad> = {
-  nombre: '',
-  municipio_id: undefined,
-  localidad_id: undefined,
-  lengua_indigena: '',
-  poblacion: undefined,
-  notas: '',
-}
+const STEPS = [
+  'Identidad',
+  'Sociocultural',
+  'Agroecología',
+  'Ubicación',
+  'Confirmación'
+] as const
 
-import React from 'react';
+export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
 
+  const { municipios } = useMunicipios()
+  const { lenguas } = useLenguas()
 
-interface Municipio { id: number; nombre: string }
-interface Localidad { id: number; nombre: string }
-interface Lengua { id: number; nombre: string }
-interface LenguaResponse { count: number; results: Lengua[] }
-interface MunicipioResponse { count: number; results: Municipio[] }
-interface LocalidadResponse { count: number; results: Localidad[] }
+  const [step, setStep] = useState(0)
 
-const ModalComunidad = ({ comunidad, onClose, onSaved }: Props) => {
-  const [form, setForm] = useState<Partial<Comunidad>>(comunidad ?? EMPTY)
-  const [municipios, setMunicipios] = useState<Municipio[]>([])
-  const [localidadesFiltradas, setLocalidadesFiltradas] = useState<Localidad[]>([])
-  const [lenguas, setLenguas] = useState<Lengua[]>([])
+  const [form, setForm] = useState<Partial<Comunidad>>({
+    nombre: '',
+    nombre_lengua_orig: '',
+    tipo: '',
+    municipio_id: undefined,
+
+    presencia_maiz_nativo: false,
+    presencia_historica_maiz: false,
+
+    diversidad_ecologica_score: 3,
+    riqueza_cultural_score: 3,
+    prioridad_muestreo: 'media',
+
+    poblacion_total: undefined,
+    num_localidades: undefined,
+
+    fuente: 'INEGI 2020',
+    activo: true,
+  })
+
+  const [lat, setLat] = useState<number | null>(null)
+  const [lng, setLng] = useState<number | null>(null)
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
-  // Cargar lenguas indígenas al montar
-  useEffect(() => {
-    (async () => {
-      try {
-        const data: LenguaResponse = await GET('/social/lengua');
-        if (data && Array.isArray(data.results)) {
-          setLenguas(data.results.filter((l): l is Lengua => l && typeof l.id === 'number' && typeof l.nombre === 'string'));
-        } else {
-          setLenguas([]);
-        }
-      } catch {
-        setLenguas([]);
-      }
-    })();
-  }, []);
 
-  // Cargar municipios al montar
-  useEffect(() => {
-    (async () => {
-      try {
-        const muns: Municipio[] | MunicipioResponse = await GET('/geo/municipio');
-        if (Array.isArray(muns)) {
-          setMunicipios(muns.filter((m): m is Municipio => m && typeof m.id === 'number' && typeof m.nombre === 'string'));
-        } else if (muns && Array.isArray((muns as MunicipioResponse).results)) {
-          setMunicipios((muns as MunicipioResponse).results.filter((m): m is Municipio => m && typeof m.id === 'number' && typeof m.nombre === 'string'));
-        } else {
-          setMunicipios([]);
-        }
-      } catch {
-        setMunicipios([]);
-      }
-    })();
-  }, []);
+  const next = () => setStep(s => Math.min(s + 1, STEPS.length - 1))
+  const back = () => setStep(s => Math.max(s - 1, 0))
 
-  // Cuando cambia el municipio, limpiar localidad y cargar localidades del municipio
-  const update = (k: keyof Comunidad) =>
-    async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const value = e.target.value;
-      if (k === 'municipio_id') {
-        setForm(f => ({ ...f, municipio_id: value ? Number(value) : undefined, localidad_id: undefined }));
-        if (value) {
-          try {
-            const locs: Localidad[] | LocalidadResponse = await GET(`/geo/localidad?municipio_id=${value}`);
-            if (Array.isArray(locs)) {
-              setLocalidadesFiltradas(locs.filter((l): l is Localidad => l && typeof l.id === 'number' && typeof l.nombre === 'string'));
-            } else if (locs && Array.isArray((locs as LocalidadResponse).results)) {
-              setLocalidadesFiltradas((locs as LocalidadResponse).results.filter((l): l is Localidad => l && typeof l.id === 'number' && typeof l.nombre === 'string'));
-            } else {
-              setLocalidadesFiltradas([]);
-            }
-          } catch {
-            setLocalidadesFiltradas([]);
-          }
-        } else {
-          setLocalidadesFiltradas([]);
-        }
-      } else if (k === 'localidad_id') {
-        setForm(f => ({ ...f, localidad_id: value ? Number(value) : undefined }));
-      } else {
-        setForm(f => ({ ...f, [k]: value }));
+  // =========================
+  // UPDATE SEGURO (NO OBJETOS)
+  // =========================
+  const update =
+    (k: keyof Comunidad) =>
+    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+
+      let value: any = e.target.value
+
+      if (
+        k === 'municipio_id' ||
+        k === 'poblacion_total' ||
+        k === 'num_localidades' ||
+        k === 'diversidad_ecologica_score' ||
+        k === 'riqueza_cultural_score'
+      ) {
+        value = value === '' ? undefined : Number(value)
       }
+
+      if (typeof value === 'object') return
+
+      setForm(prev => ({
+        ...prev,
+        [k]: value
+      }))
     }
 
-  // Cargar localidades al abrir modal si ya hay municipio seleccionado (edición)
-  useEffect(() => {
-    if (form.municipio_id) {
-      (async () => {
-        try {
-          const locs: Localidad[] | LocalidadResponse = await GET(`/geo/localidad?municipio_id=${form.municipio_id}`);
-          if (Array.isArray(locs)) {
-            setLocalidadesFiltradas(locs.filter((l): l is Localidad => l && typeof l.id === 'number' && typeof l.nombre === 'string'));
-          } else if (locs && Array.isArray((locs as LocalidadResponse).results)) {
-            setLocalidadesFiltradas((locs as LocalidadResponse).results.filter((l): l is Localidad => l && typeof l.id === 'number' && typeof l.nombre === 'string'));
-          } else {
-            setLocalidadesFiltradas([]);
-          }
-        } catch {
-          setLocalidadesFiltradas([]);
-        }
-      })();
-    } else {
-      setLocalidadesFiltradas([]);
-    }
-  }, [form.municipio_id]);
+  // =========================
+  // SUBMIT REAL (SOLO FINAL)
+  // =========================
+  const handleSubmitFinal = async () => {
 
-  async function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    setError('')
+    const payload = {
+      ...form,
+      latitud: lat,
+      longitud: lng,
+    }
+
     setLoading(true)
+    setError('')
+
     try {
       if (comunidad?.id) {
-        await PUT(`/social/comunidad/${comunidad.id}`, form)
+        await PUT(`/core/comunidad/${comunidad.id}`, payload)
       } else {
-        await POST('/social/comunidad', form)
+        await POST(`/core/comunidad`, payload)
       }
+
       onSaved()
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+    } catch (err: any) {
+      setError(err?.message ?? 'Error al guardar')
     } finally {
       setLoading(false)
     }
   }
 
-  const isMobile = useIsMobile();
+  const municipioNombre =
+    municipios.find(m => m.id === form.municipio_id)?.nombre ?? ''
+
+  const lenguaNombre = form.nombre_lengua_orig ?? ''
+
   return (
     <Modal
       titulo={comunidad ? 'Editar comunidad' : 'Nueva comunidad'}
       onClose={onClose}
       ancho="lg"
-      footer={
-        <>
-          <Button variante="secundario" type="button" onClick={onClose}>Cancelar</Button>
-          <Button variante="primario" type="submit" form="form-comunidad" cargando={loading}>
-            {comunidad ? 'Guardar cambios' : 'Crear comunidad'}
-          </Button>
-        </>
-      }
-      open={!isMobile}
+      open={true}
+      footer={null}
     >
-      <form id="form-comunidad" onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <div style={{ gridColumn: '1 / -1' }}>
+
+      {/* HEADER WIZARD */}
+      <div style={{ marginBottom: 16 }}>
+        <strong>Paso {step + 1} de {STEPS.length}</strong>
+        <div style={{ fontSize: 14, opacity: 0.7 }}>
+          {STEPS[step]}
+        </div>
+      </div>
+
+      {/* 🚨 IMPORTANTE: NO submit HTML */}
+      <form onSubmit={(e) => e.preventDefault()}>
+
+        {/* ================= STEP 1 ================= */}
+        {step === 0 && (
+          <>
             <Field
-              label="Nombre de la comunidad"
-              name="nombre"
+              label="Nombre"
               value={form.nombre ?? ''}
               onChange={update('nombre')}
-              required
             />
+
+            <SelectField
+              label="Tipo"
+              value={form.tipo ?? ''}
+              onChange={update('tipo')}
+              options={[
+                { value: '', label: '— Selecciona —' },
+                { value: 'indigena', label: 'Indígena' },
+                { value: 'campesina', label: 'Campesina' },
+                { value: 'ejidal', label: 'Ejidal' },
+                { value: 'mixta', label: 'Mixta' },
+                { value: 'urbana', label: 'Urbana' },
+                { value: 'otro', label: 'Otro' },
+              ]}
+            />
+          </>
+        )}
+
+        {/* ================= STEP 2 ================= */}
+        {step === 1 && (
+          <>
+            <SelectField
+              label="Lengua originaria"
+              value={form.nombre_lengua_orig ?? ''}
+              onChange={update('nombre_lengua_orig')}
+              options={[
+                { value: '', label: '— Selecciona —' },
+                ...lenguas.map(l => ({
+                  value: l.nombre,
+                  label: l.nombre
+                }))
+              ]}
+            />
+
+            <Field
+              label="Población"
+              type="number"
+              value={form.poblacion_total ?? ''}
+              onChange={update('poblacion_total')}
+            />
+
+            <Field
+              label="Localidades"
+              type="number"
+              value={form.num_localidades ?? ''}
+              onChange={update('num_localidades')}
+            />
+          </>
+        )}
+
+        {/* ================= STEP 3 ================= */}
+        {step === 2 && (
+          <>
+            <label>
+              <input
+                type="checkbox"
+                checked={form.presencia_maiz_nativo ?? false}
+                onChange={e =>
+                  setForm(f => ({
+                    ...f,
+                    presencia_maiz_nativo: e.target.checked
+                  }))
+                }
+              />
+              Maíz nativo
+            </label>
+
+            <label>
+              <input
+                type="checkbox"
+                checked={form.presencia_historica_maiz ?? false}
+                onChange={e =>
+                  setForm(f => ({
+                    ...f,
+                    presencia_historica_maiz: e.target.checked
+                  }))
+                }
+              />
+              Histórica
+            </label>
+
+            <SelectField
+              label="Diversidad"
+              value={String(form.diversidad_ecologica_score ?? 3)}
+              onChange={update('diversidad_ecologica_score')}
+              options={[1,2,3,4,5].map(n => ({
+                value: String(n),
+                label: String(n)
+              }))}
+            />
+
+            <SelectField
+              label="Riqueza cultural"
+              value={String(form.riqueza_cultural_score ?? 3)}
+              onChange={update('riqueza_cultural_score')}
+              options={[1,2,3,4,5].map(n => ({
+                value: String(n),
+                label: String(n)
+              }))}
+            />
+          </>
+        )}
+
+        {/* ================= STEP 4 ================= */}
+        {step === 3 && (
+          <>
+            <Button
+              type="button"
+              variante="secundario"
+              onClick={() => {
+                navigator.geolocation.getCurrentPosition(pos => {
+                  setLat(pos.coords.latitude)
+                  setLng(pos.coords.longitude)
+                })
+              }}
+            >
+              📡 Ubicación actual
+            </Button>
+
+            <MapPicker
+              lat={lat ?? undefined}
+              lng={lng ?? undefined}
+              onChange={(lat, lng) => {
+                setLat(lat)
+                setLng(lng)
+              }}
+            />
+          </>
+        )}
+
+        {/* ================= STEP 5 ================= */}
+        {step === 4 && (
+          <div style={{ fontSize: 14 }}>
+            <p><b>Nombre:</b> {form.nombre}</p>
+            <p><b>Tipo:</b> {form.tipo}</p>
+
+            {/* 🚨 FIX OBJETO */}
+            <p><b>Municipio:</b> {municipioNombre}</p>
+
+            <p><b>Lengua:</b> {lenguaNombre}</p>
+
+            <p><b>Población:</b> {form.poblacion_total}</p>
+            <p><b>Maíz:</b> {form.presencia_maiz_nativo ? 'Sí' : 'No'}</p>
+            <p><b>Ubicación:</b> {lat}, {lng}</p>
           </div>
+        )}
 
-          <SelectField
-            label="Municipio"
-            name="municipio_id"
-            value={form.municipio_id !== undefined && form.municipio_id !== null ? String(form.municipio_id) : ''}
-            onChange={update('municipio_id')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              ...municipios.map(m => ({ value: String(m.id), label: m.nombre })),
-            ]}
-          />
+        {/* ================= NAV ================= */}
+        <div style={{ display: 'flex', justifyContent: 'space-between', marginTop: 20 }}>
 
-          <SelectField
-            label="Localidad"
-            name="localidad_id"
-            value={form.localidad_id !== undefined && form.localidad_id !== null ? String(form.localidad_id) : ''}
-            onChange={update('localidad_id')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              ...localidadesFiltradas.map(l => ({ value: String(l.id), label: l.nombre })),
-            ]}
-          />
+          <Button
+            type="button"
+            variante="secundario"
+            onClick={back}
+            disabled={step === 0}
+          >
+            Atrás
+          </Button>
 
-          <SelectField
-            label="Lengua indígena principal"
-            name="lengua_indigena"
-            value={form.lengua_indigena ?? ''}
-            onChange={update('lengua_indigena')}
-            options={[
-              { value: '', label: '— Ninguna —' },
-              ...lenguas.map(l => ({ value: l.nombre, label: l.nombre }))
-            ]}
-          />
+          {step < STEPS.length - 1 ? (
+            <Button type="button" onClick={next}>
+              Siguiente
+            </Button>
+          ) : (
+            <Button
+              type="button"
+              variante="primario"
+              cargando={loading}
+              onClick={handleSubmitFinal}
+            >
+              Guardar comunidad
+            </Button>
+          )}
 
-          <Field
-            label="Población aproximada"
-            name="poblacion"
-            type="number"
-            value={form.poblacion ?? ''}
-            onChange={update('poblacion')}
-          />
-
-          <Field
-            label="Latitud"
-            name="latitud"
-            type="number"
-            value={form.latitud ?? ''}
-            onChange={update('latitud')}
-          />
-
-          <Field
-            label="Longitud"
-            name="longitud"
-            type="number"
-            value={form.longitud ?? ''}
-            onChange={update('longitud')}
-          />
         </div>
 
-        {error && <p style={{ color: 'var(--rojo)', marginTop: 12 }}>{error}</p>}
       </form>
+
+      {error && (
+        <p style={{ color: 'red', marginTop: 10 }}>
+          {error}
+        </p>
+      )}
+
     </Modal>
   )
-
 }
-
-export default ModalComunidad;
-
-

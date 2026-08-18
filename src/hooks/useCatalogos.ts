@@ -23,14 +23,14 @@ export function useCatalogos(enabled = true) {
 
   const municipios = useQuery({
     queryKey: ['municipios'],
-    queryFn:  () => GET('/geo/municipio'),
+    queryFn:  () => GET('/catalogo/municipio'),
     staleTime: Infinity,  // catálogos no cambian frecuentemente
     enabled,
   })
 
   const localidades = useQuery({
     queryKey: ['localidades'],
-    queryFn:  () => GET('/geo/localidad'),
+    queryFn:  () => GET('/catalogo/localidad'),
     staleTime: Infinity,
     enabled,
   })

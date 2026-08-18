@@ -1,7 +1,4 @@
 'use client'
-// src/components/dashboard/AdminShell.tsx
-// Shell reutilizable con Sidebar + Topbar para todas las páginas admin/dashboard.
-// Maneja el estado colapso, marginLeft y datos de usuario desde el store.
 
 import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/navigation'
@@ -29,21 +26,48 @@ export default function AdminShell({ children, contentPadding = '32px 40px', def
   const addToast = useAppStore(s => s.addToast)
   const isMobile = () => typeof window !== 'undefined' && window.innerWidth < 768
   const [collapsed, setCollapsed] = useState(defaultSidebarCollapsed)
+  const [mobileOpen, setMobileOpen] = useState(false)
+  const [isMobileView, setIsMobileView] = useState(false)
 
+
+  const handleSidebarToggle = () => {
+    if (isMobileView) {
+      setMobileOpen(v => !v)   // 🔥 abre / cierra correctamente
+    } else {
+      setCollapsed(v => !v)
+    }
+  }
   // En pantallas pequeñas inicia colapsado
   useEffect(() => {
-    if (isMobile()) setCollapsed(true)
+    if (isMobile()) {
+      setCollapsed(true)
+    }
     const onResize = () => {
-      if (isMobile()) setCollapsed(true)
+      if (isMobile()) {
+        setCollapsed(true)
+      } else {
+        setMobileOpen(false)
+      }
     }
     window.addEventListener('resize', onResize)
     return () => window.removeEventListener('resize', onResize)
-  }, [defaultSidebarCollapsed])
+  }, [])
+
+  useEffect(() => {
+    const check = () => setIsMobileView(window.innerWidth < 768)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   // Mantiene --sidebar-w sincronizado para que Topbar (position:fixed) se reposicione
   useEffect(() => {
     document.documentElement.style.setProperty('--sidebar-w', collapsed ? '64px' : '260px')
   }, [collapsed])
+
+  useEffect(() => {
+    document.body.classList.toggle('sidebar-mobile-open', mobileOpen)
+  }, [mobileOpen])
 
   // Si no hay usuario, redirige a inicio (evita pantalla de carga infinita tras logout),
   // EXCEPTO en la página not-found para permitir mostrar el 404 con shell
@@ -92,13 +116,29 @@ export default function AdminShell({ children, contentPadding = '32px 40px', def
         user={userSidebar}
         rol={rolActual}
         onLogout={handleLogout}
-        onNavigate={handleNavigate}
+        onNavigate={(p) => {
+          handleNavigate(p)
+          if (isMobileView) setMobileOpen(false)
+        }}
         onCollapseToggle={() => setCollapsed(v => !v)}
         collapsed={collapsed}
+        mobileOpen={mobileOpen}
+        onMobileClose={() => setMobileOpen(false)}
       />
+      {mobileOpen && isMobile() && (
+        <div
+          onClick={() => setMobileOpen(false)}
+          style={{
+            position: 'fixed',
+            inset: 0,
+            background: 'rgba(0,0,0,0.4)',
+            zIndex: 40
+          }}
+        />
+      )}
       <div
         style={{
-          marginLeft: collapsed ? 64 : 260,
+          marginLeft: isMobile() ? 0 : (collapsed ? 64 : 260),
           transition: 'margin-left 0.2s',
           flex: 1,
           display: 'flex',
@@ -110,7 +150,7 @@ export default function AdminShell({ children, contentPadding = '32px 40px', def
           user={{ initials: userSidebar.initials, name: userSidebar.name.split(' ')[0], color: userSidebar.color }}
           breadcrumb={breadcrumb}
           onNavigate={handleNavigate}
-          onSidebarToggle={() => setCollapsed(v => !v)}
+          onSidebarToggle={handleSidebarToggle}
           onLogout={handleLogout}
         />
         {/* Espaciador para compensar la Topbar fija (64px = --topbar-h) */}

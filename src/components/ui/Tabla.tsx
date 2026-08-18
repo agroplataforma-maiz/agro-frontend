@@ -11,7 +11,7 @@ import StateView from './StateView'
 export interface Columna<T> {
   key: keyof T | string
   header: string
-  render?: (row: T) => React.ReactNode
+  render?: (row: T, index?: number) => React.ReactNode
   width?: string
   nowrap?: boolean
   sortable?: boolean
@@ -82,7 +82,7 @@ export default function Tabla<T extends { id: number | string }>({
           </tr>
         </thead>
         <tbody>
-          {datos.map(row => (
+          {datos.map((row, index) => (
             <tr
               key={row.id}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
@@ -91,7 +91,7 @@ export default function Tabla<T extends { id: number | string }>({
               {columnas.map(col => (
                 <td key={String(col.key)} className={`${styles.td}${col.hideOnMobile ? ' ' + styles.colHideMobile : ''}${col.hideOnTablet ? ' ' + styles.colHideTablet : ''}`} style={col.nowrap ? { whiteSpace: 'nowrap', width: col.width, minWidth: col.width } : { width: col.width, minWidth: col.width }}>
                   {col.render
-                    ? col.render(row)
+                    ? col.render(row, index)
                     : String((row as Record<string, unknown>)[String(col.key)] ?? '—')}
                 </td>
               ))}

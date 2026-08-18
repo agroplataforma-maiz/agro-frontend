@@ -124,7 +124,7 @@ export default function Page() {
   // ── Catálogo productores ──────────────────────────────────────────────
   const { data: productoresRaw } = useQuery({
     queryKey: ["productores-lista"],
-    queryFn: () => GET("/social/productor?limit=200"),
+    queryFn: () => GET("/core/productor?limit=200"),
     enabled: accesoPermitido,
     staleTime: Infinity,
   });
@@ -143,7 +143,7 @@ export default function Page() {
   // ── Catálogo lenguas ──────────────────────────────────────────────────
   const { data: lenguasRaw } = useQuery({
     queryKey: ["lenguas"],
-    queryFn: () => GET("/social/lengua"),
+    queryFn: () => GET("/catalogo/lengua"),
     enabled: accesoPermitido,
     staleTime: Infinity,
   });

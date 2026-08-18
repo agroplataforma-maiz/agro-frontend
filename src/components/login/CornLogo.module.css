@@ -1,0 +1,9 @@
+/* Mazorca decorativa */
+.maiz-deco {
+  position: fixed;
+  right: -40px; bottom: -20px;
+  width: 320px;
+  opacity: .04;
+  pointer-events: none;
+  z-index: 0;
+}

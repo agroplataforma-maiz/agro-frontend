@@ -117,9 +117,9 @@ export default function ModalProductor({ productor, onClose, onSaved }: Props) {
     setLoading(true)
     try {
       if (productor?.id) {
-        await PUT(`/social/productor/${productor.id}`, form)
+        await PUT(`/core/productor/${productor.id}`, form)
       } else {
-        await POST('/social/productor', form)
+        await POST('/core/productor', form)
       }
       onSaved()
     } catch (err: unknown) {

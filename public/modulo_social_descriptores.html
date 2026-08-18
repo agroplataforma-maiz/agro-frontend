@@ -1,0 +1,693 @@
+<link rel="stylesheet" href="/styles/globals.css">
+<link rel="stylesheet" href="/styles/landing.css">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.app{max-width:960px;margin:0 auto;padding:1.5rem 1rem}
+.hdr{padding-bottom:1rem;margin-bottom:1.5rem;border-bottom:0.5px solid var(--color-border-tertiary)}
+.hdr-top{display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.hdr h1{font-size:19px;font-weight:500;color:var(--color-text-primary);margin:0}
+.hdr p{font-size:12px;color:var(--color-text-secondary);margin:4px 0 0;line-height:1.5}
+.method-pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:8px}
+.pill{font-size:10px;padding:3px 9px;border-radius:20px;border:0.5px solid;font-weight:500}
+.pill-blue{background:#E6F1FB;color:#0C447C;border-color:#85B7EB}
+.pill-purple{background:#EEEDFE;color:#3C3489;border-color:#AFA9EC}
+.pill-teal{background:#E1F5EE;color:#085041;border-color:#5DCAA5}
+.prog-wrap{margin-bottom:1.5rem}
+.prog-bar{height:5px;background:var(--color-background-secondary);border-radius:3px;overflow:hidden}
+.prog-fill{height:100%;border-radius:3px;background:#185FA5;transition:width .4s}
+.prog-label{font-size:11px;color:var(--color-text-tertiary);margin-bottom:5px;display:flex;justify-content:space-between}
+.nav{display:flex;gap:3px;flex-wrap:wrap;margin-bottom:1.5rem;background:var(--color-background-secondary);border-radius:var(--border-radius-lg);padding:4px}
+.nav-btn{flex:1;min-width:90px;padding:7px 8px;font-size:12px;font-weight:400;background:transparent;color:var(--color-text-secondary);border:none;border-radius:var(--border-radius-md);cursor:pointer;transition:all .12s;text-align:center}
+.nav-btn.on{background:var(--color-background-primary);color:var(--color-text-primary);font-weight:500;border:0.5px solid var(--color-border-tertiary)}
+.sec{display:none}
+.sec.on{display:block}
+.sec-hdr{display:flex;align-items:center;gap:8px;margin-bottom:4px}
+.sec-bar{width:4px;height:20px;border-radius:2px;flex-shrink:0}
+.sec-title{font-size:14px;font-weight:500;color:var(--color-text-primary)}
+.sec-sub{font-size:11px;color:var(--color-text-tertiary);margin-bottom:1rem;padding-left:12px}
+.desc-table{width:100%;border-collapse:collapse;margin-bottom:1.5rem;font-size:12px}
+.desc-table thead tr{background:var(--color-background-secondary)}
+.desc-table th{padding:8px 10px;text-align:left;font-size:11px;font-weight:500;color:var(--color-text-secondary);white-space:nowrap;border-bottom:0.5px solid var(--color-border-tertiary)}
+.desc-table td{padding:0;border-bottom:0.5px solid var(--color-border-tertiary);vertical-align:top}
+.desc-table tr:hover td{background:var(--color-background-secondary)}
+.d-num{display:inline-block;width:28px;height:28px;border-radius:50%;font-size:11px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.d-num-blue{background:#E6F1FB;color:#0C447C}
+.d-num-purple{background:#EEEDFE;color:#3C3489}
+.d-num-teal{background:#E1F5EE;color:#085041}
+.d-num-amber{background:#FAEEDA;color:#633806}
+.d-num-coral{background:#FAECE7;color:#712B13}
+.cell-pad{padding:8px 10px}
+.d-name{font-weight:500;color:var(--color-text-primary);font-size:12px;line-height:1.3}
+.d-method{font-size:10px;color:var(--color-text-tertiary);margin-top:2px}
+.d-ref{font-size:10px;font-style:italic;color:var(--color-text-tertiary)}
+.tipo-badge{display:inline-block;padding:2px 7px;border-radius:var(--border-radius-md);font-size:10px;font-weight:500;white-space:nowrap}
+.t-cual{background:#EEEDFE;color:#3C3489}
+.t-cuant{background:#E6F1FB;color:#0C447C}
+.t-mixto{background:#E1F5EE;color:#085041}
+.t-escala{background:#FAEEDA;color:#633806}
+.t-nominal{background:#FAECE7;color:#712B13}
+.options-wrap{display:flex;flex-wrap:wrap;gap:4px;padding:8px 10px}
+.opt{padding:4px 9px;font-size:11px;border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-secondary);cursor:pointer;transition:all .1s}
+.opt.sel-blue{background:#E6F1FB;border-color:#378ADD;color:#0C447C;font-weight:500}
+.opt.sel-purple{background:#EEEDFE;border-color:#7F77DD;color:#3C3489;font-weight:500}
+.opt.sel-teal{background:#E1F5EE;border-color:#1D9E75;color:#085041;font-weight:500}
+.opt.sel-amber{background:#FAEEDA;border-color:#BA7517;color:#633806;font-weight:500}
+.opt.sel-coral{background:#FAECE7;border-color:#D85A30;color:#712B13;font-weight:500}
+.num-inp{width:90px;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary)}
+.text-inp{width:100%;padding:5px 8px;font-size:12px;border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);background:transparent;color:var(--color-text-primary)}
+.likert-row{display:flex;gap:4px;align-items:center;padding:8px 10px;flex-wrap:wrap}
+.likert-lbl{font-size:10px;color:var(--color-text-tertiary);width:80px;flex-shrink:0}
+.lk-btn{width:30px;height:30px;border-radius:50%;border:0.5px solid var(--color-border-secondary);background:transparent;font-size:12px;font-weight:500;color:var(--color-text-secondary);cursor:pointer;transition:all .1s;display:flex;align-items:center;justify-content:center}
+.lk-btn.sel{background:#185FA5;border-color:#185FA5;color:#E6F1FB}
+.lk-end{font-size:10px;color:var(--color-text-tertiary);width:60px;flex-shrink:0;text-align:right}
+.action-row{display:flex;gap:8px;justify-content:flex-end;margin-top:1rem}
+.btn-p{padding:8px 18px;font-size:12px;font-weight:500;background:#185FA5;color:#E6F1FB;border:none;border-radius:var(--border-radius-md);cursor:pointer}
+.btn-s{padding:8px 16px;font-size:12px;font-weight:400;background:transparent;color:var(--color-text-secondary);border:0.5px solid var(--color-border-secondary);border-radius:var(--border-radius-md);cursor:pointer}
+.note-box{background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 12px;margin-bottom:1rem;border-left:3px solid #378ADD;border-top-left-radius:0;border-bottom-left-radius:0}
+.note-box p{font-size:11px;color:var(--color-text-secondary);line-height:1.6;margin:0}
+.report-row{display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:0.5px solid var(--color-border-tertiary);font-size:12px;gap:8px}
+.report-key{color:var(--color-text-secondary);flex:1}
+.report-val{color:var(--color-text-primary);font-weight:500;text-align:right;max-width:55%}
+.r-empty{color:var(--color-text-tertiary);font-style:italic;font-weight:400}
+.sec-divider{font-size:11px;font-weight:500;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:.6px;padding:10px 0 6px;margin-top:4px}
+.star{color:#BA7517;font-size:11px;margin-left:2px}
+.consent-check{display:flex;align-items:flex-start;gap:8px;padding:8px 10px;background:var(--color-background-secondary);border-radius:var(--border-radius-md);margin-bottom:6px;cursor:pointer}
+.consent-check input{margin-top:2px;flex-shrink:0}
+.consent-check span{font-size:12px;color:var(--color-text-secondary);line-height:1.5}
+</style>
+
+<div class="app">
+<div class="hdr">
+  <div class="hdr-top">
+    <div>
+      <h1>Módulo Social — Descriptores etnográficos</h1>
+      <p>Entrevistas semiestructuradas · Encuestas · Muestreo intencional</p>
+      <div class="method-pills">
+        <span class="pill pill-blue">Hammersley &amp; Atkinson (2007)</span>
+        <span class="pill pill-purple">Spradley (2016)</span>
+        <span class="pill pill-teal">Patton (2014)</span>
+      </div>
+    </div>
+    <div style="display:flex;gap:6px;flex-wrap:wrap;align-items:flex-start">
+      <button class="btn-s" style="font-size:11px">Guardar borrador</button>
+      <button class="btn-p" style="font-size:11px" onclick="gotoReport()">Ver ficha ↗</button>
+    </div>
+  </div>
+  <div class="prog-wrap" style="margin-top:14px;margin-bottom:0">
+    <div class="prog-label"><span id="prog-step">Paso 1 / 5</span><span id="prog-pct">0% completado</span></div>
+    <div class="prog-bar"><div class="prog-fill" id="prog-fill" style="width:0%"></div></div>
+  </div>
+</div>
+
+<div class="nav">
+  <button class="nav-btn on" id="nb-0" onclick="goSec(0)">S1 — Comunidad</button>
+  <button class="nav-btn" id="nb-1" onclick="goSec(1)">S2 — Informante</button>
+  <button class="nav-btn" id="nb-2" onclick="goSec(2)">S3 — Entrevista</button>
+  <button class="nav-btn" id="nb-3" onclick="goSec(3)">S4 — Encuesta</button>
+  <button class="nav-btn" id="nb-4" onclick="goSec(4)">S5 — Ficha</button>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S1 — COMUNIDAD (Criterios muestreo intencional)
+═══════════════════════════════════════════════════════ -->
+<div class="sec on" id="sec-0">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#185FA5"></div><span class="sec-title">Sección 1 — Caracterización de la comunidad</span></div>
+  <p class="sec-sub">Muestreo intencional · Selección estratégica (Patton, 2014) · Criterios de diversidad ecológica y riqueza cultural</p>
+
+  <div class="note-box"><p>Los criterios de muestreo intencional priorizan comunidades con <strong>presencia confirmada o histórica</strong> de maíz nativo y alta diversidad ecológica y cultural. Se asigna puntuación compuesta para definir la prioridad de intervención.</p></div>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:36%">Descriptor</th><th style="width:14%">Tipo</th><th style="width:12%">Fuente</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">1</div></td>
+        <td class="cell-pad"><div class="d-name">Nombre de la comunidad<span class="star">★</span></div><div class="d-method">Unidad muestral primaria</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Patton (2014)</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Ej: San Pedro Apóstol, Oax." id="c1" oninput="reg('c1',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">2</div></td>
+        <td class="cell-pad"><div class="d-name">Nombre en lengua indígena</div><div class="d-method">Toponimia originaria</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Etnográfico</div></td>
+        <td><div class="options-wrap"><input class="text-inp" placeholder="Ej: Ñuu Savi" id="c2" oninput="reg('c2',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">3</div></td>
+        <td class="cell-pad"><div class="d-name">Altitud (msnm)<span class="star">★</span></div><div class="d-method">Determinante adaptativo clave</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Cuantitativo</span></td>
+        <td class="cell-pad"><div class="d-ref">INEGI / GPS</div></td>
+        <td><div class="options-wrap"><input class="num-inp" type="number" placeholder="msnm" id="c3" oninput="reg('c3',this.value)"><span style="font-size:11px;color:var(--color-text-tertiary);margin-left:6px">m s.n.m.</span></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">4</div></td>
+        <td class="cell-pad"><div class="d-name">Lengua predominante<span class="star">★</span></div><div class="d-method">Criterio de diversidad cultural</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">INALI</div></td>
+        <td><div class="options-wrap" id="c4">
+          <button class="opt" onclick="sel('c4',this,'Náhuatl','sel-blue')">Náhuatl</button>
+          <button class="opt" onclick="sel('c4',this,'Zapoteco','sel-blue')">Zapoteco</button>
+          <button class="opt" onclick="sel('c4',this,'Tzotzil','sel-blue')">Tzotzil</button>
+          <button class="opt" onclick="sel('c4',this,'Mixteco','sel-blue')">Mixteco</button>
+          <button class="opt" onclick="sel('c4',this,'Maya','sel-blue')">Maya</button>
+          <button class="opt" onclick="sel('c4',this,'Otomí','sel-blue')">Otomí</button>
+          <button class="opt" onclick="sel('c4',this,'Purépecha','sel-blue')">Purépecha</button>
+          <button class="opt" onclick="sel('c4',this,'Otra/Español','sel-blue')">Otra / Español</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">5</div></td>
+        <td class="cell-pad"><div class="d-name">Tenencia de la tierra<span class="star">★</span></div><div class="d-method">Contexto agrario</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">RAN / campo</div></td>
+        <td><div class="options-wrap" id="c5">
+          <button class="opt" onclick="sel('c5',this,'Comunal','sel-blue')">Comunal</button>
+          <button class="opt" onclick="sel('c5',this,'Ejidal','sel-blue')">Ejidal</button>
+          <button class="opt" onclick="sel('c5',this,'Privada','sel-blue')">Privada</button>
+          <button class="opt" onclick="sel('c5',this,'Mixta','sel-blue')">Mixta</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">6</div></td>
+        <td class="cell-pad"><div class="d-name">Presencia confirmada de maíz nativo<span class="star">★</span></div><div class="d-method">Criterio de elegibilidad primario</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Dicotómico</span></td>
+        <td class="cell-pad"><div class="d-ref">Patton (2014)</div></td>
+        <td><div class="options-wrap" id="c6">
+          <button class="opt" onclick="sel('c6',this,'Confirmada','sel-teal')">Confirmada</button>
+          <button class="opt" onclick="sel('c6',this,'Histórica','sel-amber')">Histórica</button>
+          <button class="opt" onclick="sel('c6',this,'No confirmada','sel-coral')">No confirmada</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">7</div></td>
+        <td class="cell-pad"><div class="d-name">Diversidad ecológica<span class="star">★</span></div><div class="d-method">Escala 1–5 · Criterio muestreo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal 1–5</span></td>
+        <td class="cell-pad"><div class="d-ref">Patton (2014)</div></td>
+        <td><div class="likert-row"><span class="likert-lbl">Muy baja</span>
+          <button class="lk-btn" id="c7-1" onclick="likert('c7',1)">1</button>
+          <button class="lk-btn" id="c7-2" onclick="likert('c7',2)">2</button>
+          <button class="lk-btn" id="c7-3" onclick="likert('c7',3)">3</button>
+          <button class="lk-btn" id="c7-4" onclick="likert('c7',4)">4</button>
+          <button class="lk-btn" id="c7-5" onclick="likert('c7',5)">5</button>
+          <span class="lk-end">Muy alta</span></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">8</div></td>
+        <td class="cell-pad"><div class="d-name">Riqueza cultural<span class="star">★</span></div><div class="d-method">Escala 1–5 · Criterio muestreo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal 1–5</span></td>
+        <td class="cell-pad"><div class="d-ref">Patton (2014)</div></td>
+        <td><div class="likert-row"><span class="likert-lbl">Muy baja</span>
+          <button class="lk-btn" id="c8-1" onclick="likert('c8',1)">1</button>
+          <button class="lk-btn" id="c8-2" onclick="likert('c8',2)">2</button>
+          <button class="lk-btn" id="c8-3" onclick="likert('c8',3)">3</button>
+          <button class="lk-btn" id="c8-4" onclick="likert('c8',4)">4</button>
+          <button class="lk-btn" id="c8-5" onclick="likert('c8',5)">5</button>
+          <span class="lk-end">Muy alta</span></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-blue">9</div></td>
+        <td class="cell-pad"><div class="d-name">Prioridad de muestreo<span class="star">★</span></div><div class="d-method">Calculada con D7 + D8</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Patton (2014)</div></td>
+        <td><div class="options-wrap" id="c9">
+          <button class="opt" onclick="sel('c9',this,'Alta','sel-teal')">Alta</button>
+          <button class="opt" onclick="sel('c9',this,'Media','sel-amber')">Media</button>
+          <button class="opt" onclick="sel('c9',this,'Baja','sel-coral')">Baja</button>
+        </div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row"><button class="btn-p" onclick="goSec(1)">Siguiente: informante →</button></div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S2 — INFORMANTE
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-1">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#534AB7"></div><span class="sec-title">Sección 2 — Perfil del informante clave</span></div>
+  <p class="sec-sub">Informante = unidad de análisis social · Clave anónima autogenerada · Consentimiento ético previo</p>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:36%">Descriptor</th><th style="width:14%">Tipo</th><th style="width:12%">Fuente</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">10</div></td>
+        <td class="cell-pad"><div class="d-name">Edad (años)</div><div class="d-method">Perfil sociodemográfico</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Cuantitativo</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap"><input class="num-inp" type="number" placeholder="años" id="i10" oninput="reg('i10',this.value)"></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">11</div></td>
+        <td class="cell-pad"><div class="d-name">Género<span class="star">★</span></div><div class="d-method">Variable de análisis sociocultural</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="i11">
+          <button class="opt" onclick="sel('i11',this,'Mujer','sel-purple')">Mujer</button>
+          <button class="opt" onclick="sel('i11',this,'Hombre','sel-purple')">Hombre</button>
+          <button class="opt" onclick="sel('i11',this,'No binario','sel-purple')">No binario</button>
+          <button class="opt" onclick="sel('i11',this,'Prefiere no decir','sel-purple')">No indica</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">12</div></td>
+        <td class="cell-pad"><div class="d-name">Escolaridad</div><div class="d-method">Capital educativo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="i12">
+          <button class="opt" onclick="sel('i12',this,'Sin escolaridad','sel-purple')">Sin escolaridad</button>
+          <button class="opt" onclick="sel('i12',this,'Primaria incompleta','sel-purple')">Prim. incompleta</button>
+          <button class="opt" onclick="sel('i12',this,'Primaria completa','sel-purple')">Primaria</button>
+          <button class="opt" onclick="sel('i12',this,'Secundaria','sel-purple')">Secundaria</button>
+          <button class="opt" onclick="sel('i12',this,'Bachillerato','sel-purple')">Bachillerato</button>
+          <button class="opt" onclick="sel('i12',this,'Superior','sel-purple')">Superior</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">13</div></td>
+        <td class="cell-pad"><div class="d-name">Lengua materna<span class="star">★</span></div><div class="d-method">Competencia lingüística</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Nominal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="i13">
+          <button class="opt" onclick="sel('i13',this,'Lengua indígena (bilingüe)','sel-purple')">Indígena + español</button>
+          <button class="opt" onclick="sel('i13',this,'Solo lengua indígena','sel-purple')">Solo indígena</button>
+          <button class="opt" onclick="sel('i13',this,'Solo español','sel-purple')">Solo español</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">14</div></td>
+        <td class="cell-pad"><div class="d-name">Años cultivando maíz<span class="star">★</span></div><div class="d-method">Trayectoria productiva</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Cuantitativo</span></td>
+        <td class="cell-pad"><div class="d-ref">Entrevista</div></td>
+        <td><div class="options-wrap" id="i14">
+          <button class="opt" onclick="sel('i14',this,'1 — Menos de 5 años','sel-purple')">1 — &lt;5</button>
+          <button class="opt" onclick="sel('i14',this,'2 — 5-15 años','sel-purple')">2 — 5-15</button>
+          <button class="opt" onclick="sel('i14',this,'3 — 16-30 años','sel-purple')">3 — 16-30</button>
+          <button class="opt" onclick="sel('i14',this,'4 — Más de 30 años','sel-purple')">4 — &gt;30</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">15</div></td>
+        <td class="cell-pad"><div class="d-name">Superficie cultivada (ha)<span class="star">★</span></div><div class="d-method">Escala de producción</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Cuantitativo</span></td>
+        <td class="cell-pad"><div class="d-ref">Encuesta</div></td>
+        <td><div class="options-wrap" id="i15">
+          <button class="opt" onclick="sel('i15',this,'1 — Menos de 1 ha','sel-purple')">1 — &lt;1 ha</button>
+          <button class="opt" onclick="sel('i15',this,'2 — 1-3 ha','sel-purple')">2 — 1-3 ha</button>
+          <button class="opt" onclick="sel('i15',this,'3 — 3-10 ha','sel-purple')">3 — 3-10 ha</button>
+          <button class="opt" onclick="sel('i15',this,'4 — Más de 10 ha','sel-purple')">4 — &gt;10 ha</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-purple">16</div></td>
+        <td class="cell-pad"><div class="d-name">Rol en la comunidad<span class="star">★</span></div><div class="d-method">Tipología de informante clave</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Hammersley (2007)</div></td>
+        <td><div class="options-wrap" id="i16">
+          <button class="opt" onclick="selMulti('i16',this,'Agricultor/a tradicional','sel-purple')">Agricultor/a trad.</button>
+          <button class="opt" onclick="selMulti('i16',this,'Custodio/a de semillas','sel-purple')">Custodio/a semillas</button>
+          <button class="opt" onclick="selMulti('i16',this,'Líder/esa comunitario','sel-purple')">Líder comunitario</button>
+          <button class="opt" onclick="selMulti('i16',this,'Curandero/a tradicional','sel-purple')">Curandero/a</button>
+          <button class="opt" onclick="selMulti('i16',this,'Jornalero/a','sel-purple')">Jornalero/a</button>
+          <button class="opt" onclick="selMulti('i16',this,'Promotor/a de salud','sel-purple')">Promotor/a salud</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad" colspan="5">
+          <div style="padding:10px 10px 8px">
+            <div style="font-size:12px;font-weight:500;color:var(--color-text-primary);margin-bottom:8px">17 — Consentimiento informado <span class="star">★</span></div>
+            <label class="consent-check"><input type="checkbox" id="ck1" onchange="reg('ck1',this.checked?'Sí':'No')"><span>El/la informante fue informado/a sobre los objetivos de la investigación y consiente su participación voluntaria (Hammersley &amp; Atkinson, 2007).</span></label>
+            <label class="consent-check"><input type="checkbox" id="ck2" onchange="reg('ck2',this.checked?'Sí':'No')"><span>Acepta grabación de audio para transcripción y análisis cualitativo.</span></label>
+            <label class="consent-check"><input type="checkbox" id="ck3" onchange="reg('ck3',this.checked?'Sí':'No')"><span>Acepta registro fotográfico y/o video durante la sesión.</span></label>
+            <label class="consent-check"><input type="checkbox" id="ck4" onchange="reg('ck4',this.checked?'Sí':'No')"><span>Comprende que sus datos serán anonimizados en los reportes finales.</span></label>
+          </div>
+        </td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(0)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(2)">Siguiente: entrevista →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S3 — ENTREVISTA SEMIESTRUCTURADA
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-2">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#0F6E56"></div><span class="sec-title">Sección 3 — Guía de entrevista semiestructurada</span></div>
+  <p class="sec-sub">Preguntas base + sondas exploratorias (Hammersley &amp; Atkinson, 2007; Spradley, 2016)</p>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:22%">Dimensión</th><th style="width:12%">Tipo</th><th style="width:14%">Aplica a</th><th>Pregunta base + captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">18</div></td>
+        <td class="cell-pad"><div class="d-name">Trayectoria con el maíz<span class="star">★</span></div><div class="d-method">Dominio cultural — Spradley</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Narrativa</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="options-wrap" style="flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:var(--color-text-secondary);font-style:italic;padding:4px 0">"¿Desde cuándo cultiva maíz y cómo aprendió?"</div>
+          <div class="options-wrap" id="e18" style="padding:0">
+            <button class="opt" onclick="sel('e18',this,'1 — Heredado (padres/abuelos)','sel-teal')">1 — Herencia familiar</button>
+            <button class="opt" onclick="sel('e18',this,'2 — Comunidad/vecinos','sel-teal')">2 — Comunidad</button>
+            <button class="opt" onclick="sel('e18',this,'3 — Autodidacta','sel-teal')">3 — Autodidacta</button>
+            <button class="opt" onclick="sel('e18',this,'4 — Capacitación externa','sel-teal')">4 — Capacitación</button>
+          </div>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">19</div></td>
+        <td class="cell-pad"><div class="d-name">Diversidad varietal conocida<span class="star">★</span></div><div class="d-method">Taxonomía folk — Spradley</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Cuantitativo</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="options-wrap" style="flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:var(--color-text-secondary);font-style:italic;padding:4px 0">"¿Qué tipos de maíz cultiva o ha cultivado? ¿Cómo los distingue?"</div>
+          <div class="options-wrap" id="e19" style="padding:0">
+            <button class="opt" onclick="sel('e19',this,'1 — Una variedad','sel-teal')">1 — Una</button>
+            <button class="opt" onclick="sel('e19',this,'2 — Dos a tres variedades','sel-teal')">2 — 2-3</button>
+            <button class="opt" onclick="sel('e19',this,'3 — Cuatro a seis variedades','sel-teal')">3 — 4-6</button>
+            <button class="opt" onclick="sel('e19',this,'4 — Más de seis variedades','sel-teal')">4 — &gt;6</button>
+          </div>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">20</div></td>
+        <td class="cell-pad"><div class="d-name">Selección y conservación de semilla<span class="star">★</span></div><div class="d-method">Práctica central de custodia</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Dicotómico</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Custodios</td>
+        <td><div class="options-wrap" style="flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:var(--color-text-secondary);font-style:italic;padding:4px 0">"¿Guarda su propia semilla? ¿Cómo la selecciona y conserva?"</div>
+          <div class="options-wrap" id="e20" style="padding:0">
+            <button class="opt" onclick="sel('e20',this,'1 — Sí, selección propia cada ciclo','sel-teal')">1 — Selección propia</button>
+            <button class="opt" onclick="sel('e20',this,'2 — Sí, pero ocasionalmente','sel-teal')">2 — Ocasional</button>
+            <button class="opt" onclick="sel('e20',this,'3 — No, obtiene semilla externa','sel-teal')">3 — Semilla externa</button>
+          </div>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">21</div></td>
+        <td class="cell-pad"><div class="d-name">Sistema milpa y policultivo<span class="star">★</span></div><div class="d-method">Agroecología tradicional</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Ordinal</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Agricultores</td>
+        <td><div class="options-wrap" style="flex-direction:column;gap:4px">
+          <div style="font-size:11px;color:var(--color-text-secondary);font-style:italic;padding:4px 0">"¿Siembra otras plantas junto al maíz? ¿Cuáles y por qué?"</div>
+          <div class="options-wrap" id="e21" style="padding:0">
+            <button class="opt" onclick="sel('e21',this,'1 — Monocultivo (solo maíz)','sel-teal')">1 — Monocultivo</button>
+            <button class="opt" onclick="sel('e21',this,'2 — Milpa básica (maíz+frijol)','sel-teal')">2 — Milpa básica</button>
+            <button class="opt" onclick="sel('e21',this,'3 — Milpa tradicional (maíz+frijol+calabaza+chile)','sel-teal')">3 — Milpa trad.</button>
+            <button class="opt" onclick="sel('e21',this,'4 — Milpa diversificada (5+ especies)','sel-teal')">4 — Milpa diversif.</button>
+          </div>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">22</div></td>
+        <td class="cell-pad"><div class="d-name">Prácticas rituales vinculadas<span class="star">★</span></div><div class="d-method">Dimensión simbólico-religiosa</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cual">Dicotómico</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Líderes</td>
+        <td><div class="options-wrap" id="e22">
+          <button class="opt" onclick="sel('e22',this,'1 — Sí, vigentes y practicadas','sel-teal')">1 — Vigentes</button>
+          <button class="opt" onclick="sel('e22',this,'2 — Sí, pero en declive','sel-teal')">2 — En declive</button>
+          <button class="opt" onclick="sel('e22',this,'3 — Conoce pero no practica','sel-teal')">3 — Solo conoce</button>
+          <button class="opt" onclick="sel('e22',this,'4 — No hay rituales asociados','sel-teal')">4 — Ninguno</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">23</div></td>
+        <td class="cell-pad"><div class="d-name">Percepción de amenazas<span class="star">★</span></div><div class="d-method">Análisis de vulnerabilidad</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="options-wrap" id="e23">
+          <button class="opt" onclick="selMulti('e23',this,'Semilla comercial/híbrida','sel-teal')">Semilla comercial</button>
+          <button class="opt" onclick="selMulti('e23',this,'Cambio climático','sel-teal')">Cambio climático</button>
+          <button class="opt" onclick="selMulti('e23',this,'Migración de jóvenes','sel-teal')">Migración</button>
+          <button class="opt" onclick="selMulti('e23',this,'Pérdida de mercado','sel-teal')">Pérdida mercado</button>
+          <button class="opt" onclick="selMulti('e23',this,'Políticas agrarias','sel-teal')">Políticas agrarias</button>
+          <button class="opt" onclick="selMulti('e23',this,'Plagas y enfermedades nuevas','sel-teal')">Nuevas plagas</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">24</div></td>
+        <td class="cell-pad"><div class="d-name">Red de intercambio de semillas<span class="star">★</span></div><div class="d-method">Capital social-semillero</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-cuant">Ordinal</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="options-wrap" id="e24">
+          <button class="opt" onclick="sel('e24',this,'1 — No intercambia','sel-teal')">1 — No intercambia</button>
+          <button class="opt" onclick="sel('e24',this,'2 — Con familia cercana','sel-teal')">2 — Familia</button>
+          <button class="opt" onclick="sel('e24',this,'3 — Con vecinos de la comunidad','sel-teal')">3 — Comunidad</button>
+          <button class="opt" onclick="sel('e24',this,'4 — Con otras comunidades','sel-teal')">4 — Intercomunal</button>
+          <button class="opt" onclick="sel('e24',this,'5 — En ferias/tianguis de semillas','sel-teal')">5 — Ferias</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">25</div></td>
+        <td class="cell-pad"><div class="d-name">Valoración del maíz nativo<span class="star">★</span></div><div class="d-method">Escala Likert 1–5</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Likert 1–5</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="likert-row"><span class="likert-lbl">Nada import.</span>
+          <button class="lk-btn" id="e25-1" onclick="likert('e25',1)">1</button>
+          <button class="lk-btn" id="e25-2" onclick="likert('e25',2)">2</button>
+          <button class="lk-btn" id="e25-3" onclick="likert('e25',3)">3</button>
+          <button class="lk-btn" id="e25-4" onclick="likert('e25',4)">4</button>
+          <button class="lk-btn" id="e25-5" onclick="likert('e25',5)">5</button>
+          <span class="lk-end">Muy import.</span></div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-teal">26</div></td>
+        <td class="cell-pad"><div class="d-name">Disposición a continuar cultivando<span class="star">★</span></div><div class="d-method">Proyección temporal</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Likert 1–5</span></td>
+        <td class="cell-pad" style="font-size:11px;color:var(--color-text-secondary)">Todos</td>
+        <td><div class="likert-row"><span class="likert-lbl">Definitiv. no</span>
+          <button class="lk-btn" id="e26-1" onclick="likert('e26',1)">1</button>
+          <button class="lk-btn" id="e26-2" onclick="likert('e26',2)">2</button>
+          <button class="lk-btn" id="e26-3" onclick="likert('e26',3)">3</button>
+          <button class="lk-btn" id="e26-4" onclick="likert('e26',4)">4</button>
+          <button class="lk-btn" id="e26-5" onclick="likert('e26',5)">5</button>
+          <span class="lk-end">Definitiv. sí</span></div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(1)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(3)">Siguiente: encuesta →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S4 — ENCUESTA SOCIOECONÓMICA
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-3">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#BA7517"></div><span class="sec-title">Sección 4 — Encuesta socioeconómica complementaria</span></div>
+  <p class="sec-sub">Indicadores cuantitativos de contexto socioeconómico y productivo · Método mixto</p>
+
+  <table class="desc-table">
+    <thead>
+      <tr><th style="width:38px">N°</th><th style="width:36%">Descriptor</th><th style="width:14%">Tipo</th><th style="width:12%">Escala</th><th>Captura</th></tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">27</div></td>
+        <td class="cell-pad"><div class="d-name">Ingresos mensuales del hogar</div><div class="d-method">Estrato socioeconómico</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">MXN/mes</div></td>
+        <td><div class="options-wrap" id="s27">
+          <button class="opt" onclick="sel('s27',this,'1 — Menos de $2,000','sel-amber')">1 — &lt;$2k</button>
+          <button class="opt" onclick="sel('s27',this,'2 — $2,000-$5,000','sel-amber')">2 — $2-5k</button>
+          <button class="opt" onclick="sel('s27',this,'3 — $5,001-$10,000','sel-amber')">3 — $5-10k</button>
+          <button class="opt" onclick="sel('s27',this,'4 — Más de $10,000','sel-amber')">4 — &gt;$10k</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">28</div></td>
+        <td class="cell-pad"><div class="d-name">Destino de la producción<span class="star">★</span></div><div class="d-method">Orientación del sistema</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="s28">
+          <button class="opt" onclick="selMulti('s28',this,'Autoconsumo familiar','sel-amber')">Autoconsumo</button>
+          <button class="opt" onclick="selMulti('s28',this,'Venta local/mercado','sel-amber')">Venta local</button>
+          <button class="opt" onclick="selMulti('s28',this,'Trueque','sel-amber')">Trueque</button>
+          <button class="opt" onclick="selMulti('s28',this,'Semilla para siguiente ciclo','sel-amber')">Semilla</button>
+          <button class="opt" onclick="selMulti('s28',this,'Forraje animal','sel-amber')">Forraje</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">29</div></td>
+        <td class="cell-pad"><div class="d-name">Uso de agroquímicos</div><div class="d-method">Intensidad de manejo</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Campo</div></td>
+        <td><div class="options-wrap" id="s29">
+          <button class="opt" onclick="sel('s29',this,'1 — Sin agroquímicos (orgánico)','sel-amber')">1 — Sin agroquím.</button>
+          <button class="opt" onclick="sel('s29',this,'2 — Uso mínimo (eventual)','sel-amber')">2 — Uso mínimo</button>
+          <button class="opt" onclick="sel('s29',this,'3 — Uso moderado','sel-amber')">3 — Moderado</button>
+          <button class="opt" onclick="sel('s29',this,'4 — Uso intensivo','sel-amber')">4 — Intensivo</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">30</div></td>
+        <td class="cell-pad"><div class="d-name">Acceso a apoyos gubernamentales</div><div class="d-method">Contexto de política pública</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-nominal">Nominal múlt.</span></td>
+        <td class="cell-pad"><div class="d-ref">SAGARPA</div></td>
+        <td><div class="options-wrap" id="s30">
+          <button class="opt" onclick="selMulti('s30',this,'PROAGRO/MasAgro','sel-amber')">PROAGRO</button>
+          <button class="opt" onclick="selMulti('s30',this,'Sembrando Vida','sel-amber')">Sembrando Vida</button>
+          <button class="opt" onclick="selMulti('s30',this,'Fertilizantes gratuitos','sel-amber')">Fertilizantes</button>
+          <button class="opt" onclick="selMulti('s30',this,'Crédito a la palabra','sel-amber')">Crédito</button>
+          <button class="opt" onclick="selMulti('s30',this,'Ninguno','sel-amber')">Ninguno</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">31</div></td>
+        <td class="cell-pad"><div class="d-name">Transmisión del conocimiento<span class="star">★</span></div><div class="d-method">Relevo generacional</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Ordinal</span></td>
+        <td class="cell-pad"><div class="d-ref">Entrevista</div></td>
+        <td><div class="options-wrap" id="s31">
+          <button class="opt" onclick="sel('s31',this,'1 — Hijos/as aprenden activamente','sel-amber')">1 — Activo</button>
+          <button class="opt" onclick="sel('s31',this,'2 — Hijos/as conocen pero no practican','sel-amber')">2 — Conocen</button>
+          <button class="opt" onclick="sel('s31',this,'3 — Hijos/as no están interesados','sel-amber')">3 — Sin interés</button>
+          <button class="opt" onclick="sel('s31',this,'4 — Sin descendientes/familia distante','sel-amber')">4 — Sin relevo</button>
+        </div></td>
+      </tr>
+      <tr>
+        <td class="cell-pad"><div class="d-num d-num-amber">32</div></td>
+        <td class="cell-pad"><div class="d-name">Cambio percibido en clima<span class="star">★</span></div><div class="d-method">Percepción adaptativa</div></td>
+        <td class="cell-pad"><span class="tipo-badge t-escala">Likert 1–5</span></td>
+        <td class="cell-pad"><div class="d-ref">Entrevista</div></td>
+        <td><div class="likert-row"><span class="likert-lbl">Sin cambio</span>
+          <button class="lk-btn" id="s32-1" onclick="likert('s32',1)">1</button>
+          <button class="lk-btn" id="s32-2" onclick="likert('s32',2)">2</button>
+          <button class="lk-btn" id="s32-3" onclick="likert('s32',3)">3</button>
+          <button class="lk-btn" id="s32-4" onclick="likert('s32',4)">4</button>
+          <button class="lk-btn" id="s32-5" onclick="likert('s32',5)">5</button>
+          <span class="lk-end">Cambio drástico</span></div></td>
+      </tr>
+    </tbody>
+  </table>
+  <div class="action-row">
+    <button class="btn-s" onclick="goSec(2)">← Atrás</button>
+    <button class="btn-p" onclick="goSec(4);buildReport()">Ver ficha social →</button>
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     S5 — FICHA / REPORTE
+═══════════════════════════════════════════════════════ -->
+<div class="sec" id="sec-4">
+  <div class="sec-hdr"><div class="sec-bar" style="background:#185FA5"></div><span class="sec-title">Ficha social — Resumen de descriptores capturados</span></div>
+  <p class="sec-sub">Resumen automático · Los campos sin datos aparecen indicados · Exportable a BD</p>
+  <div id="report-body"></div>
+  <div class="action-row" style="margin-top:1.5rem">
+    <button class="btn-s" onclick="goSec(3)">← Editar</button>
+    <button class="btn-p" onclick="sendPrompt('Analiza esta ficha social de maíz nativo con los descriptores capturados y sugiere patrones de vulnerabilidad o fortaleza cultural basado en la metodología de Patton (2014) y Spradley (2016)')">Análisis IA ↗</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+var D={};
+
+function reg(k,v){D[k]=v;calcProg()}
+function goSec(n){
+  document.querySelectorAll('.sec').forEach(function(s){s.classList.remove('on')});
+  document.querySelectorAll('.nav-btn').forEach(function(b){b.classList.remove('on')});
+  document.getElementById('sec-'+n).classList.add('on');
+  document.getElementById('nb-'+n).classList.add('on');
+  calcProg();
+}
+function gotoReport(){goSec(4);buildReport()}
+
+function sel(grp,btn,val,cls){
+  document.getElementById(grp).querySelectorAll('.opt').forEach(function(b){
+    b.classList.remove('sel-blue','sel-purple','sel-teal','sel-amber','sel-coral');
+  });
+  btn.classList.add(cls);
+  D[grp]=val;calcProg();
+}
+
+var multiSel={};
+function selMulti(grp,btn,val,cls){
+  if(!multiSel[grp])multiSel[grp]=[];
+  var idx=multiSel[grp].indexOf(val);
+  if(idx===-1){multiSel[grp].push(val);btn.classList.add(cls);}
+  else{multiSel[grp].splice(idx,1);btn.classList.remove('sel-blue','sel-purple','sel-teal','sel-amber','sel-coral');}
+  D[grp]=multiSel[grp].join(', ')||undefined;
+  calcProg();
+}
+
+var likertVals={};
+function likert(grp,v){
+  likertVals[grp]=v;
+  for(var i=1;i<=5;i++){
+    var b=document.getElementById(grp+'-'+i);
+    if(b)b.classList.toggle('sel',i===v);
+  }
+  D[grp]=v;calcProg();
+}
+
+var TOTAL_KEYS=['c1','c2','c3','c4','c5','c6','c7','c8','c9',
+  'i10','i11','i12','i13','i14','i15','i16','ck1',
+  'e18','e19','e20','e21','e22','e23','e24','e25','e26',
+  's27','s28','s29','s30','s31','s32'];
+
+function calcProg(){
+  var filled=TOTAL_KEYS.filter(function(k){return D[k]!==undefined&&D[k]!==''}).length;
+  var pct=Math.round(filled/TOTAL_KEYS.length*100);
+  document.getElementById('prog-fill').style.width=pct+'%';
+  document.getElementById('prog-pct').textContent=pct+'% completado';
+  var secs=['Comunidad','Informante','Entrevista','Encuesta','Ficha'];
+  var curSec=0;
+  document.querySelectorAll('.sec').forEach(function(s,i){if(s.classList.contains('on'))curSec=i});
+  document.getElementById('prog-step').textContent='Paso '+(curSec+1)+' / 5 — '+secs[curSec];
+}
+
+var LABELS={
+  c1:'Nombre de la comunidad',c2:'Nombre en lengua indígena',c3:'Altitud (msnm)',
+  c4:'Lengua predominante',c5:'Tenencia de la tierra',c6:'Presencia maíz nativo',
+  c7:'Diversidad ecológica (1-5)',c8:'Riqueza cultural (1-5)',c9:'Prioridad de muestreo',
+  i10:'Edad',i11:'Género',i12:'Escolaridad',i13:'Lengua materna',
+  i14:'Años cultivando maíz',i15:'Superficie cultivada',i16:'Rol en comunidad',ck1:'Consentimiento informado',
+  e18:'Trayectoria con el maíz',e19:'Variedades conocidas',e20:'Selección/conservación semilla',
+  e21:'Sistema milpa',e22:'Prácticas rituales',e23:'Amenazas percibidas',
+  e24:'Red de intercambio',e25:'Valoración maíz nativo (1-5)',e26:'Disposición a continuar (1-5)',
+  s27:'Ingresos mensuales',s28:'Destino producción',s29:'Uso agroquímicos',
+  s30:'Apoyos gubernamentales',s31:'Transmisión del conocimiento',s32:'Cambio percibido en clima (1-5)'
+};
+
+var SECCIONES=[
+  {title:'Comunidad (descriptores 1-9)',keys:['c1','c2','c3','c4','c5','c6','c7','c8','c9']},
+  {title:'Informante (descriptores 10-17)',keys:['i10','i11','i12','i13','i14','i15','i16','ck1']},
+  {title:'Entrevista semiestructurada (descriptores 18-26)',keys:['e18','e19','e20','e21','e22','e23','e24','e25','e26']},
+  {title:'Encuesta socioeconómica (descriptores 27-32)',keys:['s27','s28','s29','s30','s31','s32']}
+];
+
+function buildReport(){
+  var html='';
+  SECCIONES.forEach(function(sec){
+    html+='<div class="sec-divider">'+sec.title+'</div>';
+    sec.keys.forEach(function(k){
+      var v=D[k];
+      html+='<div class="report-row"><span class="report-key">'+LABELS[k]+'</span>';
+      if(v!==undefined&&v!==''){html+='<span class="report-val">'+v+'</span>';}
+      else{html+='<span class="report-val r-empty">sin datos</span>';}
+      html+='</div>';
+    });
+  });
+  var filled=TOTAL_KEYS.filter(function(k){return D[k]!==undefined&&D[k]!==''}).length;
+  var pct=Math.round(filled/TOTAL_KEYS.length*100);
+  html='<div style="display:flex;gap:10px;flex-wrap:wrap;margin-bottom:1rem">'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:1;min-width:100px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Descriptores</div><div style="font-size:20px;font-weight:500;color:var(--color-text-primary)">'+filled+' / '+TOTAL_KEYS.length+'</div></div>'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:1;min-width:100px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Completitud</div><div style="font-size:20px;font-weight:500;color:'+(pct>70?'#185FA5':pct>40?'#BA7517':'#A32D2D')+'">'+pct+'%</div></div>'
+    +'<div style="background:var(--color-background-secondary);border-radius:var(--border-radius-md);padding:10px 14px;flex:1;min-width:100px"><div style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;margin-bottom:3px">Comunidad</div><div style="font-size:14px;font-weight:500;color:var(--color-text-primary)">'+(D.c1||'—')+'</div></div>'
+    +'</div>'+html;
+  document.getElementById('report-body').innerHTML=html;
+}
+</script>
+

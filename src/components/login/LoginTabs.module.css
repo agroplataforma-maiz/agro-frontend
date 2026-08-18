@@ -1,0 +1,28 @@
+/* ── TABS ── */
+.card-tabs {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  background: var(--verde-pal);
+  border-bottom: 1px solid var(--borde);
+}
+
+.tab-btn {
+  font-family: 'Nunito', sans-serif;
+  font-size: 13px;
+  font-weight: 800;
+  padding: 16px;
+  border: none;
+  background: transparent;
+  color: var(--gris);
+  cursor: pointer;
+  border-bottom: 3px solid transparent;
+  transition: all .2s;
+  letter-spacing: .02em;
+}
+
+.tab-btn:hover { color: var(--verde); }
+.tab-btn.active {
+  color: var(--verde);
+  border-bottom-color: var(--verde);
+  background: var(--blanco);
+}

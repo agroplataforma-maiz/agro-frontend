@@ -48,10 +48,22 @@ const DEFAULT_ZOOM = 9;
 
 const BASE_STYLES = [
   {
+  id: 'minimal',
+  name: 'Agroplataforma',
+  url: '/maps/minStyle.json',
+  terrain: false,
+},
+  {
+    id: 'streets',
+    name: 'Calles',
+    url: 'https://api.maptiler.com/maps/streets-v2/style.json?key=Q65Ltx3kCG3wapbpAkFb',
+    terrain: false,
+  },
+  {
     id: 'outdoor-3d',
     name: 'Relieve 3D',
     url: 'https://api.maptiler.com/maps/outdoor-v2/style.json?key=Q65Ltx3kCG3wapbpAkFb',
-    terrain: true,
+    terrain: false,
   },
   {
     id: 'topo',
@@ -65,12 +77,7 @@ const BASE_STYLES = [
     url: 'https://api.maptiler.com/maps/hybrid/style.json?key=Q65Ltx3kCG3wapbpAkFb',
     terrain: false,
   },
-  {
-    id: 'streets',
-    name: 'Calles',
-    url: 'https://api.maptiler.com/maps/streets-v2/style.json?key=Q65Ltx3kCG3wapbpAkFb',
-    terrain: false,
-  },
+  
 ];
 
 const MUNICIPIO_COLORS = [

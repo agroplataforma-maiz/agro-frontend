@@ -6,6 +6,28 @@ import { ThemeProvider } from 'next-themes';
 import { useAuth } from '@/hooks/useAuth';
 import ToastContainer from '@/components/ui/ToastContainer';
 
+const USE_MOCKS =
+  process.env.NODE_ENV === 'development' &&
+  process.env.NEXT_PUBLIC_USE_MOCKS === 'true';
+
+function MockServiceWorker({ children }: { children: React.ReactNode }) {
+  const [ready, setReady] = useState(!USE_MOCKS);
+
+  useEffect(() => {
+    if (!USE_MOCKS) return;
+
+    let mounted = true;
+    import('@/mocks/browser').then(({ worker }) => worker.start({
+      onUnhandledRequest: (request) => new URL(request.url, window.location.origin).origin === window.location.origin ? 'bypass' : 'error',
+    }))
+      .then(() => { if (mounted) setReady(true); });
+
+    return () => { mounted = false; };
+  }, []);
+
+  return ready ? children : null;
+}
+
 // Overlay global para red lenta
 function SlowNetworkOverlay() {
   const [show, setShow] = useState(false);
@@ -58,10 +80,16 @@ function SlowNetworkOverlay() {
   );
 }
 
-function SessionInit() {
+function SessionInit({ children }: { children: React.ReactNode }) {
   const { inicializarSesion } = useAuth();
-  useEffect(() => { inicializarSesion(); }, []);
-  return null;
+  const [ready, setReady] = useState(false);
+
+  useEffect(() => {
+    inicializarSesion();
+    setReady(true);
+  }, []);
+
+  return ready ? children : null;
 }
 
 export default function Providers({ children }: { children: React.ReactNode }) {
@@ -75,12 +103,15 @@ export default function Providers({ children }: { children: React.ReactNode }) {
   }));
 
   return (
-    <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+    <ThemeProvider attribute="class" defaultTheme="light" enableSystem>
       <QueryClientProvider client={queryClient}>
-        <SessionInit />
-        <SlowNetworkOverlay />
-        {children}
-        <ToastContainer />
+        <MockServiceWorker>
+          <SessionInit>
+            <SlowNetworkOverlay />
+            {children}
+            <ToastContainer />
+          </SessionInit>
+        </MockServiceWorker>
       </QueryClientProvider>
     </ThemeProvider>
   );

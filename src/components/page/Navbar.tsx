@@ -14,8 +14,8 @@ export default function Navbar() {
     useEffect(() => {
     // Forzar modo claro SOLO mientras este componente esté montado
     const root = document.documentElement;
-    const wasDark = root.classList.contains('dark');
-    root.classList.remove('dark');
+    // const wasDark = root.classList.contains('dark');
+    // root.classList.remove('dark');
 
     const t = getToken();
     const u = getUsuario();
@@ -32,7 +32,7 @@ export default function Navbar() {
     return () => {
       window.removeEventListener('scroll', onScroll);
       // Restaurar modo oscuro si estaba activo antes
-      if (wasDark) root.classList.add('dark');
+      // if (wasDark) root.classList.add('dark');
     };
   }, [router]);
 

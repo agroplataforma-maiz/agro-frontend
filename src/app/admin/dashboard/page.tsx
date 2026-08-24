@@ -104,7 +104,7 @@ export default function DashboardPage() {
       router.replace('/sin-acceso');
     }
     if (!usuario) {
-      router.replace('/');
+      router.replace('/login');
     }
   }, [usuario, isAdmin, router]);
 

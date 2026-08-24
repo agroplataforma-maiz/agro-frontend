@@ -69,15 +69,18 @@ export default function AdminShell({ children, contentPadding = '32px 40px', def
     document.body.classList.toggle('sidebar-mobile-open', mobileOpen)
   }, [mobileOpen])
 
+  useEffect(() => {
+    if (!usuario && !forceShowShell) {
+      router.replace('/login')
+    }
+  }, [usuario, forceShowShell, router])
+
   // Si no hay usuario, redirige a inicio (evita pantalla de carga infinita tras logout),
   // EXCEPTO en la página not-found para permitir mostrar el 404 con shell
 
   let userSidebar, rolActual;
   if (!usuario) {
     if (!forceShowShell) {
-      if (typeof window !== 'undefined') {
-        router.replace('/')
-      }
       return null
     }
     // Shell genérica para not-found o uso forzado

@@ -36,7 +36,7 @@ export default function DashboardPage() {
   // Si no hay usuario, no renderizar nada (pantalla en blanco) y redirigir
   React.useEffect(() => {
     if (!usuario) {
-      router.replace('/');
+      router.replace('/login');
     }
   }, [usuario, router]);
   if (!usuario) return null;

@@ -1,0 +1,104 @@
+{
+  "version": 8,
+
+  "sources": {
+    "maptiler": {
+      "type": "vector",
+      "tiles": [
+        "https://api.maptiler.com/tiles/v3/{z}/{x}/{y}.pbf?key=Q65Ltx3kCG3wapbpAkFb"
+      ],
+      "minzoom": 0,
+      "maxzoom": 15
+    }
+  },
+
+  "layers": [
+    {
+      "id": "background",
+      "type": "background",
+      "paint": {
+        "background-color": "#dbe3e8"
+      }
+    },
+    {
+  "id": "landcover-grass",
+  "type": "fill",
+  "source": "maptiler",
+  "source-layer": "landcover",
+  "minzoom": 5,
+  "paint": {
+    "fill-color": "#A8C686",
+    "fill-opacity": 0.12
+  },
+  "filter": [
+    "==",
+    ["get", "subclass"],
+    "grass"
+  ]
+},
+{
+  "id": "landcover-scrub",
+  "type": "fill",
+  "source": "maptiler",
+  "source-layer": "landcover",
+  "minzoom": 5,
+  "paint": {
+    "fill-color": "#91A66A",
+    "fill-opacity": 0.10
+  },
+  "filter": [
+    "==",
+    ["get", "subclass"],
+    "scrub"
+  ]
+},
+{
+  "id": "landcover-wood",
+  "type": "fill",
+  "source": "maptiler",
+  "source-layer": "landcover",
+  "minzoom": 5,
+  "paint": {
+    "fill-color": "#668F5A",
+    "fill-opacity": 0.12
+  },
+  "filter": [
+    "==",
+    ["get", "subclass"],
+    "wood"
+  ]
+},
+    {
+  "id": "landcover-forest",
+  "type": "fill",
+  "source": "maptiler",
+  "source-layer": "landcover",
+  "minzoom": 5,
+  "paint": {
+    "fill-color": "#6B8E5A",
+    "fill-opacity": 0.18
+  },
+  "filter": [
+    "==",
+    ["get", "subclass"],
+    "forest"
+  ]
+},
+{
+  "id": "landcover-farmland",
+  "type": "fill",
+  "source": "maptiler",
+  "source-layer": "landcover",
+  "minzoom": 5,
+  "paint": {
+    "fill-color": "#C9B458",
+    "fill-opacity": 0.16
+  },
+  "filter": [
+    "==",
+    ["get", "subclass"],
+    "farmland"
+  ]
+}
+  ]
+}

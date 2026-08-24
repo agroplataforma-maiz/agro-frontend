@@ -17,7 +17,7 @@ export default function UsuariosPage() {
   // Si usuario es null (sesión cerrada), redirige y no muestra nada
   useEffect(() => {
     if (usuario === null) {
-      router.replace('/');
+      router.replace('/login');
     }
   }, [usuario, router]);
 

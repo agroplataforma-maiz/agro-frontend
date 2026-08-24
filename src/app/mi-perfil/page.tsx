@@ -85,7 +85,7 @@ export default function MiPerfilPage() {
   // Si no hay usuario, redirige a inicio (evita pantalla de carga infinita tras logout)
   if (!usuario) {
     if (typeof window !== 'undefined') {
-      router.replace('/')
+      router.replace('/login')
     }
     return null
   }

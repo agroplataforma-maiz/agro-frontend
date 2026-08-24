@@ -104,7 +104,7 @@ export default function ComunidadesPage() {
     if (!usuario) {
       const timeout = setTimeout(() => {
         if (!useAppStore.getState().usuario) {
-          router.replace('/');
+          router.replace('/login');
         }
       }, 80);
       return () => clearTimeout(timeout);

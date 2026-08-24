@@ -434,7 +434,7 @@ export default function CatalogosPage() {
   const usuario = useAppStore(s => s.usuario);
   if (!usuario) {
     if (typeof window !== 'undefined') {
-      router.replace('/')
+      router.replace('/login')
     }
     return null
   }

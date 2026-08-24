@@ -94,7 +94,7 @@ export default function UsuariosPanel() {
   // Queries y mutaciones
   const { data: usuarios = [], isLoading, isError, error, refetch } = useQuery<Usuario[]>({
     queryKey: ['usuarios'],
-    queryFn: () => GET('/auth/usuario'),
+    queryFn: () => GET('/auth/usuarios'),
     retry: 1,
     select: (d: unknown) => {
       const data = d as Usuario[] | { count?: number; items?: Usuario[]; results?: Usuario[] };

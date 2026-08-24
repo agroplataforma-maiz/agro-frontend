@@ -91,7 +91,7 @@ export default function Page() {
   const router = useRouter();
   useEffect(() => {
     if (usuario === null) {
-      router.replace('/');
+      router.replace('/login');
     }
   }, [usuario, router]);
 

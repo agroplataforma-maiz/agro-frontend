@@ -24,7 +24,7 @@ export default function AdminSocioculturalPage() {
 
   useEffect(() => {
     if (!usuario) {
-      router.replace('/')
+      router.replace('/login')
     }
   }, [usuario, router])
 

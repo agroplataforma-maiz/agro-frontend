@@ -15,6 +15,7 @@ const ROLES_VALIDOS: Rol[] = [
   'tecnico_campo',
   'visualizador',
   'productor',
+  'invitado',
 ]
 
 function normalizarRol(rol: string): Rol {
@@ -152,9 +153,6 @@ export function useAuth() {
     limpiarOverlay()
     // Redirigir a login tras logout y limpiar la URL
     router.replace('/login')
-    if (typeof window !== 'undefined') {
-      window.history.replaceState({}, '', '/login');
-    }
   }
 
   // Inicializa el store desde localStorage al montar la app

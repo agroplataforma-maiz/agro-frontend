@@ -40,7 +40,7 @@ export default function ProductoresPage() {
   // Redirección automática si no hay usuario
   useEffect(() => {
     if (usuario === null) {
-      router.replace('/')
+      router.replace('/login')
     }
   }, [usuario, router])
 

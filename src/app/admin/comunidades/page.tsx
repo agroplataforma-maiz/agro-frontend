@@ -24,7 +24,7 @@ export default function AdminComunidadesPage() {
 
   useEffect(() => {
     if (!usuario) {
-      router.replace('/')
+      router.replace('/login')
     }
   }, [usuario, router])
   if (!usuario) return null

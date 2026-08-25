@@ -170,6 +170,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
   const [terrainEnabled, setTerrainEnabled] = useState(defaultStyle.terrain);
   const [showOutline, setShowOutline] = useState(true);
   const [showMunicipios, setShowMunicipios] = useState(true);
+  const [showRoads, setShowRoads] = useState(false);
   const [panelCapasAbierto, setPanelCapasAbierto] = useState(false);
 
   // Puntos válidos
@@ -264,6 +265,19 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
     }
     map.setTerrain({ source: 'maptiler-dem', exaggeration: 1.8 });
   };
+
+  useEffect(() => {
+  const map = mapRef.current?.getMap?.();
+  if (!map || !styleReady) return;
+
+  const visibility = showRoads ? 'visible' : 'none';
+
+  ['roads-trunk', 'roads-primary', 'roads-secondary'].forEach((layerId) => {
+    if (map.getLayer(layerId)) {
+      map.setLayoutProperty(layerId, 'visibility', visibility);
+    }
+  });
+}, [showRoads, styleReady]);
 
   // Handler: clic en el mapa (municipios)
   const handleMapClick = (e: MapLayerMouseEvent) => {
@@ -475,8 +489,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         }
         .btn-capas {
           position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
+          
           z-index: 3002 !important;
           pointer-events: auto !important;
         }
@@ -523,11 +536,15 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
       <button
         className="btn-capas"
         aria-label={panelCapasAbierto ? 'Cerrar panel de capas' : 'Abrir panel de capas'}
-        onClick={() => setPanelCapasAbierto((v) => !v)}
+        onClick={() => {
+  console.log('BOTÓN CAPAS CLICKEADO');
+  setPanelCapasAbierto((v) => !v);
+}}
         style={{
           position: 'fixed',
           top: isMobile ? 'calc(var(--topbar-h,64px) + 12px)' : 'calc(var(--topbar-h,64px) + 18px)',
-          left: isMobile ? '12px' : 'calc(var(--sidebar-w,64px) + 18px)',
+          right: isMobile ? 'auto' : '24px',
+          left: isMobile ? '12px' : 'auto',
           width: 48,
           height: 48,
           borderRadius: 14,
@@ -555,9 +572,10 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         <div
           style={{
             position: 'absolute',
-            top: 'calc(var(--topbar-h) + 72px)',
-            left: 'calc(var(--sidebar-w) + 16px)',
-            zIndex: 1300,
+            top: '90px',
+            left: 'auto',
+            right: '24px',
+            zIndex: 99999,
             background: '#fff',
             borderRadius: 12,
             boxShadow: '0 6px 24px rgba(61,34,8,.16)',
@@ -617,6 +635,22 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
             />
             Envolvente regional
           </label>
+          <label
+  style={{
+    display: 'flex',
+    alignItems: 'center',
+    gap: 6,
+    marginBottom: 4,
+    cursor: 'pointer',
+  }}
+>
+  <input
+    type="checkbox"
+    checked={showRoads}
+    onChange={() => setShowRoads((v) => !v)}
+  />
+  Carreteras principales
+</label>
         </div>
       )}
 
@@ -654,6 +688,9 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         onClick={handleMapClick}
         onZoom={(e) => setZoom(e.viewState.zoom)}
       >
+
+        
+
         {/* Capa agua */}
         {styleReady && (
           <Source id="osm-water" type="vector" url="https://api.maptiler.com/tiles/v3/tiles.json?key=Q65Ltx3kCG3wapbpAkFb">

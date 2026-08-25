@@ -48,11 +48,11 @@ const DEFAULT_ZOOM = 9;
 
 const BASE_STYLES = [
   {
-  id: 'minimal',
-  name: 'Agroplataforma',
-  url: '/maps/minStyle.json',
-  terrain: false,
-},
+    id: 'minimal',
+    name: 'Agroplataforma',
+    url: '/maps/minStyle.json',
+    terrain: false,
+  },
   {
     id: 'streets',
     name: 'Calles',
@@ -77,7 +77,7 @@ const BASE_STYLES = [
     url: 'https://api.maptiler.com/maps/hybrid/style.json?key=Q65Ltx3kCG3wapbpAkFb',
     terrain: false,
   },
-  
+
 ];
 
 const MUNICIPIO_COLORS = [
@@ -167,7 +167,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
   // Controles de capas
   const defaultStyle = BASE_STYLES.find((s) => s.terrain) ?? BASE_STYLES[0];
   const [baseStyle, setBaseStyle] = useState(defaultStyle.url);
-  const [terrainEnabled, setTerrainEnabled] = useState(defaultStyle.terrain);
+  const [terrainEnabled, setTerrainEnabled] = useState(false);
   const [showOutline, setShowOutline] = useState(true);
   const [showMunicipios, setShowMunicipios] = useState(true);
   const [showRoads, setShowRoads] = useState(false);
@@ -267,17 +267,17 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
   };
 
   useEffect(() => {
-  const map = mapRef.current?.getMap?.();
-  if (!map || !styleReady) return;
+    const map = mapRef.current?.getMap?.();
+    if (!map || !styleReady) return;
 
-  const visibility = showRoads ? 'visible' : 'none';
+    const visibility = showRoads ? 'visible' : 'none';
 
-  ['roads-trunk', 'roads-primary', 'roads-secondary'].forEach((layerId) => {
-    if (map.getLayer(layerId)) {
-      map.setLayoutProperty(layerId, 'visibility', visibility);
-    }
-  });
-}, [showRoads, styleReady]);
+    ['roads-trunk', 'roads-primary', 'roads-secondary'].forEach((layerId) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, 'visibility', visibility);
+      }
+    });
+  }, [showRoads, styleReady]);
 
   // Handler: clic en el mapa (municipios)
   const handleMapClick = (e: MapLayerMouseEvent) => {
@@ -331,19 +331,19 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
     () =>
       municipiosGeoJson
         ? {
-            id: 'municipios',
-            type: 'fill' as const,
-            source: 'municipios',
-            paint: {
-              'fill-color': [
-                'case',
-                ['==', ['get', 'municipio_key'], municipioActivoKey],
-                '#FFD600',
-                '#D1D5DB',
-              ] as maplibregl.ExpressionSpecification,
-              'fill-opacity': 0.15,
-            },
-          }
+          id: 'municipios',
+          type: 'fill' as const,
+          source: 'municipios',
+          paint: {
+            'fill-color': [
+              'case',
+              ['==', ['get', 'municipio_key'], municipioActivoKey],
+              '#FFD600',
+              '#D1D5DB',
+            ] as maplibregl.ExpressionSpecification,
+            'fill-opacity': 0.15,
+          },
+        }
         : null,
     [municipiosGeoJson, municipioActivoKey],
   );
@@ -352,14 +352,14 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
     () =>
       municipiosGeoJson
         ? {
-            id: 'municipios-outline',
-            type: 'line' as const,
-            source: 'municipios',
-            paint: {
-              'line-color': '#166534',
-              'line-width': 1.5,
-            },
-          }
+          id: 'municipios-outline',
+          type: 'line' as const,
+          source: 'municipios',
+          paint: {
+            'line-color': '#166534',
+            'line-width': 1.5,
+          },
+        }
         : null,
     [municipiosGeoJson],
   );
@@ -537,9 +537,9 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         className="btn-capas"
         aria-label={panelCapasAbierto ? 'Cerrar panel de capas' : 'Abrir panel de capas'}
         onClick={() => {
-  console.log('BOTÓN CAPAS CLICKEADO');
-  setPanelCapasAbierto((v) => !v);
-}}
+
+          setPanelCapasAbierto((v) => !v);
+        }}
         style={{
           position: 'fixed',
           top: isMobile ? 'calc(var(--topbar-h,64px) + 12px)' : 'calc(var(--topbar-h,64px) + 18px)',
@@ -588,14 +588,14 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
             margin: 0,
             ...(isMobile
               ? {
-                  left: 0,
-                  right: 0,
-                  top: 'calc(var(--topbar-h) + 8px)',
-                  maxWidth: '100vw',
-                  minWidth: 0,
-                  borderRadius: 0,
-                  boxShadow: '0 2px 12px rgba(61,34,8,.10)',
-                }
+                left: 0,
+                right: 0,
+                top: 'calc(var(--topbar-h) + 8px)',
+                maxWidth: '100vw',
+                minWidth: 0,
+                borderRadius: 0,
+                boxShadow: '0 2px 12px rgba(61,34,8,.10)',
+              }
               : {}),
           }}
         >
@@ -608,13 +608,13 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
                 checked={baseStyle === style.url}
                 onChange={() => {
                   setBaseStyle(style.url);
-                  setTerrainEnabled(!!style.terrain);
+
                 }}
               />
               {style.name}
-              {style.terrain && (
-                <span style={{ color: '#0F766E', fontWeight: 600, fontSize: 12 }}>(3D)</span>
-              )}
+
+
+
             </label>
           ))}
 
@@ -636,21 +636,37 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
             Envolvente regional
           </label>
           <label
-  style={{
-    display: 'flex',
-    alignItems: 'center',
-    gap: 6,
-    marginBottom: 4,
-    cursor: 'pointer',
-  }}
->
-  <input
-    type="checkbox"
-    checked={showRoads}
-    onChange={() => setShowRoads((v) => !v)}
-  />
-  Carreteras principales
-</label>
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginBottom: 4,
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={showRoads}
+              onChange={() => setShowRoads((v) => !v)}
+            />
+            Carreteras principales
+          </label>
+          <label
+            style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: 6,
+              marginTop: 4,
+              cursor: 'pointer',
+            }}
+          >
+            <input
+              type="checkbox"
+              checked={terrainEnabled}
+              onChange={() => setTerrainEnabled((v) => !v)}
+            />
+            Terreno 3D
+          </label>
         </div>
       )}
 
@@ -689,7 +705,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         onZoom={(e) => setZoom(e.viewState.zoom)}
       >
 
-        
+
 
         {/* Capa agua */}
         {styleReady && (

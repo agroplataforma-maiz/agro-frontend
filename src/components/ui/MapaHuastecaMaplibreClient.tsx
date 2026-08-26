@@ -217,32 +217,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
 
   // Activar terreno 3D cuando cambia el estilo o la opción
   useEffect(() => {
-    const map = mapRef.current?.getMap?.();
-    if (!map || !terrainEnabled) return;
-
-    const applyTerrain = () => {
-      if (!map.getSource('maptiler-dem')) {
-        map.addSource('maptiler-dem', {
-          type: 'raster-dem',
-          url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=Q65Ltx3kCG3wapbpAkFb',
-          tileSize: 512,
-          maxzoom: 12,
-        });
-      }
-      map.setTerrain({ source: 'maptiler-dem', exaggeration: 1.8 });
-      map.easeTo({ pitch: 45, bearing: -17, duration: 800 });
-    };
-
-    if (map.isStyleLoaded()) {
-      applyTerrain();
-    } else {
-      map.once('styledata', applyTerrain);
-    }
-
-    return () => {
-      const m = mapRef.current?.getMap?.();
-      if (m?.getTerrain()) m.setTerrain(null);
-    };
+    applyTerrain();
   }, [terrainEnabled, baseStyle]);
 
   // Reset styleReady al cambiar estilo base
@@ -250,20 +225,47 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
     setStyleReady(false);
   }, [baseStyle]);
 
-  // Handler: estilo listo
-  const handleStyleData = () => {
-    setStyleReady(true);
+  const applyTerrain = () => {
     const map = mapRef.current?.getMap?.();
-    if (!map || !terrainEnabled) return;
+
+    if (!map) return;
+
+    // Si el terreno está desactivado, quitarlo inmediatamente.
+    if (!terrainEnabled) {
+      if (map.getTerrain()) {
+        map.setTerrain(null);
+      }
+      return;
+    }
+
+    // Para activarlo sí necesitamos que el estilo esté listo.
+    if (!map.isStyleLoaded()) return;
+
     if (!map.getSource('maptiler-dem')) {
       map.addSource('maptiler-dem', {
         type: 'raster-dem',
         url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=Q65Ltx3kCG3wapbpAkFb',
         tileSize: 512,
-        maxzoom: 12,
+        maxzoom: 10,
       });
     }
-    map.setTerrain({ source: 'maptiler-dem', exaggeration: 1.8 });
+
+    map.setTerrain({
+      source: 'maptiler-dem',
+      exaggeration: 1.8,
+    });
+
+    map.easeTo({
+  pitch: 45,
+  bearing: -17,
+  duration: 800,
+});
+  };
+
+  // Handler: estilo listo
+  const handleStyleData = () => {
+    setStyleReady(true);
+    applyTerrain();
   };
 
   useEffect(() => {
@@ -687,18 +689,8 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         dragRotate
         touchPitch
         interactiveLayerIds={showMunicipios ? ['municipios'] : []}
-        onLoad={(e) => {
-          const map = e.target;
-          if (!terrainEnabled) return;
-          if (!map.getSource('maptiler-dem')) {
-            map.addSource('maptiler-dem', {
-              type: 'raster-dem',
-              url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=Q65Ltx3kCG3wapbpAkFb',
-              tileSize: 512,
-              maxzoom: 12,
-            });
-          }
-          map.setTerrain({ source: 'maptiler-dem', exaggeration: 1.8 });
+        onLoad={() => {
+          applyTerrain();
         }}
         onStyleData={handleStyleData}
         onClick={handleMapClick}

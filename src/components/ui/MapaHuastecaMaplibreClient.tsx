@@ -49,7 +49,7 @@ const DEFAULT_ZOOM = 9;
 const BASE_STYLES = [
   {
     id: 'minimal',
-    name: 'Agroplataforma',
+    name: 'Básico',
     url: '/maps/minStyle.json',
     terrain: false,
   },
@@ -246,20 +246,20 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         type: 'raster-dem',
         url: 'https://api.maptiler.com/tiles/terrain-rgb/tiles.json?key=Q65Ltx3kCG3wapbpAkFb',
         tileSize: 512,
-        maxzoom: 10,
+        maxzoom: 12,
       });
     }
 
     map.setTerrain({
       source: 'maptiler-dem',
-      exaggeration: 1.8,
+      exaggeration: 1.5,
     });
 
     map.easeTo({
-  pitch: 45,
-  bearing: -17,
-  duration: 800,
-});
+      pitch: 45,
+      bearing: -17,
+      duration: 800,
+    });
   };
 
   // Handler: estilo listo
@@ -491,15 +491,27 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
         }
         .btn-capas {
           position: fixed !important;
-          
+          background: #fff !important;
           z-index: 3002 !important;
           pointer-events: auto !important;
+        }
+        html.dark .btn-capas {
+          background: #1F2937 !important;
         }
         .maplibregl-ctrl-top-right { z-index: 500 !important; }
         .maplibregl-ctrl-bottom-left { z-index: 500 !important; }
         .maplibregl-popup-close-button {
           font-size: 20px !important;
           color: #C8820A !important;
+        }
+        .panel-capas {
+          background: #fff !important;
+          color: #1F2937;
+        }
+
+        html.dark .panel-capas {
+          background: #1F2937 !important;
+          color: #fff;
         }
       `}</style>
 
@@ -550,7 +562,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
           width: 48,
           height: 48,
           borderRadius: 14,
-          background: '#fff',
+          
           border: '2.5px solid #FFD600',
           boxShadow: '0 4px 16px rgba(61,34,8,.13)',
           display: 'flex',
@@ -560,6 +572,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
           padding: 0,
           zIndex: 3002,
           pointerEvents: 'auto',
+          
         }}
       >
         <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
@@ -572,13 +585,14 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
       {/* Panel de capas */}
       {panelCapasAbierto && (
         <div
+          className="panel-capas"
           style={{
             position: 'absolute',
             top: '90px',
             left: 'auto',
             right: '24px',
             zIndex: 99999,
-            background: '#fff',
+            
             borderRadius: 12,
             boxShadow: '0 6px 24px rgba(61,34,8,.16)',
             padding: '16px 18px 12px',

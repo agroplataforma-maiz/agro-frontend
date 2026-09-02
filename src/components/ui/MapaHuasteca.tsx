@@ -9,6 +9,7 @@ export interface PuntoMapaHuasteca {
   municipio: string
   latitud: number
   longitud: number
+  imagenUrl?: string | null;
 }
 
 interface MapaHuastecaProps {

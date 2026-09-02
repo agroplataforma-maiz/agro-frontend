@@ -12,6 +12,7 @@ interface PuntoMapaHuasteca {
   municipio: string;
   latitud: number;
   longitud: number;
+  imagenUrl?: string | null
 }
 
 interface PopupInfo extends PuntoMapaHuasteca {
@@ -252,7 +253,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
 
     map.setTerrain({
       source: 'maptiler-dem',
-      exaggeration: 1.5,
+      exaggeration: 1.8,
     });
 
     map.easeTo({
@@ -420,6 +421,24 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
             Proyecto territorial
           </div>
           <strong style={{ fontSize: 18, color: '#3D2208', fontWeight: 900 }}>{info.comunidad}</strong>
+
+          {info.imagenUrl && (
+            <img
+              src={info.imagenUrl}
+              alt={info.comunidad || 'Imagen de parcela'}
+              style={{
+                width: '100%',
+                maxHeight: 180,
+                objectFit: 'cover',
+                borderRadius: 10,
+                marginTop: 10,
+                marginBottom: 8,
+                display: 'block',
+                border: '1px solid #E5E7EB',
+              }}
+            />
+          )}
+
           <br />
           <span style={{ color: '#6B3D1E', fontSize: 13, fontWeight: 600 }}>{info.municipio}</span>
           <div
@@ -562,7 +581,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
           width: 48,
           height: 48,
           borderRadius: 14,
-          
+
           border: '2.5px solid #FFD600',
           boxShadow: '0 4px 16px rgba(61,34,8,.13)',
           display: 'flex',
@@ -572,7 +591,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
           padding: 0,
           zIndex: 3002,
           pointerEvents: 'auto',
-          
+
         }}
       >
         <svg width="26" height="26" viewBox="0 0 26 26" fill="none">
@@ -592,7 +611,7 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
             left: 'auto',
             right: '24px',
             zIndex: 99999,
-            
+
             borderRadius: 12,
             boxShadow: '0 6px 24px rgba(61,34,8,.16)',
             padding: '16px 18px 12px',

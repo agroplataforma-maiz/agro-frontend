@@ -1,6 +1,8 @@
 // src/app/comunidades/page.tsx
 'use client'
 
+import { useMedioParcela } from '@/hooks/useMedioParcela';
+
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
@@ -66,6 +68,29 @@ export default function ComunidadesPage() {
   const municipiosStore = useAppStore(s => s.municipios);
   const router = useRouter();
 
+  // Medio de parcela de prueba
+  const {
+  data: medioParcela,
+  isLoading: medioParcelaLoading,
+  isError: medioParcelaError,
+  error: medioParcelaErrorDetail,
+} = useMedioParcela();
+
+  // Punto de parcela generado a partir del backend
+  const puntoParcela: PuntoMapaHuasteca | null =
+    medioParcela?.ubicacion &&
+      Number.isFinite(medioParcela.ubicacion.latitud) &&
+      Number.isFinite(medioParcela.ubicacion.longitud)
+      ? {
+        id: medioParcela.id,
+        comunidad: 'Parcela',
+        municipio: '',
+        latitud: medioParcela.ubicacion.latitud,
+        longitud: medioParcela.ubicacion.longitud,
+        imagenUrl: medioParcela.url_temporal,
+      }
+      : null;
+
   // Estados y lógica para filtros y selección
   const [busqueda, setBusqueda] = useState('');
   const [municipioFiltro, setMunicipioFiltro] = useState('todos');
@@ -86,13 +111,12 @@ export default function ComunidadesPage() {
   })));
   const [puntoActivoId, setPuntoActivoId] = useState<number | string | null>(null);
 
-    // Cierra el panel de perfil si se entra a móvil
+  // Cierra el panel de perfil si se entra a móvil
   useEffect(() => {
     if (isMobile && comunidadPerfilId) {
       setComunidadPerfilId(null);
     }
   }, [isMobile, comunidadPerfilId]);
-
 
   useEffect(() => {
     setMounted(true);
@@ -133,7 +157,7 @@ export default function ComunidadesPage() {
           const municipiosValidos = (lista as unknown[]).filter(isMunicipio);
           setMunicipios(municipiosValidos);
         })
-        .catch(() => {});
+        .catch(() => { });
     }
   }, [usuario, router, municipiosStore.length, setMunicipios]);
 
@@ -234,16 +258,21 @@ export default function ComunidadesPage() {
               flexDirection: 'column',
             }}
           >
+
             <MapaHuasteca
-              puntos={ubicacionesFiltradas}
+              puntos={[
+                ...ubicacionesFiltradas,
+                ...(puntoParcela ? [puntoParcela] : []),
+              ]}
               height={undefined}
               selectedId={puntoActivoId}
               onSelectPoint={setPuntoActivoId}
               isMobile={isMobile}
             />
+
           </div>
           {/* Panel lateral flotante (sidebar de comunidades) */}
-          { mostrarSidebarComunidades  && (
+          {mostrarSidebarComunidades && (
             <SidebarComunidades
               rol={rol}
               busqueda={busqueda}
@@ -274,3 +303,4 @@ export default function ComunidadesPage() {
     </AdminShell>
   );
 }
+

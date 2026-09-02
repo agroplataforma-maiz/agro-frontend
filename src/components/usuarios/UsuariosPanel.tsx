@@ -49,7 +49,15 @@ export default function UsuariosPanel() {
   const [modalUsuario, setModalUsuario] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
   const [modalPermisos, setModalPermisos] = useState(false);
   const [modalPerfil, setModalPerfil] = useState<{ open: boolean; usuario?: Usuario }>({ open: false });
-  const [modalConfirm, setModalConfirm] = useState<{ open: boolean; id?: number; nombre?: string; esInvitado?: boolean; estaActivo?: boolean; accion?: 'activar' | 'desactivar' | 'eliminar' }>({ open: false });
+
+  const [modalConfirm, setModalConfirm] = useState<{
+    open: boolean;
+    id?: string;
+    nombre?: string;
+    esInvitado?: boolean;
+    estaActivo?: boolean;
+    accion?: 'activar' | 'desactivar' | 'eliminar';
+  }>({ open: false });
 
   const abrirModalUsuario = (usuario?: Usuario) => setModalUsuario({ open: true, usuario });
   const cerrarModalUsuario = () => setModalUsuario({ open: false });
@@ -112,19 +120,19 @@ export default function UsuariosPanel() {
   });
 
   const activarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuario/${id}/activar`, {}),
+    mutationFn: (id: string) => PUT(`/auth/usuario/${id}/activar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario activado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al activar usuario', 'err'),
   });
 
   const desactivarUsuario = useMutation({
-    mutationFn: (id: number) => PUT(`/auth/usuario/${id}/desactivar`, {}),
+    mutationFn: (id: string) => PUT(`/auth/usuario/${id}/desactivar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario desactivado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al desactivar usuario', 'err'),
   });
 
   const eliminarUsuario = useMutation({
-    mutationFn: (id: number) => DEL(`/auth/usuario/${id}`),
+    mutationFn: (id: string) => DEL(`/auth/usuario/${id}`),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario eliminado', 'ok'); },
     onError: () => addToast('Error al eliminar usuario', 'err'),
   });

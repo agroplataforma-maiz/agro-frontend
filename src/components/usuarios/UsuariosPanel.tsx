@@ -120,19 +120,19 @@ export default function UsuariosPanel() {
   });
 
   const activarUsuario = useMutation({
-    mutationFn: (id: string) => PUT(`/auth/usuario/${id}/activar`, {}),
+    mutationFn: (id: string) => PUT(`/auth/usuarios/${id}/activar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario activado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al activar usuario', 'err'),
   });
 
   const desactivarUsuario = useMutation({
-    mutationFn: (id: string) => PUT(`/auth/usuario/${id}/desactivar`, {}),
+    mutationFn: (id: string) => PUT(`/auth/usuarios/${id}/desactivar`, {}),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario desactivado', 'ok'); },
     onError: (e: Error) => addToast(e.message || 'Error al desactivar usuario', 'err'),
   });
 
   const eliminarUsuario = useMutation({
-    mutationFn: (id: string) => DEL(`/auth/usuario/${id}`),
+    mutationFn: (id: string) => DEL(`/auth/usuarios/${id}`),
     onSuccess: () => { cerrarModalConfirm(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario eliminado', 'ok'); },
     onError: () => addToast('Error al eliminar usuario', 'err'),
   });
@@ -323,8 +323,8 @@ export default function UsuariosPanel() {
                 render: (u: Usuario) => u.ultimo_acceso ? new Date(u.ultimo_acceso).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
               },
               {
-                key: 'fecha_registro', header: 'Registro', width: '110px', nowrap: true, sortable: true, hideOnMobile: true, hideOnTablet: true,
-                render: (u: Usuario) => u.fecha_registro ? new Date(u.fecha_registro).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
+                key: 'creado_en', header: 'Registro', width: '110px', nowrap: true, sortable: true, hideOnMobile: true, hideOnTablet: true,
+                render: (u: Usuario) => u.creado_en ? new Date(u.creado_en).toLocaleDateString('es-MX', { day: '2-digit', month: 'short', year: 'numeric' }) : '—'
               },
             ]}
             acciones={(u: Usuario) => (

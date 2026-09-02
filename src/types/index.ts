@@ -17,7 +17,7 @@ export interface Usuario {
   activo: boolean
   ultimo_acceso?: string | null
   last_login?: string | null       
-  fecha_registro?: string | null
+  creado_en?: string | null
 }
 
 export interface Ubicacion {

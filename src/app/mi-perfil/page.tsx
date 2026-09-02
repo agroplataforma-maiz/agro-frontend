@@ -56,9 +56,9 @@ export default function MiPerfilPage() {
 
     const tieneUltimoAcceso = Boolean(usuario.ultimo_acceso || usuario.last_login);
     const tieneFechaRegistro = Boolean(
-      usuario.fecha_registro ||
+      usuario.creado_en ||
       usuarioExt?.date_joined ||
-      usuarioExt?.created_at ||
+      usuarioExt?.creado_en ||
       usuarioExt?.fecha_creacion
     );
 
@@ -94,7 +94,7 @@ export default function MiPerfilPage() {
   const color = ROL_COLOR[usuario.rol] ?? '#888';
   const ultimoAccesoRaw = usuario.ultimo_acceso ?? usuario.last_login ?? null;
   const fechaRegistroRaw =
-    usuario.fecha_registro ??
+    usuario.creado_en ??
     usuarioExt?.date_joined ??
     usuarioExt?.creado_en ??
     usuarioExt?.fecha_creacion ??

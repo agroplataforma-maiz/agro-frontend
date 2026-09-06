@@ -1,13 +1,11 @@
 'use client'
 
 import { useState, useEffect, FormEvent } from 'react'
-import { GET } from '@/lib/api'
-import { useAppStore } from '@/store/useAppStore'
-import { POST, PUT } from '@/lib/api'
+import { POST } from '@/lib/api'
 import type { Productor } from '@/types'
+
 import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
-import SelectField from '@/components/ui/SelectField'
 import Button from '@/components/ui/Button'
 
 interface Props {
@@ -16,114 +14,164 @@ interface Props {
   onSaved: () => void
 }
 
-const EMPTY: Partial<Productor> = {
-  nombres: '', apellido_paterno: '', apellido_materno: '',
-  fecha_nacimiento: '', genero: '', anios_experiencia: undefined,
-  municipio_id: undefined, localidad_id: undefined,
-  tipo_productor_id: undefined, comunidad_id: undefined,
+/*
+ * ─────────────────────────────────────────────────────────────────────────
+ * FORMULARIO MÍNIMO DE PRODUCTOR
+ *
+ * El backend actualmente define el alta mediante:
+ *
+ *   POST /productores
+ *
+ * Payload mínimo:
+ *
+ * {
+ *   "nombres": "...",
+ *   "apellido_paterno": "...",
+ *   "apellido_materno": "...",
+ *   "telefono": "...",
+ *   "correo_electronico": "..."
+ * }
+ *
+ * Estos campos de contacto todavía no forman parte del tipo Productor
+ * general de src/types/index.ts, por eso utilizamos un tipo específico
+ * para el formulario.
+ * ─────────────────────────────────────────────────────────────────────────
+ */
+interface ProductorForm {
+  nombres: string
+  apellido_paterno: string
+  apellido_materno: string
+  telefono: string
+  correo_electronico: string
 }
 
-type LocalidadesResponse = { items?: { id: number; nombre: string }[]; results?: { id: number; nombre: string }[] };
+const EMPTY: ProductorForm = {
+  nombres: '',
+  apellido_paterno: '',
+  apellido_materno: '',
+  telefono: '',
+  correo_electronico: '',
+}
 
-export default function ModalProductor({ productor, onClose, onSaved }: Props) {
-  const municipios     = useAppStore(s => s.municipios)
-  const [localidadesFiltradas, setLocalidadesFiltradas] = useState([])
-  const tiposProductor = useAppStore(s => s.tiposProductor)
+export default function ModalProductor({
+  productor,
+  onClose,
+  onSaved,
+}: Props) {
+  const [form, setForm] = useState<ProductorForm>(() => ({
+    ...EMPTY,
 
-  const [form,    setForm]    = useState<Partial<Productor>>(productor ?? EMPTY)
+    /*
+     * Si en el futuro se abre este formulario para edición, estos valores
+     * pueden utilizarse como base.
+     *
+     * Actualmente el backend no tiene PUT /productores/:id, por lo que
+     * la edición permanece pendiente.
+     */
+    nombres: productor?.nombres ?? '',
+    apellido_paterno: productor?.apellido_paterno ?? '',
+    apellido_materno: productor?.apellido_materno ?? '',
+  }))
+
   const [loading, setLoading] = useState(false)
-  const [error,   setError]   = useState('')
+  const [error, setError] = useState('')
 
+  /*
+   * Actualizar el formulario cuando cambia el productor seleccionado.
+   *
+   * Actualmente solamente se utiliza la creación, pero conservamos este
+   * comportamiento porque el componente seguirá siendo reutilizable cuando
+   * exista la edición en backend.
+   */
   useEffect(() => {
-    setForm(productor ?? EMPTY)
+    setForm({
+      ...EMPTY,
+      nombres: productor?.nombres ?? '',
+      apellido_paterno: productor?.apellido_paterno ?? '',
+      apellido_materno: productor?.apellido_materno ?? '',
+    })
   }, [productor])
 
+  const update =
+    (campo: keyof ProductorForm) =>
+    (
+      e: React.ChangeEvent<
+        HTMLInputElement |
+        HTMLSelectElement |
+        HTMLTextAreaElement
+      >
+    ) => {
+      const value = e.target.value
 
-  // Cuando cambia el municipio, limpiar localidad y cargar localidades del municipio
-  const update = (k: keyof Productor) =>
-    async (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
-      const value = e.target.value;
-      if (k === 'municipio_id') {
-        setForm(f => ({ ...f, municipio_id: Number(value), localidad_id: 0 }));
-        if (value) {
-          try {
-            const locs = await GET(`/geo/localidad?municipio_id=${value}`);
-            if (Array.isArray(locs)) {
-              setLocalidadesFiltradas(locs);
-            } else if (typeof locs === 'object' && locs !== null) {
-              const l = locs as LocalidadesResponse;
-              if (Array.isArray(l.items)) {
-                setLocalidadesFiltradas(l.items);
-              } else if (Array.isArray(l.results)) {
-                setLocalidadesFiltradas(l.results);
-              } else {
-                setLocalidadesFiltradas([]);
-              }
-            } else {
-              setLocalidadesFiltradas([]);
-            }
-          } catch {
-            setLocalidadesFiltradas([]);
-          }
-        } else {
-          setLocalidadesFiltradas([]);
-        }
-      } else if (k === 'localidad_id') {
-        setForm(f => ({ ...f, localidad_id: Number(value) }));
-      } else if (k === 'tipo_productor_id') {
-        setForm(f => ({ ...f, tipo_productor_id: Number(value) }));
-      } else {
-        setForm(f => ({ ...f, [k]: value }));
-      }
+      setForm(actual => ({
+        ...actual,
+        [campo]: value,
+      }))
     }
-
-  // Cargar localidades al abrir modal si ya hay municipio seleccionado (edición)
-  useEffect(() => {
-    if (form.municipio_id) {
-      (async () => {
-        try {
-          const locs = await GET(`/geo/localidad?municipio_id=${form.municipio_id}`);
-          if (Array.isArray(locs)) {
-            setLocalidadesFiltradas(locs);
-          } else if (typeof locs === 'object' && locs !== null) {
-            const l = locs as LocalidadesResponse;
-            if (Array.isArray(l.items)) {
-              setLocalidadesFiltradas(l.items);
-            } else if (Array.isArray(l.results)) {
-              setLocalidadesFiltradas(l.results);
-            } else {
-              setLocalidadesFiltradas([]);
-            }
-          } else {
-            setLocalidadesFiltradas([]);
-          }
-        } catch {
-          setLocalidadesFiltradas([]);
-        }
-      })();
-    } else {
-      setLocalidadesFiltradas([]);
-    }
-  }, [form.municipio_id]);
-
-
-
-
-
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
+
     setError('')
+
+    /*
+     * Validación mínima en frontend.
+     *
+     * Nombres y ambos apellidos forman parte del registro mínimo definido.
+     */
+    if (
+      !form.nombres.trim() ||
+      !form.apellido_paterno.trim() ||
+      !form.apellido_materno.trim() ||
+      !form.telefono.trim() ||
+      !form.correo_electronico.trim()
+    ) {
+      setError('Completa todos los campos requeridos.')
+      return
+    }
+
     setLoading(true)
+
     try {
-      if (productor?.id) {
-        await PUT(`/core/productor/${productor.id}`, form)
-      } else {
-        await POST('/core/productor', form)
-      }
+      /*
+       * ── ALTA FUNCIONAL ───────────────────────────────────────────────────
+       *
+       * Endpoint confirmado por el backend:
+       *
+       *   POST /productores
+       *
+       * Se envía únicamente el JSON mínimo requerido.
+       *
+       * No se envían:
+       * - contraseña
+       * - rol
+       * - usuario
+       * - municipio
+       * - localidad
+       * - parcela
+       * - fecha de nacimiento
+       * - género
+       * - experiencia
+       * - tipo de productor
+       *
+       * Esos datos podrán incorporarse posteriormente cuando formen parte
+       * del flujo correspondiente.
+       */
+      await POST('/productores', {
+        nombres: form.nombres.trim(),
+        apellido_paterno: form.apellido_paterno.trim(),
+        apellido_materno: form.apellido_materno.trim(),
+        telefono: form.telefono.trim(),
+        correo_electronico: form.correo_electronico.trim(),
+      })
+
       onSaved()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Error al registrar el productor'
+      )
     } finally {
       setLoading(false)
     }
@@ -136,62 +184,124 @@ export default function ModalProductor({ productor, onClose, onSaved }: Props) {
       ancho="lg"
       footer={
         <>
-          <Button variante="secundario" type="button" onClick={onClose}>Cancelar</Button>
-          <Button variante="primario" type="submit" form="form-productor" cargando={loading}>
+          <Button
+            variante="secundario"
+            type="button"
+            onClick={onClose}
+          >
+            Cancelar
+          </Button>
+
+          <Button
+            variante="primario"
+            type="submit"
+            form="form-productor"
+            cargando={loading}
+          >
             {productor ? 'Guardar cambios' : 'Crear productor'}
           </Button>
         </>
       }
     >
-      <form id="form-productor" onSubmit={handleSubmit}>
-        <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
-          <Field label="Nombres" name="nombres" value={form.nombres ?? ''} onChange={update('nombres')} required />
-          <Field label="Apellido paterno" name="apellido_paterno" value={form.apellido_paterno ?? ''} onChange={update('apellido_paterno')} required />
-          <Field label="Apellido materno" name="apellido_materno" value={form.apellido_materno ?? ''} onChange={update('apellido_materno')} />
-          <Field label="Fecha de nacimiento" name="fecha_nacimiento" type="date" value={form.fecha_nacimiento ?? ''} onChange={update('fecha_nacimiento')} />
-          <SelectField
-            label="Género" name="genero"
-            value={form.genero ?? ''}
-            onChange={update('genero')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              { value: 'Masculino', label: 'Masculino' },
-              { value: 'Femenino', label: 'Femenino' },
-              { value: 'No binario', label: 'No binario' },
-              { value: 'Prefiero no decir', label: 'Prefiero no decir' },
-            ]}
+      <form
+        id="form-productor"
+        onSubmit={handleSubmit}
+      >
+        <div
+          style={{
+            display: 'grid',
+            gridTemplateColumns: '1fr 1fr',
+            gap: '16px',
+          }}
+        >
+          <Field
+            label="Nombres"
+            name="nombres"
+            value={form.nombres}
+            onChange={update('nombres')}
+            required
           />
-          <Field label="Años de experiencia" name="anios_experiencia" type="number" value={form.anios_experiencia ?? ''} onChange={update('anios_experiencia')} />
-          <SelectField
-            label="Tipo de productor" name="tipo_productor_id"
-            value={form.tipo_productor_id ?? ''}
-            onChange={update('tipo_productor_id')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              ...tiposProductor.map(t => ({ value: t.id, label: t.nombre })),
-            ]}
+
+          <Field
+            label="Apellido paterno"
+            name="apellido_paterno"
+            value={form.apellido_paterno}
+            onChange={update('apellido_paterno')}
+            required
           />
-          <SelectField
-            label="Municipio" name="municipio_id"
-            value={form.municipio_id !== undefined && form.municipio_id !== null ? String(form.municipio_id) : ''}
-            onChange={update('municipio_id')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              ...municipios.map(m => ({ value: String(m.id), label: m.nombre })),
-            ]}
+
+          <Field
+            label="Apellido materno"
+            name="apellido_materno"
+            value={form.apellido_materno}
+            onChange={update('apellido_materno')}
+            required
           />
-          <SelectField
-            label="Localidad" name="localidad_id"
-            value={form.localidad_id !== undefined && form.localidad_id !== null ? String(form.localidad_id) : ''}
-            onChange={update('localidad_id')}
-            options={[
-              { value: '', label: '— Selecciona —' },
-              ...localidadesFiltradas.map(l => ({ value: String(l.id), label: l.nombre })),
-            ]}
+
+          <Field
+            label="Teléfono"
+            name="telefono"
+            type="tel"
+            value={form.telefono}
+            onChange={update('telefono')}
+            required
+          />
+
+          <Field
+            label="Correo electrónico"
+            name="correo_electronico"
+            type="email"
+            value={form.correo_electronico}
+            onChange={update('correo_electronico')}
+            required
           />
         </div>
-        {error && <p style={{ color: 'var(--rojo)', marginTop: 12 }}>{error}</p>}
+
+        {error && (
+          <p
+            style={{
+              color: 'var(--rojo)',
+              marginTop: 12,
+            }}
+          >
+            {error}
+          </p>
+        )}
       </form>
+
+      {/*
+        ───────────────────────────────────────────────────────────────────
+        FUNCIONALIDADES FUTURAS — NO ELIMINAR
+
+        El componente original permitía editar productores mediante:
+
+          PUT /core/productor/:id
+
+        Ese endpoint no está disponible actualmente.
+
+        Por eso, en esta etapa el componente solamente implementa:
+
+          POST /productores
+
+        Cuando exista el endpoint de edición, se deberá restaurar la
+        bifurcación del submit:
+
+          if (productor?.id) {
+            await PUT(`/productores/${productor.id}`, form)
+          } else {
+            await POST('/productores', form)
+          }
+
+        También se conservan conceptualmente los campos adicionales que
+        existían anteriormente (fecha de nacimiento, género, experiencia,
+        municipio, localidad, tipo de productor, comunidad), pero no se
+        muestran porque NO forman parte del JSON mínimo actual de alta.
+
+        Esto es intencional: primero implementamos el contrato actual del
+        backend y posteriormente ampliamos el formulario cuando esos datos
+        estén definidos para este flujo.
+        ───────────────────────────────────────────────────────────────────
+      */}
     </Modal>
   )
 }

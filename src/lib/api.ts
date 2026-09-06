@@ -38,27 +38,35 @@ interface ApiOptions extends RequestInit {
 async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T> {
   const { auth = true, headers, ...rest } = opts
 
+  const method = (rest.method || 'GET').toUpperCase()
+
   const reqHeaders: Record<string, string> = {
-    'Content-Type': 'application/json',
     ...(headers as Record<string, string>),
+    'ngrok-skip-browser-warning': 'true',
+  }
+
+  if (method !== 'GET' && method !== 'HEAD') {
+    reqHeaders['Content-Type'] = 'application/json'
   }
 
   if (auth) {
     const token = getToken()
     if (token) reqHeaders['Authorization'] = `Bearer ${token}`
   }
+
   const hadAuthToken = Boolean(reqHeaders['Authorization'])
 
-  //const normalizedPath = normalizePath(path)
-  const normalizedPath = path.trim() // No forzar prefijo /api, lo maneja el backend QUITAR CUANDO SE VAYA A PRODUCCIÓN
+  const normalizedPath = path.trim()
+
   const url = /^https?:\/\//i.test(normalizedPath)
     ? normalizedPath
     : `${API_BASE}${normalizedPath}`
 
   const res = await fetch(url, {
-    headers: reqHeaders,
     ...rest,
+    headers: reqHeaders,
   })
+
 
   if (!res.ok) {
     const err = await res.json().catch(() => ({ detail: res.statusText }))

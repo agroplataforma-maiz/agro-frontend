@@ -14,7 +14,7 @@ export const MOCK_ADMIN: Usuario = {
   activo: true,
   ultimo_acceso: null,
   last_login: null,
-  fecha_registro: '2026-08-21T00:00:00.000Z',
+  creado_en: '2026-08-21T00:00:00.000Z',
 }
 
 export const MOCK_USUARIOS: Usuario[] = [
@@ -28,7 +28,7 @@ export const MOCK_USUARIOS: Usuario[] = [
     activo: true,
     ultimo_acceso: null,
     last_login: null,
-    fecha_registro: '2026-08-20T00:00:00.000Z',
+    creado_en: '2026-08-20T00:00:00.000Z',
   },
   {
     id: 'mock-tecnico-001',
@@ -39,7 +39,7 @@ export const MOCK_USUARIOS: Usuario[] = [
     activo: true,
     ultimo_acceso: null,
     last_login: null,
-    fecha_registro: '2026-08-19T00:00:00.000Z',
+    creado_en: '2026-08-19T00:00:00.000Z',
   },
   {
     id: 'mock-visualizador-001',
@@ -50,7 +50,7 @@ export const MOCK_USUARIOS: Usuario[] = [
     activo: true,
     ultimo_acceso: null,
     last_login: null,
-    fecha_registro: '2026-08-18T00:00:00.000Z',
+    creado_en: '2026-08-18T00:00:00.000Z',
   },
   {
     id: 'mock-productor-001',
@@ -61,7 +61,7 @@ export const MOCK_USUARIOS: Usuario[] = [
     activo: true,
     ultimo_acceso: null,
     last_login: null,
-    fecha_registro: '2026-08-17T00:00:00.000Z',
+    creado_en: '2026-08-17T00:00:00.000Z',
   },
   {
     id: 'mock-invitado-001',
@@ -72,7 +72,7 @@ export const MOCK_USUARIOS: Usuario[] = [
     activo: true,
     ultimo_acceso: null,
     last_login: null,
-    fecha_registro: '2026-08-16T00:00:00.000Z',
+    creado_en: '2026-08-16T00:00:00.000Z',
   },
 ]
 

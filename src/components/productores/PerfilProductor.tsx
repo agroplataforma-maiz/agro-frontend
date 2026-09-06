@@ -10,7 +10,7 @@ import Button from '@/components/ui/Button'
 import StateView from '@/components/ui/StateView'
 
 interface Props {
-  id: number
+  id: string
   onVolver: () => void
 }
 
@@ -19,7 +19,7 @@ function iniciales(nombre: string) {
 }
 
 // Secciones del perfil — cada una consume su propio endpoint
-const SECCIONES: { key: string; emoji: string; label: string; path: (id: number) => string }[] = [
+const SECCIONES: { key: string; emoji: string; label: string; path: (id: string) => string }[] = [
   { key: 'lenguas',     emoji: '🗣️',  label: 'Lenguas',                path: id => `/catalogo/lengua?productor_id=${id}` },
   { key: 'geo',         emoji: '🌐',  label: 'Geografía',              path: id => `/social/geo?productor_id=${id}` },
   { key: 'socio',       emoji: '👥',  label: 'Datos socioeconómicos',  path: id => `/social/socioeconomico?productor_id=${id}` },

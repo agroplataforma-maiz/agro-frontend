@@ -37,7 +37,7 @@ export function useMedioParcela(
 ) {
   return useQuery<MedioParcela>({
     queryKey: ['medio-parcela', mongoId],
-    queryFn: () => GET(`/medios-parcela/${mongoId}`) as Promise<MedioParcela>,
+    queryFn: () => GET(`/medios-parcelas/${mongoId}`) as Promise<MedioParcela>,
     enabled: Boolean(mongoId),
   });
 }

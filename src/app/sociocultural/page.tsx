@@ -874,7 +874,7 @@ export default function Page() {
               pasos={STEPS}
               progresos={pg}
               productores={productores ?? []}
-              tecnicosCampo={(tecnicosCampo ?? []).map(t => ({ ...t, id: typeof t.id === 'string' ? Number(t.id) : t.id }))}
+              tecnicosCampo={tecnicosCampo ?? []}
             />
           </div>
 

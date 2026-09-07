@@ -2,20 +2,30 @@
 'use client'
 
 import Tabla, { Columna } from '@/components/ui/Tabla'
-import type { Comunidad } from '@/types'
+//import type { Comunidad } from '@/types'
+
+interface ComunidadTabla {
+  id: string
+  nombre: string
+  municipio_nombre?: string
+  localidad_nombre?: string
+  lengua_indigena?: string
+  poblacion?: number
+  num_productores?: number
+}
 
 
 import Button from '@/components/ui/Button'
 import { DEL } from '@/lib/api'
 
 interface Props {
-  comunidades: Comunidad[]
-  onEdit?: (comunidad: Comunidad) => void
-  onDelete?: (id: number) => void
+  comunidades: ComunidadTabla[]
+  onEdit?: (comunidad: ComunidadTabla) => void
+  onDelete?: (id: string) => void
 }
 
 export default function TablaComunidades({ comunidades, onEdit, onDelete }: Props) {
-  const columnas: Columna<Comunidad>[] = [
+  const columnas: Columna<ComunidadTabla>[] = [
     { key: 'nombre', header: 'Comunidad', width: '22%' },
     { key: 'municipio_nombre', header: 'Municipio', width: '18%' },
     { key: 'localidad_nombre', header: 'Localidad', width: '18%' },

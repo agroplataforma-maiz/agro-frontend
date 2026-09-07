@@ -16,10 +16,11 @@ export default function AdminComunidadesPage() {
   const router = useRouter()
   const [modalOpen, setModalOpen] = useState(false)
   const [comunidadEdit, setComunidadEdit] = useState<Comunidad | null>(null)
-  const [perfilId, setPerfilId] = useState<number | null>(null)
+  const [perfilId, setPerfilId] = useState<string | null>(null)
   // Simulación de datos para KPIs
   const [comunidades, setComunidades] = useState<Comunidad[]>([])
-  const productoresVinculados = comunidades.reduce((acc, c) => acc + (c.num_productores || 0), 0)
+  const productoresVinculados = 0
+  // const productoresVinculados = comunidades.reduce((acc, c) => acc + (c.num_productores || 0), 0)
   const municipios = Array.from(new Set(comunidades.map(c => c.municipio_nombre))).filter(Boolean)
 
   useEffect(() => {

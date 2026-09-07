@@ -10,9 +10,9 @@ import { useAppStore } from '@/store/useAppStore'
 import StateView from '@/components/ui/StateView'
 
 interface Props {
-  id: number
+  id: string
   onVolver: () => void
-  onEdit?: (id: number) => void
+  onEdit?: (id: string) => void
 }
 
 export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
@@ -20,12 +20,12 @@ export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
   const rol = usuario?.rol;
   const { data: comunidad, isLoading } = useQuery<Comunidad>({
     queryKey: ['comunidad', id],
-    queryFn:  () => GET(`/core/comunidad/${id}`),
+    queryFn: () => GET(`/core/comunidad/${id}`),
   })
 
   const { data: productores = [] } = useQuery<Productor[]>({
     queryKey: ['productores-comunidad', id],
-    queryFn:  () => GET(`/core/productor?comunidad_id=${id}`),
+    queryFn: () => GET(`/core/productor?comunidad_id=${id}`),
     select: (d: unknown) => {
       const data = d as Productor[] | { items?: Productor[]; results?: Productor[] }
       return Array.isArray(data) ? data : data.items ?? data.results ?? []
@@ -56,19 +56,19 @@ export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
           <div className={styles.heroInfo}>
             <div className={styles.heroTop}>
               <h1 className={styles.nombre}>{comunidad.nombre}</h1>
-              {comunidad.lengua_indigena && (
-                <span className={styles.badge}>{comunidad.lengua_indigena}</span>
+              {comunidad.nombre_lengua_orig && (
+                <span className={styles.badge}>{comunidad.nombre_lengua_orig}</span>
               )}
             </div>
             <div className={styles.meta}>
               {comunidad.municipio_nombre && (
                 <span className={styles.metaItem}>📍 {comunidad.municipio_nombre}</span>
               )}
-              {comunidad.localidad_nombre && (
+              {/*comunidad.localidad_nombre && (
                 <span className={styles.metaItem}>🏠 {comunidad.localidad_nombre}</span>
-              )}
-              {comunidad.poblacion && (
-                <span className={styles.metaItem}>👥 {comunidad.poblacion.toLocaleString()} hab.</span>
+              )*/}
+              {comunidad.poblacion_total && (
+                <span className={styles.metaItem}>👥 {comunidad.poblacion_total.toLocaleString()} hab.</span>
               )}
             </div>
           </div>
@@ -87,14 +87,17 @@ export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
 
       {/* Stats rápidas */}
       <div className={styles.statsGrid}>
-        <StatPerfil emoji="🔢" label="ID"             valor={String(comunidad.id)} />
-        <StatPerfil emoji="🧑‍🌾" label="Productores"  valor={comunidad.num_productores != null ? String(comunidad.num_productores) : (productores.length ? String(productores.length) : undefined)} />
-        <StatPerfil emoji="🗣️" label="Lengua indígena" valor={comunidad.lengua_indigena} />
-        <StatPerfil emoji="👥" label="Población"      valor={comunidad.poblacion?.toLocaleString()} />
+        <StatPerfil emoji="🔢" label="ID" valor={String(comunidad.id)} />
+        <StatPerfil
+          emoji="🧑‍🌾"
+          label="Productores"
+          valor={productores.length ? String(productores.length) : undefined}
+        />        <StatPerfil emoji="🗣️" label="Lengua indígena" valor={comunidad.nombre_lengua_orig} />
+        <StatPerfil emoji="👥" label="Población" valor={comunidad.poblacion_total?.toLocaleString()} />
       </div>
 
       {/* Coordenadas (si existen) */}
-      {(comunidad.latitud || comunidad.longitud) && (
+      {/*(comunidad.latitud || comunidad.longitud) && (
         <div className={styles.seccion}>
           <h2 className={styles.secTitulo}>📌 Ubicación geográfica</h2>
           <div className={styles.coordGrid}>
@@ -108,7 +111,7 @@ export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
             </div>
           </div>
         </div>
-      )}
+      )*/}
 
       {/* Lista de productores asociados */}
       <div className={styles.seccion}>

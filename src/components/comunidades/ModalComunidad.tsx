@@ -14,7 +14,7 @@ import { useMunicipios } from '@/hooks/useMunicipios'
 import { useLenguas } from '@/hooks/useLenguas'
 
 interface Props {
-  comunidad: Comunidad | null
+  comunidad: Partial<Comunidad> | null
   onClose: () => void
   onSaved: () => void
 }
@@ -37,7 +37,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
   const [form, setForm] = useState<Partial<Comunidad>>({
     nombre: '',
     nombre_lengua_orig: '',
-    tipo: '',
+    tipo: undefined,
     municipio_id: undefined,
 
     presencia_maiz_nativo: false,
@@ -70,7 +70,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
     (k: keyof Comunidad) =>
     (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
 
-      let value: any = e.target.value
+      let value: string | number | undefined = e.target.value
 
       if (
         k === 'municipio_id' ||
@@ -112,8 +112,8 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
       }
 
       onSaved()
-    } catch (err: any) {
-      setError(err?.message ?? 'Error al guardar')
+    } catch (err: unknown) {
+      setError(err instanceof Error ? err.message : 'Error al guardar')
     } finally {
       setLoading(false)
     }
@@ -148,12 +148,14 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
         {step === 0 && (
           <>
             <Field
+              name="nombre"
               label="Nombre"
               value={form.nombre ?? ''}
               onChange={update('nombre')}
             />
 
             <SelectField
+              name="tipo"
               label="Tipo"
               value={form.tipo ?? ''}
               onChange={update('tipo')}
@@ -174,6 +176,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
         {step === 1 && (
           <>
             <SelectField
+              name="nombre_lengua_orig"
               label="Lengua originaria"
               value={form.nombre_lengua_orig ?? ''}
               onChange={update('nombre_lengua_orig')}
@@ -187,6 +190,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
             />
 
             <Field
+              name="poblacion_total"
               label="Población"
               type="number"
               value={form.poblacion_total ?? ''}
@@ -194,6 +198,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
             />
 
             <Field
+              name="num_localidades"
               label="Localidades"
               type="number"
               value={form.num_localidades ?? ''}
@@ -234,6 +239,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
             </label>
 
             <SelectField
+              name="diversidad_ecologica_score"
               label="Diversidad"
               value={String(form.diversidad_ecologica_score ?? 3)}
               onChange={update('diversidad_ecologica_score')}
@@ -244,6 +250,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
             />
 
             <SelectField
+              name="riqueza_cultural_score"
               label="Riqueza cultural"
               value={String(form.riqueza_cultural_score ?? 3)}
               onChange={update('riqueza_cultural_score')}

@@ -44,6 +44,18 @@ const COMUNIDADES_HUASTECA: PuntoMapaHuasteca[] = [
   { id: 22, comunidad: 'Coromohom', municipio: 'Tanlajás', latitud: 21.6770912, longitud: -98.8884554 },
 ];
 
+type ComunidadMock = {
+  id: string;
+  nombre: string;
+  municipio_nombre: string;
+  localidad_nombre: string;
+  lengua_indigena: string;
+  poblacion?: number;
+  num_productores?: number;
+  latitud: number;
+  longitud: number;
+};
+
 // Hook para detectar si es móvil
 function useIsMobile() {
   const [isMobile, setIsMobile] = useState(false);
@@ -96,10 +108,12 @@ export default function ComunidadesPage() {
   const [municipioFiltro, setMunicipioFiltro] = useState('todos');
   // Modal de nueva comunidad o edición
   const [modalNuevaOpen, setModalNuevaOpen] = useState(false);
-  const [comunidadEdit, setComunidadEdit] = useState<Comunidad | null>(null);
-  const [comunidadPerfilId, setComunidadPerfilId] = useState<number | null>(null);
-  const [comunidades, setComunidades] = useState(COMUNIDADES_HUASTECA.map(c => ({
-    id: Number(c.id),
+  const [comunidadEdit, setComunidadEdit] = useState<ComunidadMock | null>(null);
+  // const [comunidadEdit, setComunidadEdit] = useState<Comunidad | null>(null);
+  const [comunidadPerfilId, setComunidadPerfilId] = useState<string | null>(null);
+  const [comunidades, setComunidades] = useState<ComunidadMock[]>(
+  COMUNIDADES_HUASTECA.map(c => ({
+    id: String(c.id),
     nombre: c.comunidad,
     municipio_nombre: c.municipio,
     localidad_nombre: '',

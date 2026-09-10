@@ -15,7 +15,7 @@ import { iniciales } from '@/lib/auth'
 // import { iniciales } from '@/lib/auth'
 import { useAppStore } from '@/store/useAppStore'
 import { ROL_COLOR, ROL_LABELS } from '@/types'
-import type { Comunidad, Productor, Usuario } from '@/types'
+import type { Comunidad, Productor, Investigador, Usuario } from '@/types'
 import styles from './dashboard.module.css'
 
 type Acceso = {
@@ -28,6 +28,7 @@ type Acceso = {
 
 const ACCESOS_ADMIN: Acceso[] = [
   { href: '/productores', icon: '🧑‍🌾', label: 'Consulta de registros de productores', desc: 'Ver, editar o depurar expedientes existentes', tone: 'verde' },
+  { href: '/investigadores', icon: '🧑‍🔬', label: 'Consulta de registros de investigadores', desc: 'Ver, editar o depurar expedientes existentes', tone: 'verde' },
   { href: '/comunidades', icon: '🏘️', label: 'Consulta de registros de comunidades', desc: 'Revisión territorial, lengua y cobertura', tone: 'maiz' },
   { href: '/sociocultural', icon: '🎭', label: 'Consulta de registros socioculturales', desc: 'Saberes, prácticas y patrimonio ya capturado', tone: 'tierra' },
   { href: '/fenotipo', icon: '🔬', label: 'Consulta de registros fenotípicos', desc: 'Seguimiento técnico y evaluación morfológica', tone: 'azul' },
@@ -37,6 +38,7 @@ const ACCESOS_ADMIN: Acceso[] = [
 
 const ACCESOS_CAMPO: Acceso[] = [
   { href: '/productores', icon: '🌽', label: 'Productores', desc: 'Captura y actualización de datos en campo', tone: 'verde' },
+  { href: '/investigadores', icon: '🧑‍🔬', label: 'Investigadores', desc: 'Captura y actualización de datos en campo', tone: 'verde' },
   { href: '/comunidades', icon: '🏘️', label: 'Comunidades', desc: 'Consulta territorial y contexto local', tone: 'maiz' },
   { href: '/sociocultural', icon: '🎭', label: 'Sociocultural', desc: 'Registro de saberes y prácticas comunitarias', tone: 'tierra' },
   { href: '/fenotipo', icon: '🔬', label: 'Fenotipo', desc: 'Evaluación morfológica y evidencia técnica', tone: 'azul' },
@@ -97,6 +99,17 @@ export default function DashboardPage() {
       return [];
     },
   });
+  // Obtener investigadores desde el backend
+  const { data: investigadores = [] } = useQuery<Investigador[]>({
+    queryKey: ['investigadores'],
+    queryFn: () => GET('/core/investigador'),
+    select: (d: unknown) => {
+      if (Array.isArray(d)) return d as Investigador[];
+      if (d && typeof d === 'object' && 'items' in d) return (d as { items: Investigador[] }).items;
+      if (d && typeof d === 'object' && 'results' in d) return (d as { results: Investigador[] }).results;
+      return [];
+    },
+  });
 
   // Redirigir si no es admin
   useEffect(() => {
@@ -114,6 +127,7 @@ export default function DashboardPage() {
   const usuariosRecientes = usuarios.slice(0, 6)
   const municipiosCubiertos = new Set(comunidades.map(c => c.municipio_nombre).filter(Boolean)).size
   const totalProductores = productores?.length ?? 0
+  const totalInvestigadores = investigadores?.length ?? 0
   const resumenRol = isAdmin
     ? {
         eyebrow: 'Administración · Centro de control',

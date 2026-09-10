@@ -57,6 +57,13 @@ export interface Productor {
   nombres: string
   apellido_paterno: string
   apellido_materno?: string
+
+  telefono?: string | null
+  correo_electronico?: string | null
+
+  creado_en?: string | null
+  actualizado_en?: string | null
+
   fecha_nacimiento?: string
   genero?: string
   anios_experiencia?: number
@@ -66,6 +73,54 @@ export interface Productor {
   localidad_nombre?: string
   tipo_productor_id?: number
   tipo_productor_nombre?: string
+  comunidad_id?: number
+  comunidad_nombre?: string
+}
+
+export interface Investigador {
+  id: UUID
+  nombres: string
+  apellido_paterno: string
+  apellido_materno?: string
+
+  telefono?: string | null
+  correo_electronico?: string | null
+
+  creado_en?: string | null
+  actualizado_en?: string | null
+
+  fecha_nacimiento?: string
+  genero?: string
+  anios_experiencia?: number
+
+  municipio_id?: number
+  municipio_nombre?: string
+  localidad_id?: number
+  localidad_nombre?: string
+  comunidad_id?: number
+  comunidad_nombre?: string
+}
+
+export interface TecnicoCampo {
+  id: UUID
+  nombres: string
+  apellido_paterno: string
+  apellido_materno?: string
+
+  telefono?: string | null
+  correo_electronico?: string | null
+
+  creado_en?: string | null
+  actualizado_en?: string | null
+
+  fecha_nacimiento?: string
+  genero?: string
+  anios_experiencia?: number
+
+  municipio_id?: number
+  municipio_nombre?: string
+  localidad_id?: number
+  localidad_nombre?: string
   comunidad_id?: number
   comunidad_nombre?: string
 }
@@ -86,8 +141,6 @@ export interface TipoProductor {
   id: number
   nombre: string
 }
-
-
 
 export interface Catalogo {
   id: number

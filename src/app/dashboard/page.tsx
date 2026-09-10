@@ -7,7 +7,7 @@ import React from 'react';
 import AdminShell from '@/components/dashboard/AdminShell';
 import { useQuery } from '@tanstack/react-query'
 import { GET } from '@/lib/api'
-import type { Productor, Usuario } from '@/types'
+import type { Productor, TecnicoCampo, Investigador, Usuario } from '@/types'
 
 export default function DashboardPage() {
 
@@ -22,6 +22,16 @@ export default function DashboardPage() {
       return Array.isArray(data) ? data : (data.items ?? data.results ?? [])
     },
   })
+
+  const { data: tecnicos = [] } = useQuery<TecnicoCampo[]>({
+    queryKey: ['tecnicos-count'],
+    queryFn:  () => GET('/core/tecnico-campo') as Promise<TecnicoCampo[]>,
+    select:   (d: unknown) => {
+      const data = d as TecnicoCampo[] | { items?: TecnicoCampo[]; results?: TecnicoCampo[] }
+      return Array.isArray(data) ? data : (data.items ?? data.results ?? [])
+    },
+  })
+
   const { data: usuarios = [] } = useQuery<Usuario[]>({
     queryKey: ['usuarios-count'],
     queryFn:  () => GET('/auth/usuarios') as Promise<Usuario[]>,
@@ -225,6 +235,29 @@ export default function DashboardPage() {
                 </div>
               </div>
               )}
+
+              {puedeCapturar ? (
+              <button className={styles['modulo-card']} role="listitem" onClick={() => handleNavigate('tecnicos')} aria-label="Módulo Técnicos de Campo - Activo">
+                <span className={styles['mod-badge-nuevo']} aria-label="Módulo nuevo">Nuevo</span>
+                <div className={`${styles['mod-ico-wrap']} ${styles['mod-ico-verde']}`} aria-hidden="true">🚁</div>
+                <div className={styles['mod-nombre']}>Técnicos de Campo</div>
+                <p className={styles['mod-desc']}>Registro y perfil completo: datos personales, socioeconómicos, cultural, seguridad alimentaria y consentimiento.</p>
+                <div className={styles['mod-footer']}>
+                  <span className={styles['mod-estado-activo']}>● Activo</span>
+                  <span className={styles['mod-arrow']} aria-hidden="true">→</span>
+                </div>
+              </button>
+              ) : (
+              <div className={`${styles['modulo-card']} ${styles['disabled']}`} role="listitem" aria-label="Módulo Técnicos de Campo - Sin acceso">
+                <div className={`${styles['mod-ico-wrap']} ${styles['mod-ico-gris']}`} aria-hidden="true">🚁</div>
+                <div className={styles['mod-nombre']}>Técnicos de Campo</div>
+                <p className={styles['mod-desc']}>Registro y perfil completo: datos personales, socioeconómicos, cultural, seguridad alimentaria y consentimiento.</p>
+                <div className={styles['mod-footer']}>
+                  <span className={styles['mod-estado-pronto']}>🔒 Sin acceso</span>
+                </div>
+              </div>
+              )}
+
               {puedeVerComunidades ? (
               <button className={styles['modulo-card']} role="listitem" onClick={() => handleNavigate('comunidades')} aria-label={esSoloConsultaMapa ? 'Mapa de comunidades - Activo' : 'Módulo Comunidades - Activo'}>
                 <span className={styles['mod-badge-nuevo']} aria-label={esSoloConsultaMapa ? 'Mapa disponible' : 'Módulo nuevo'}>{esSoloConsultaMapa ? 'Mapa' : 'Nuevo'}</span>

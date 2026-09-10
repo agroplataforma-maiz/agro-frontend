@@ -111,6 +111,43 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
               <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
             </button>
           )}
+
+          {/* Investigadores */}
+          {['administrador','investigador','tecnico_campo'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/investigadores') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/investigadores') ? 'page' : undefined}
+              aria-label="Investigadores"
+              data-tooltip="Investigadores"
+              onClick={() => {
+                onNavigate('/investigadores')
+                if (onMobileClose) onMobileClose()
+              }}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🧑‍🔬</span>
+              <span className={styles['sb-item-txt']}>Investigadores</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+            </button>
+          )}
+
+          {/* Técnicos de Campo */}
+          {['administrador','investigador'].includes(rol) && (
+            <button
+              className={styles['sb-item'] + (pathname.startsWith('/tecnicos') ? ' ' + styles['active'] : '')}
+              aria-current={pathname.startsWith('/tecnicos') ? 'page' : undefined}
+              aria-label="Técnicos de Campo"
+              data-tooltip="Técnicos de Campo"
+              onClick={() => {
+                onNavigate('/tecnicos')
+                if (onMobileClose) onMobileClose()
+              }}
+            >
+              <span className={styles['sb-item-ico']} aria-hidden="true">🚁</span>
+              <span className={styles['sb-item-txt']}>Técnicos de Campo</span>
+              <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+            </button>
+          )}
+
           {/* Comunidades */}
           {['administrador','investigador','tecnico_campo'].includes(rol) && (
             <button
@@ -238,6 +275,26 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 <span className={styles['sb-item-txt']}>Productores</span>
                 <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
               </button>
+
+              {/* Técnicos de Campo */}
+              <button
+                className={
+                  styles['sb-item'] +
+                  (pathname.startsWith('/tecnicos') ? ' ' + styles['active'] : '')
+                }
+                aria-current={pathname.startsWith('/tecnicos') ? 'page' : undefined}
+                aria-label="Técnicos de Campo"
+                data-tooltip="Técnicos de Campo"
+                onClick={() => {
+                  onNavigate('/tecnicos')
+                  if (onMobileClose) onMobileClose()
+                }}
+              >
+                <span className={styles['sb-item-ico']} aria-hidden="true">🚁</span>
+                <span className={styles['sb-item-txt']}>Técnicos de Campo</span>
+                <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{marginLeft:4}}>Nuevo</span>
+              </button>
+
               {/* Comunidades debajo de Productores, con badge Nuevo */}
               <button
                 className={

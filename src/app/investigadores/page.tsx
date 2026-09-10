@@ -1,4 +1,4 @@
-// src/app/productores/page.tsx
+// src/app/investigadores/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -7,13 +7,13 @@ import { DEL } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { useCatalogos } from '@/hooks/useCatalogos'
 
-import ModalProductor from '@/components/productores/ModalProductor'
-import PerfilProductor from '@/components/productores/PerfilProductor'
+import ModalInvestigador from '@/components/investigadores/ModalInvestigador'
+import PerfilInvestigador from '@/components/investigadores/PerfilInvestigador'
 import UsuariosVisualizadoresPanel from '@/components/productores/UsuariosVisualizadoresPanel'
-import ProductoresPanel from '@/components/productores/ProductoresPanel'
+import InvestigadoresPanel from '@/components/investigadores/InvestigadoresPanel'
 
-import type { Productor } from '@/types'
-import styles from './productores.module.css'
+import type { Investigador } from '@/types'
+import styles from './investigadores.module.css'
 import AdminShell from '@/components/dashboard/AdminShell'
 import Button from '@/components/ui/Button'
 import ModuleHero from '@/components/ui/ModuleHero'
@@ -25,13 +25,11 @@ import { useRouter } from 'next/navigation'
 
 type Vista = 'lista' | 'perfil'
 
-export default function ProductoresPage() {
+export default function InvestigadoresPage() {
   // ── Hooks y stores al inicio ──
   const router = useRouter()
   const accesoPermitido = useRolGuard([
-    'administrador',
-    'investigador',
-    'tecnico_campo',
+    'administrador'
   ])
 
   useCatalogos(accesoPermitido)
@@ -48,19 +46,19 @@ export default function ProductoresPage() {
   }, [usuario, router])
 
   const [vista, setVista] = useState<Vista>('lista')
-  const [productorId, setProductorId] = useState<string | null>(null)
+  const [investigadorId, setInvestigadorId] = useState<string | null>(null)
   const [modalAbierto, setModalAbierto] = useState(false)
-  const [editando, setEditando] = useState<Productor | null>(null)
-  const [confirmEliminar, setConfirmEliminar] = useState<Productor | null>(null)
+  const [editando, setEditando] = useState<Investigador | null>(null)
+  const [confirmEliminar, setConfirmEliminar] = useState<Investigador | null>(null)
 
-  // ── Eliminación de productores ────────────────────────────────────────────
+  // ── Eliminación de investigadores ────────────────────────────────────────────
   // TODO BACKEND:
-  // Implementar DELETE /productores/{id} antes de habilitar esta operación.
+  // Implementar DELETE /investigadores/{id} antes de habilitar esta operación.
   const eliminar = useMutation({
-    mutationFn: (id: string) => DEL(`/productores/${id}`),
+    mutationFn: (id: string) => DEL(`/investigadores/${id}`),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['productores'] })
-      addToast('Productor eliminado', 'ok')
+      qc.invalidateQueries({ queryKey: ['investigadores'] })
+      addToast('Investigador eliminado', 'ok')
     },
     onError: (e: Error) => addToast(e.message, 'err'),
   })
@@ -73,31 +71,31 @@ export default function ProductoresPage() {
   }
 
   const esAdmin = usuario.rol === 'administrador'
-  const puedeCrear = !esAdmin
+  const puedeCrear = esAdmin
 
-  function abrirEdicion(productor: Productor) {
-    setEditando(productor)
+  function abrirEdicion(investigador: Investigador) {
+    setEditando(investigador)
     setModalAbierto(true)
   }
 
-  function confirmarEliminar(productor: Productor) {
-    setConfirmEliminar(productor)
+  function confirmarEliminar(investigador: Investigador) {
+    setConfirmEliminar(investigador)
   }
 
   function verPerfil(id: string) {
-    setProductorId(id)
+    setInvestigadorId(id)
     setVista('perfil')
   }
 
   // ── Vista perfil ──────────────────────────────────────────────────────────
-  if (vista === 'perfil' && productorId) {
+  if (vista === 'perfil' && investigadorId) {
     return (
       <AdminShell contentPadding="24px 24px 32px">
-        <PerfilProductor
-          id={productorId}
+        <PerfilInvestigador
+          id={investigadorId}
           onVolver={() => {
             setVista('lista')
-            setProductorId(null)
+            setInvestigadorId(null)
           }}
         />
       </AdminShell>
@@ -110,16 +108,16 @@ export default function ProductoresPage() {
       <div className={styles.page}>
 
         <ModuleHero
-          eyebrow="Social · Módulo de productores"
+          eyebrow="Social · Módulo de investigadores"
           title={
             <>
-              Gestión de <em>Productores</em> 🌽
+              Gestión de <em>Investigadores</em> 🧑‍🔬
             </>
           }
           description={
             esAdmin
-              ? 'Consulta, actualiza o depura productores existentes. Las altas iniciales están reservadas para investigadores y técnicos de campo.'
-              : 'Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma.'
+              ? 'Consulta, actualiza o depura investigadores existentes. Las altas iniciales están reservadas para administradores.'
+              : 'Consulta, crea y administra investigadores vinculados al registro territorial y sociocultural de la plataforma.'
           }
           stats={[
             {
@@ -137,14 +135,14 @@ export default function ProductoresPage() {
             Solo visible para técnico de campo.
             El panel contiene su propia consulta, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        {usuario.rol === 'tecnico_campo' && (
+        {usuario.rol === 'administrador' && (
           <UsuariosVisualizadoresPanel />
         )}
 
-        {/* ── Productores ────────────────────────────────────────────────────
+        {/* ── Investigadores ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        <ProductoresPanel
+        <InvestigadoresPanel
           puedeCrear={puedeCrear}
           onNuevo={() => {
             setEditando(null)
@@ -155,22 +153,22 @@ export default function ProductoresPage() {
           onVerPerfil={verPerfil}
         />
 
-        {/* ── Modal de productor ─────────────────────────────────────────── */}
+        {/* ── Modal de investigador ─────────────────────────────────────────── */}
         {modalAbierto && (puedeCrear || Boolean(editando)) && (
-          <ModalProductor
-            productor={editando}
+          <ModalInvestigador
+            investigador={editando}
             onClose={() => setModalAbierto(false)}
             onSaved={() => {
               setModalAbierto(false)
 
               qc.invalidateQueries({
-                queryKey: ['productores'],
+                queryKey: ['investigadores'],
               })
 
               addToast(
                 editando
-                  ? 'Productor actualizado'
-                  : 'Productor creado',
+                  ? 'Investigador actualizado'
+                  : 'Investigador creado',
                 'ok'
               )
             }}
@@ -180,7 +178,7 @@ export default function ProductoresPage() {
         {/* ── Confirmación de eliminación ────────────────────────────────── */}
         {confirmEliminar && (
           <Modal
-            titulo="Eliminar productor"
+            titulo="Eliminar investigador"
             ancho="sm"
             onClose={() => setConfirmEliminar(null)}
             footer={

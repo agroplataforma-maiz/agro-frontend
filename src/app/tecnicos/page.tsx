@@ -1,4 +1,4 @@
-// src/app/productores/page.tsx
+// src/app/investigadores/page.tsx
 'use client'
 
 import { useState, useEffect } from 'react'
@@ -7,13 +7,13 @@ import { DEL } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { useCatalogos } from '@/hooks/useCatalogos'
 
-import ModalProductor from '@/components/productores/ModalProductor'
-import PerfilProductor from '@/components/productores/PerfilProductor'
+import ModalTecnico from '@/components/tecnicos/ModalTecnico'
+import PerfilTecnico from '@/components/tecnicos/PerfilTecnico'
 import UsuariosVisualizadoresPanel from '@/components/productores/UsuariosVisualizadoresPanel'
-import ProductoresPanel from '@/components/productores/ProductoresPanel'
+import TecnicosPanel from '@/components/tecnicos/TecnicosPanel'
 
-import type { Productor } from '@/types'
-import styles from './productores.module.css'
+import type { TecnicoCampo } from '@/types'
+import styles from './tecnicos.module.css'
 import AdminShell from '@/components/dashboard/AdminShell'
 import Button from '@/components/ui/Button'
 import ModuleHero from '@/components/ui/ModuleHero'
@@ -25,13 +25,11 @@ import { useRouter } from 'next/navigation'
 
 type Vista = 'lista' | 'perfil'
 
-export default function ProductoresPage() {
+export default function TecnicosPage() {
   // ── Hooks y stores al inicio ──
   const router = useRouter()
   const accesoPermitido = useRolGuard([
-    'administrador',
-    'investigador',
-    'tecnico_campo',
+    'administrador','investigador'
   ])
 
   useCatalogos(accesoPermitido)
@@ -48,19 +46,19 @@ export default function ProductoresPage() {
   }, [usuario, router])
 
   const [vista, setVista] = useState<Vista>('lista')
-  const [productorId, setProductorId] = useState<string | null>(null)
+  const [tecnicoId, setTecnicoId] = useState<string | null>(null)
   const [modalAbierto, setModalAbierto] = useState(false)
-  const [editando, setEditando] = useState<Productor | null>(null)
-  const [confirmEliminar, setConfirmEliminar] = useState<Productor | null>(null)
+  const [editando, setEditando] = useState<TecnicoCampo | null>(null)
+  const [confirmEliminar, setConfirmEliminar] = useState<TecnicoCampo | null>(null)
 
-  // ── Eliminación de productores ────────────────────────────────────────────
+  // ── Eliminación de técnicos ────────────────────────────────────────────
   // TODO BACKEND:
-  // Implementar DELETE /productores/{id} antes de habilitar esta operación.
+  // Implementar DELETE /tecnicos/{id} antes de habilitar esta operación.
   const eliminar = useMutation({
-    mutationFn: (id: string) => DEL(`/productores/${id}`),
+    mutationFn: (id: string) => DEL(`/tecnicos/${id}`),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['productores'] })
-      addToast('Productor eliminado', 'ok')
+      qc.invalidateQueries({ queryKey: ['tecnicos'] })
+      addToast('Técnico eliminado', 'ok')
     },
     onError: (e: Error) => addToast(e.message, 'err'),
   })
@@ -75,29 +73,29 @@ export default function ProductoresPage() {
   const esAdmin = usuario.rol === 'administrador'
   const puedeCrear = !esAdmin
 
-  function abrirEdicion(productor: Productor) {
-    setEditando(productor)
+  function abrirEdicion(tecnico: TecnicoCampo) {
+    setEditando(tecnico)
     setModalAbierto(true)
   }
 
-  function confirmarEliminar(productor: Productor) {
-    setConfirmEliminar(productor)
+  function confirmarEliminar(tecnico: TecnicoCampo) {
+    setConfirmEliminar(tecnico)
   }
 
   function verPerfil(id: string) {
-    setProductorId(id)
+    setTecnicoId(id)
     setVista('perfil')
   }
 
   // ── Vista perfil ──────────────────────────────────────────────────────────
-  if (vista === 'perfil' && productorId) {
+  if (vista === 'perfil' && tecnicoId) {
     return (
       <AdminShell contentPadding="24px 24px 32px">
-        <PerfilProductor
-          id={productorId}
+        <PerfilTecnico
+          id={tecnicoId}
           onVolver={() => {
             setVista('lista')
-            setProductorId(null)
+            setTecnicoId(null)
           }}
         />
       </AdminShell>
@@ -110,16 +108,16 @@ export default function ProductoresPage() {
       <div className={styles.page}>
 
         <ModuleHero
-          eyebrow="Social · Módulo de productores"
+          eyebrow="Social · Módulo de técnicos"
           title={
             <>
-              Gestión de <em>Productores</em> 🌽
+              Gestión de <em>Técnicos</em> 🌾
             </>
           }
           description={
             esAdmin
-              ? 'Consulta, actualiza o depura productores existentes. Las altas iniciales están reservadas para investigadores y técnicos de campo.'
-              : 'Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma.'
+              ? 'Consulta, actualiza o depura técnicos existentes. Las altas iniciales están reservadas para administradores e investigadores.'
+              : 'Consulta, crea y administra técnicos vinculados al registro territorial y sociocultural de la plataforma.'
           }
           stats={[
             {
@@ -137,14 +135,14 @@ export default function ProductoresPage() {
             Solo visible para técnico de campo.
             El panel contiene su propia consulta, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        {usuario.rol === 'tecnico_campo' && (
+        {usuario.rol === 'investigador' && (
           <UsuariosVisualizadoresPanel />
         )}
 
-        {/* ── Productores ────────────────────────────────────────────────────
+        {/* ── Técnicos ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        <ProductoresPanel
+        <TecnicosPanel
           puedeCrear={puedeCrear}
           onNuevo={() => {
             setEditando(null)
@@ -155,22 +153,22 @@ export default function ProductoresPage() {
           onVerPerfil={verPerfil}
         />
 
-        {/* ── Modal de productor ─────────────────────────────────────────── */}
+        {/* ── Modal de técnico ─────────────────────────────────────────── */}
         {modalAbierto && (puedeCrear || Boolean(editando)) && (
-          <ModalProductor
-            productor={editando}
+          <ModalTecnico
+            tecnico={editando}
             onClose={() => setModalAbierto(false)}
             onSaved={() => {
               setModalAbierto(false)
 
               qc.invalidateQueries({
-                queryKey: ['productores'],
+                queryKey: ['tecnicos'],
               })
 
               addToast(
                 editando
-                  ? 'Productor actualizado'
-                  : 'Productor creado',
+                  ? 'Técnico actualizado'
+                  : 'Técnico creado',
                 'ok'
               )
             }}
@@ -180,7 +178,7 @@ export default function ProductoresPage() {
         {/* ── Confirmación de eliminación ────────────────────────────────── */}
         {confirmEliminar && (
           <Modal
-            titulo="Eliminar productor"
+            titulo="Eliminar técnico"
             ancho="sm"
             onClose={() => setConfirmEliminar(null)}
             footer={

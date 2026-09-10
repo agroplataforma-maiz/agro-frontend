@@ -10,18 +10,18 @@ import Tabla, { type Columna } from '@/components/ui/Tabla'
 import Button from '@/components/ui/Button'
 import SearchInput from '@/components/ui/SearchInput'
 
-import type { Productor } from '@/types'
-import styles from '@/app/productores/productores.module.css'
+import type { TecnicoCampo } from '@/types'
+import styles from '@/app/tecnicos/tecnicos.module.css'
 
 interface Props {
   puedeCrear: boolean
   onNuevo: () => void
-  onEditar: (productor: Productor) => void
-  onEliminar: (productor: Productor) => void
+  onEditar: (tecnico: TecnicoCampo) => void
+  onEliminar: (tecnico: TecnicoCampo) => void
   onVerPerfil: (id: string) => void
 }
 
-export default function ProductoresPanel({
+export default function TecnicosPanel({
   puedeCrear,
   onNuevo,
   onEditar,
@@ -31,17 +31,17 @@ export default function ProductoresPanel({
   const municipios = useAppStore(s => s.municipios)
   const [busqueda, setBusqueda] = useState('')
 
-  // ── Productores ───────────────────────────────────────────────────────────
+  // ── Técnicos ───────────────────────────────────────────────────────────
   const {
-    data: productores = [],
+    data: tecnicos = [],
     isLoading,
-  } = useQuery<Productor[]>({
-    queryKey: ['productores'],
-    queryFn: () => GET('/productores/lista'),
+  } = useQuery<TecnicoCampo[]>({
+    queryKey: ['tecnicos'],
+    queryFn: () => GET('/tecnicos/lista'),
   })
 
-  // ── Filtro de productores ─────────────────────────────────────────────────
-  const filtrados = productores.filter(p => {
+  // ── Filtro de técnicos ─────────────────────────────────────────────────
+  const filtrados = tecnicos.filter(p => {
     const nombre = nombreCompleto(
       p.nombres,
       p.apellido_paterno,
@@ -60,8 +60,8 @@ export default function ProductoresPanel({
     return texto.includes(busqueda.toLowerCase())
   })
 
-  // ── Columnas de productores ───────────────────────────────────────────────
-  const columnas: Columna<Productor>[] = [
+  // ── Columnas de técnicos ───────────────────────────────────────────────
+  const columnas: Columna<TecnicoCampo>[] = [
     /*  
     {
       key: 'id',
@@ -100,7 +100,7 @@ export default function ProductoresPanel({
       <header className={styles.header}>
         <div>
           <h1 className={styles.titulo}>
-            Productores
+            Técnicos
           </h1>
 
           <p className={styles.subtitulo}>
@@ -119,7 +119,7 @@ export default function ProductoresPanel({
               variante="primario"
               onClick={onNuevo}
             >
-              + Nuevo productor
+              + Nuevo técnico
             </Button>
           )}
         </div>
@@ -131,12 +131,12 @@ export default function ProductoresPanel({
         datos={filtrados}
         columnas={columnas}
         cargando={isLoading}
-        vacio="No hay productores registrados"
+        vacio="No hay técnicos registrados"
         onRowClick={p => onVerPerfil(p.id)}
         acciones={p => (
           <div className={styles.acciones}>
             {/* TODO BACKEND:
-                Habilitar edición cuando exista PUT /productores/{id}. */}
+                Habilitar edición cuando exista PUT /tecnicos/{id}. */}
             <Button
               variante="ghost"
               tamaño="sm"
@@ -146,7 +146,7 @@ export default function ProductoresPanel({
             </Button>
 
             {/* TODO BACKEND:
-                Habilitar eliminación cuando exista DELETE /productores/{id}. */}
+                Habilitar eliminación cuando exista DELETE /tecnicos/{id}. */}
             <Button
               variante="peligro"
               tamaño="sm"

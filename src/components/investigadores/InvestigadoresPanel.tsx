@@ -10,18 +10,18 @@ import Tabla, { type Columna } from '@/components/ui/Tabla'
 import Button from '@/components/ui/Button'
 import SearchInput from '@/components/ui/SearchInput'
 
-import type { Productor } from '@/types'
-import styles from '@/app/productores/productores.module.css'
+import type { Investigador } from '@/types'
+import styles from '@/app/investigadores/investigadores.module.css'
 
 interface Props {
   puedeCrear: boolean
   onNuevo: () => void
-  onEditar: (productor: Productor) => void
-  onEliminar: (productor: Productor) => void
+  onEditar: (investigador: Investigador) => void
+  onEliminar: (investigador: Investigador) => void
   onVerPerfil: (id: string) => void
 }
 
-export default function ProductoresPanel({
+export default function InvestigadoresPanel({
   puedeCrear,
   onNuevo,
   onEditar,
@@ -31,17 +31,17 @@ export default function ProductoresPanel({
   const municipios = useAppStore(s => s.municipios)
   const [busqueda, setBusqueda] = useState('')
 
-  // ── Productores ───────────────────────────────────────────────────────────
+  // ── Investigadores ───────────────────────────────────────────────────────────
   const {
-    data: productores = [],
+    data: investigadores = [],
     isLoading,
-  } = useQuery<Productor[]>({
-    queryKey: ['productores'],
-    queryFn: () => GET('/productores/lista'),
+  } = useQuery<Investigador[]>({
+    queryKey: ['investigadores'],
+    queryFn: () => GET('/investigadores/lista'),
   })
 
-  // ── Filtro de productores ─────────────────────────────────────────────────
-  const filtrados = productores.filter(p => {
+  // ── Filtro de investigadores ─────────────────────────────────────────────────
+  const filtrados = investigadores.filter(p => {
     const nombre = nombreCompleto(
       p.nombres,
       p.apellido_paterno,
@@ -60,8 +60,8 @@ export default function ProductoresPanel({
     return texto.includes(busqueda.toLowerCase())
   })
 
-  // ── Columnas de productores ───────────────────────────────────────────────
-  const columnas: Columna<Productor>[] = [
+  // ── Columnas de investigadores ───────────────────────────────────────────────
+  const columnas: Columna<Investigador>[] = [
     /*  
     {
       key: 'id',
@@ -100,7 +100,7 @@ export default function ProductoresPanel({
       <header className={styles.header}>
         <div>
           <h1 className={styles.titulo}>
-            Productores
+            Investigadores
           </h1>
 
           <p className={styles.subtitulo}>
@@ -119,7 +119,7 @@ export default function ProductoresPanel({
               variante="primario"
               onClick={onNuevo}
             >
-              + Nuevo productor
+              + Nuevo investigador
             </Button>
           )}
         </div>

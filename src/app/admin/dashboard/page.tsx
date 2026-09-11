@@ -28,6 +28,7 @@ type Acceso = {
 
 const ACCESOS_ADMIN: Acceso[] = [
   { href: '/productores', icon: '🧑‍🌾', label: 'Consulta de registros de productores', desc: 'Ver, editar o depurar expedientes existentes', tone: 'verde' },
+  { href: '/tecnicos', icon: '🧑‍🔧', label: 'Consulta de registros de técnicos', desc: 'Ver, editar o depurar expedientes existentes', tone: 'verde' },
   { href: '/investigadores', icon: '🧑‍🔬', label: 'Consulta de registros de investigadores', desc: 'Ver, editar o depurar expedientes existentes', tone: 'verde' },
   { href: '/comunidades', icon: '🏘️', label: 'Consulta de registros de comunidades', desc: 'Revisión territorial, lengua y cobertura', tone: 'maiz' },
   { href: '/sociocultural', icon: '🎭', label: 'Consulta de registros socioculturales', desc: 'Saberes, prácticas y patrimonio ya capturado', tone: 'tierra' },

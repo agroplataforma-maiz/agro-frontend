@@ -7,6 +7,7 @@ import type { Productor } from '@/types'
 import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
 import Button from '@/components/ui/Button'
+import styles from './Modal.module.css'
 
 interface Props {
   productor: Productor | null
@@ -133,30 +134,7 @@ export default function ModalProductor({
     setLoading(true)
 
     try {
-      /*
-       * ── ALTA FUNCIONAL ───────────────────────────────────────────────────
-       *
-       * Endpoint confirmado por el backend:
-       *
-       *   POST /productores
-       *
-       * Se envía únicamente el JSON mínimo requerido.
-       *
-       * No se envían:
-       * - contraseña
-       * - rol
-       * - usuario
-       * - municipio
-       * - localidad
-       * - parcela
-       * - fecha de nacimiento
-       * - género
-       * - experiencia
-       * - tipo de productor
-       *
-       * Esos datos podrán incorporarse posteriormente cuando formen parte
-       * del flujo correspondiente.
-       */
+      
       await POST('/productores', {
         nombres: form.nombres.trim(),
         apellido_paterno: form.apellido_paterno.trim(),

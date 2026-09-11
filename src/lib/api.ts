@@ -94,6 +94,9 @@ export const PUT  = <T>(path: string, data: unknown) =>
 export const DEL  = <T>(path: string) =>
   api<T>(path, { method: 'DELETE' })
 
+export const PATCH  = <T>(path: string, data: unknown) =>
+  api<T>(path, { method: 'PATCH',  body: JSON.stringify(data) })
+
 // Para llamadas sin auth (login, registro, páginas públicas)
 export const PUBLIC_GET = <T>(path: string, opts: Omit<ApiOptions, 'auth'> = {}) =>
   api<T>(path, { ...opts, auth: false })

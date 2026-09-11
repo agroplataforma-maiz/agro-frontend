@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { GET } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
-import { calcularEdad, dash, nombreCompleto } from '@/lib/utils'
+import { nombreCompleto, calcularEdad, dash } from '@/lib/utils'
 
 import Tabla, { type Columna } from '@/components/ui/Tabla'
 import Button from '@/components/ui/Button'
@@ -12,6 +12,8 @@ import SearchInput from '@/components/ui/SearchInput'
 
 import type { Productor } from '@/types'
 import styles from '@/app/productores/productores.module.css'
+
+import ModalAsignarTecnico from './ModalAsignarTecnico'
 
 interface Props {
   puedeCrear: boolean
@@ -29,7 +31,14 @@ export default function ProductoresPanel({
   onVerPerfil,
 }: Props) {
   const municipios = useAppStore(s => s.municipios)
+
   const [busqueda, setBusqueda] = useState('')
+
+  const [productorAsignacion, setProductorAsignacion] =
+    useState<Productor | null>(null)
+
+  const [modalAsignacionAbierto, setModalAsignacionAbierto] =
+    useState(false)
 
   // ── Productores ───────────────────────────────────────────────────────────
   const {
@@ -60,9 +69,19 @@ export default function ProductoresPanel({
     return texto.includes(busqueda.toLowerCase())
   })
 
+  function abrirAsignacion(productor: Productor) {
+    setProductorAsignacion(productor)
+    setModalAsignacionAbierto(true)
+  }
+
+  function cerrarAsignacion() {
+    setModalAsignacionAbierto(false)
+    setProductorAsignacion(null)
+  }
+
   // ── Columnas de productores ───────────────────────────────────────────────
   const columnas: Columna<Productor>[] = [
-    /*  
+    /*
     {
       key: 'id',
       header: 'ID',
@@ -114,6 +133,7 @@ export default function ProductoresPanel({
             onChange={e => setBusqueda(e.target.value)}
             placeholder="Buscar por nombre…"
           />
+
           {puedeCrear && (
             <Button
               variante="primario"
@@ -135,6 +155,14 @@ export default function ProductoresPanel({
         onRowClick={p => onVerPerfil(p.id)}
         acciones={p => (
           <div className={styles.acciones}>
+            <Button
+              variante="ghost"
+              tamaño="sm"
+              onClick={() => abrirAsignacion(p)}
+            >
+              Asignar técnico
+            </Button>
+
             {/* TODO BACKEND:
                 Habilitar edición cuando exista PUT /productores/{id}. */}
             <Button
@@ -156,6 +184,12 @@ export default function ProductoresPanel({
             </Button>
           </div>
         )}
+      />
+
+      <ModalAsignarTecnico
+        productor={productorAsignacion}
+        abierto={modalAsignacionAbierto}
+        onClose={cerrarAsignacion}
       />
     </>
   )

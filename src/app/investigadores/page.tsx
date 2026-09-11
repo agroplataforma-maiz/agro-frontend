@@ -2,14 +2,14 @@
 'use client'
 
 import { useState, useEffect } from 'react'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { DEL } from '@/lib/api'
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
+import { DEL, GET } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { useCatalogos } from '@/hooks/useCatalogos'
 
 import ModalInvestigador from '@/components/investigadores/ModalInvestigador'
 import PerfilInvestigador from '@/components/investigadores/PerfilInvestigador'
-import UsuariosVisualizadoresPanel from '@/components/productores/UsuariosVisualizadoresPanel'
+import UsuariosVisualizadoresPanel from '@/components/investigadores/UsuariosVisualizadoresPanel'
 import InvestigadoresPanel from '@/components/investigadores/InvestigadoresPanel'
 
 import type { Investigador } from '@/types'
@@ -26,10 +26,10 @@ import { useRouter } from 'next/navigation'
 type Vista = 'lista' | 'perfil'
 
 export default function InvestigadoresPage() {
-  // ── Hooks y stores al inicio ──
   const router = useRouter()
+
   const accesoPermitido = useRolGuard([
-    'administrador'
+    'administrador',
   ])
 
   useCatalogos(accesoPermitido)
@@ -38,7 +38,6 @@ export default function InvestigadoresPage() {
   const addToast = useAppStore(s => s.addToast)
   const qc = useQueryClient()
 
-  // Redirección automática si no hay usuario
   useEffect(() => {
     if (usuario === null) {
       router.replace('/login')
@@ -49,25 +48,48 @@ export default function InvestigadoresPage() {
   const [investigadorId, setInvestigadorId] = useState<string | null>(null)
   const [modalAbierto, setModalAbierto] = useState(false)
   const [editando, setEditando] = useState<Investigador | null>(null)
-  const [confirmEliminar, setConfirmEliminar] = useState<Investigador | null>(null)
+  const [confirmEliminar, setConfirmEliminar] =
+    useState<Investigador | null>(null)
 
-  // ── Eliminación de investigadores ────────────────────────────────────────────
-  // TODO BACKEND:
-  // Implementar DELETE /investigadores/{id} antes de habilitar esta operación.
-  const eliminar = useMutation({
-    mutationFn: (id: string) => DEL(`/investigadores/${id}`),
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['investigadores'] })
-      addToast('Investigador eliminado', 'ok')
-    },
-    onError: (e: Error) => addToast(e.message, 'err'),
+  // ── Investigadores ───────────────────────────────────────────────────────────
+  const {
+    data: investigadores = [],
+    isLoading: investigadoresLoading,
+  } = useQuery<Investigador[]>({
+    queryKey: ['investigadores'],
+    queryFn: () => GET('/social/investigadores'),
   })
 
-  // ── Returns condicionales después de los hooks ──
+  // ── Eliminación de investigadores ────────────────────────────────────────────
+  const eliminar = useMutation({
+    mutationFn: (id: string) =>
+      DEL(`/social/investigadores/${id}`),
+
+    onSuccess: () => {
+      qc.invalidateQueries({
+        queryKey: ['investigadores'],
+      })
+
+      addToast(
+        'Investigador eliminado',
+        'ok'
+      )
+    },
+
+    onError: (e: Error) => {
+      addToast(
+        e.message || 'Error al eliminar el investigador',
+        'err'
+      )
+    },
+  })
+
   if (!usuario) return null
 
   if (!accesoPermitido) {
-    return <AccessGuardScreen message="Verificando permisos..." />
+    return (
+      <AccessGuardScreen message="Verificando permisos..." />
+    )
   }
 
   const esAdmin = usuario.rol === 'administrador'
@@ -87,7 +109,6 @@ export default function InvestigadoresPage() {
     setVista('perfil')
   }
 
-  // ── Vista perfil ──────────────────────────────────────────────────────────
   if (vista === 'perfil' && investigadorId) {
     return (
       <AdminShell contentPadding="24px 24px 32px">
@@ -102,7 +123,6 @@ export default function InvestigadoresPage() {
     )
   }
 
-  // ── Vista lista ───────────────────────────────────────────────────────────
   return (
     <AdminShell contentPadding="0">
       <div className={styles.page}>
@@ -114,15 +134,11 @@ export default function InvestigadoresPage() {
               Gestión de <em>Investigadores</em> 🧑‍🔬
             </>
           }
-          description={
-            esAdmin
-              ? 'Consulta, actualiza o depura investigadores existentes. Las altas iniciales están reservadas para administradores.'
-              : 'Consulta, crea y administra investigadores vinculados al registro territorial y sociocultural de la plataforma.'
-          }
+          description="Consulta, crea, actualiza o elimina investigadores registrados en la plataforma."
           stats={[
             {
               label: 'visibles',
-              value: '—',
+              value: investigadores.length.toString(),
             },
             {
               label: 'municipios',
@@ -131,18 +147,13 @@ export default function InvestigadoresPage() {
           ]}
         />
 
-        {/* ── Usuarios visualizadores ────────────────────────────────────────
-            Solo visible para técnico de campo.
-            El panel contiene su propia consulta, búsqueda y tabla.
-            ───────────────────────────────────────────────────────────────── */}
         {usuario.rol === 'administrador' && (
           <UsuariosVisualizadoresPanel />
         )}
 
-        {/* ── Investigadores ────────────────────────────────────────────────────
-            El panel contiene la consulta pendiente, búsqueda y tabla.
-            ───────────────────────────────────────────────────────────────── */}
         <InvestigadoresPanel
+          investigadores={investigadores}
+          cargando={investigadoresLoading}
           puedeCrear={puedeCrear}
           onNuevo={() => {
             setEditando(null)
@@ -175,7 +186,7 @@ export default function InvestigadoresPage() {
           />
         )}
 
-        {/* ── Confirmación de eliminación ────────────────────────────────── */}
+        {/* ── Confirmación de eliminación ───────────────────────────────────── */}
         {confirmEliminar && (
           <Modal
             titulo="Eliminar investigador"
@@ -192,9 +203,13 @@ export default function InvestigadoresPage() {
 
                 <Button
                   variante="peligro"
+                  cargando={eliminar.isPending}
                   onClick={() => {
-                    eliminar.mutate(confirmEliminar.id)
-                    setConfirmEliminar(null)
+                    eliminar.mutate(confirmEliminar.id, {
+                      onSettled: () => {
+                        setConfirmEliminar(null)
+                      },
+                    })
                   }}
                 >
                   Eliminar
@@ -205,9 +220,7 @@ export default function InvestigadoresPage() {
             <p>
               ¿Eliminar a{' '}
               <strong>
-                {confirmEliminar.nombres}{' '}
-                {confirmEliminar.apellido_paterno}{' '}
-                {confirmEliminar.apellido_materno}
+                {confirmEliminar.nombre_completo}
               </strong>
               ?
             </p>

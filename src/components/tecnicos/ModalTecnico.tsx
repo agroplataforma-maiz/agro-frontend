@@ -14,43 +14,26 @@ interface Props {
   onSaved: () => void
 }
 
-/*
- * ─────────────────────────────────────────────────────────────────────────
- * FORMULARIO MÍNIMO DE PRODUCTOR
- *
- * El backend actualmente define el alta mediante:
- *
- *   POST /productores
- *
- * Payload mínimo:
- *
- * {
- *   "nombres": "...",
- *   "apellido_paterno": "...",
- *   "apellido_materno": "...",
- *   "telefono": "...",
- *   "correo_electronico": "..."
- * }
- *
- * Estos campos de contacto todavía no forman parte del tipo Productor
- * general de src/types/index.ts, por eso utilizamos un tipo específico
- * para el formulario.
- * ─────────────────────────────────────────────────────────────────────────
- */
 interface TecnicoForm {
-  nombres: string
-  apellido_paterno: string
-  apellido_materno: string
-  telefono: string
-  correo_electronico: string
+  username: string
+  email: string
+  password: string
+  confirmar_password: string
+  nombre_completo: string
+  institucion?: string
+  especialidad?: string
+  notas?: string
 }
 
 const EMPTY: TecnicoForm = {
-  nombres: '',
-  apellido_paterno: '',
-  apellido_materno: '',
-  telefono: '',
-  correo_electronico: '',
+  username: '',
+  email: '',
+  password: '',
+  confirmar_password: '',
+  nombre_completo: '',
+  institucion: '',
+  especialidad: '',
+  notas: ''
 }
 
 export default function ModalTecnico({
@@ -68,16 +51,14 @@ export default function ModalTecnico({
      * Actualmente el backend no tiene PUT /productores/:id, por lo que
      * la edición permanece pendiente.
      */
-    nombres: tecnico?.nombres ?? '',
-    apellido_paterno: tecnico?.apellido_paterno ?? '',
-    apellido_materno: tecnico?.apellido_materno ?? '',
+    nombre_completo: tecnico?.nombre_completo
   }))
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
   /*
-   * Actualizar el formulario cuando cambia el productor seleccionado.
+   * Actualizar el formulario cuando cambia el técnico seleccionado.
    *
    * Actualmente solamente se utiliza la creación, pero conservamos este
    * comportamiento porque el componente seguirá siendo reutilizable cuando
@@ -86,28 +67,26 @@ export default function ModalTecnico({
   useEffect(() => {
     setForm({
       ...EMPTY,
-      nombres: tecnico?.nombres ?? '',
-      apellido_paterno: tecnico?.apellido_paterno ?? '',
-      apellido_materno: tecnico?.apellido_materno ?? '',
+      nombre_completo: tecnico?.nombre_completo
     })
   }, [tecnico])
 
   const update =
     (campo: keyof TecnicoForm) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement |
-        HTMLSelectElement |
-        HTMLTextAreaElement
-      >
-    ) => {
-      const value = e.target.value
+      (
+        e: React.ChangeEvent<
+          HTMLInputElement |
+          HTMLSelectElement |
+          HTMLTextAreaElement
+        >
+      ) => {
+        const value = e.target.value
 
-      setForm(actual => ({
-        ...actual,
-        [campo]: value,
-      }))
-    }
+        setForm(actual => ({
+          ...actual,
+          [campo]: value,
+        }))
+      }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -120,13 +99,26 @@ export default function ModalTecnico({
      * Nombres y ambos apellidos forman parte del registro mínimo definido.
      */
     if (
-      !form.nombres.trim() ||
-      !form.apellido_paterno.trim() ||
-      !form.apellido_materno.trim() ||
-      !form.telefono.trim() ||
-      !form.correo_electronico.trim()
+      !form.username.trim() ||
+      !form.email.trim() ||
+      !form.password.trim() ||
+      !form.confirmar_password.trim() ||
+      !form.nombre_completo.trim() ||
+      !form.institucion?.trim() ||
+      !form.especialidad?.trim() ||
+      !form.notas.trim()
     ) {
       setError('Completa todos los campos requeridos.')
+      return
+    }
+
+    if (form.password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+
+    if (form.password !== form.confirmar_password) {
+      setError('Las contraseñas no coinciden.')
       return
     }
 
@@ -138,7 +130,7 @@ export default function ModalTecnico({
        *
        * Endpoint confirmado por el backend:
        *
-       *   POST /productores
+       *   POST /social/tecnicos
        *
        * Se envía únicamente el JSON mínimo requerido.
        *
@@ -157,12 +149,14 @@ export default function ModalTecnico({
        * Esos datos podrán incorporarse posteriormente cuando formen parte
        * del flujo correspondiente.
        */
-      await POST('/productores', {
-        nombres: form.nombres.trim(),
-        apellido_paterno: form.apellido_paterno.trim(),
-        apellido_materno: form.apellido_materno.trim(),
-        telefono: form.telefono.trim(),
-        correo_electronico: form.correo_electronico.trim(),
+      await POST('/social/tecnicos', {
+        username: form.username.trim(),
+        email: form.email.trim(),
+        password: form.password.trim(),
+        nombre_completo: form.nombre_completo.trim(),
+        institucion: form.institucion?.trim(),
+        especialidad: form.especialidad?.trim(),
+        notas: form.notas.trim(),
       })
 
       onSaved()
@@ -170,7 +164,7 @@ export default function ModalTecnico({
       setError(
         err instanceof Error
           ? err.message
-          : 'Error al registrar el productor'
+          : 'Error al registrar el técnico'
       )
     } finally {
       setLoading(false)
@@ -195,7 +189,7 @@ export default function ModalTecnico({
           <Button
             variante="primario"
             type="submit"
-            form="form-productor"
+            form="form-tecnico"
             cargando={loading}
           >
             {tecnico ? 'Guardar cambios' : 'Crear técnico'}
@@ -215,45 +209,66 @@ export default function ModalTecnico({
           }}
         >
           <Field
-            label="Nombres"
-            name="nombres"
-            value={form.nombres}
-            onChange={update('nombres')}
+            label="username"
+            name="username"
+            value={form.username}
+            onChange={update('username')}
             required
           />
 
           <Field
-            label="Apellido paterno"
-            name="apellido_paterno"
-            value={form.apellido_paterno}
-            onChange={update('apellido_paterno')}
+            label="email"
+            name="email"
+            value={form.email}
+            onChange={update('email')}
             required
           />
 
           <Field
-            label="Apellido materno"
-            name="apellido_materno"
-            value={form.apellido_materno}
-            onChange={update('apellido_materno')}
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={update('password')}
             required
           />
 
           <Field
-            label="Teléfono"
-            name="telefono"
-            type="tel"
-            value={form.telefono}
-            onChange={update('telefono')}
+            label="Confirmar contraseña"
+            name="confirmar_password"
+            type="password"
+            value={form.confirmar_password}
+            onChange={update('confirmar_password')}
             required
           />
 
           <Field
-            label="Correo electrónico"
-            name="correo_electronico"
-            type="email"
-            value={form.correo_electronico}
-            onChange={update('correo_electronico')}
+            label="Nombre completo"
+            name="nombre_completo"
+            value={form.nombre_completo}
+            onChange={update('nombre_completo')}
             required
+          />
+
+          <Field
+            label="institucion"
+            name="institucion"
+            value={form.institucion}
+            onChange={update('institucion')}
+          />
+
+          <Field
+            label="especialidad"
+            name="especialidad"
+            value={form.especialidad}
+            onChange={update('especialidad')}
+          />
+
+          <Field
+            label="notas"
+            name="notas"
+            value={form.notas}
+            onChange={update('notas')}
           />
         </div>
 

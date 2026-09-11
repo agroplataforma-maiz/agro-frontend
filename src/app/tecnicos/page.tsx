@@ -9,7 +9,7 @@ import { useCatalogos } from '@/hooks/useCatalogos'
 
 import ModalTecnico from '@/components/tecnicos/ModalTecnico'
 import PerfilTecnico from '@/components/tecnicos/PerfilTecnico'
-import UsuariosVisualizadoresPanel from '@/components/productores/UsuariosVisualizadoresPanel'
+import UsuariosVisualizadoresPanel from '@/components/tecnicos/UsuariosVisualizadoresPanel'
 import TecnicosPanel from '@/components/tecnicos/TecnicosPanel'
 
 import type { TecnicoCampo } from '@/types'
@@ -71,7 +71,9 @@ export default function TecnicosPage() {
   }
 
   const esAdmin = usuario.rol === 'administrador'
-  const puedeCrear = !esAdmin
+  const puedeCrear =
+    usuario.rol === 'administrador' ||
+    usuario.rol === 'investigador'
 
   function abrirEdicion(tecnico: TecnicoCampo) {
     setEditando(tecnico)
@@ -114,11 +116,7 @@ export default function TecnicosPage() {
               Gestión de <em>Técnicos</em> 🌾
             </>
           }
-          description={
-            esAdmin
-              ? 'Consulta, actualiza o depura técnicos existentes. Las altas iniciales están reservadas para administradores e investigadores.'
-              : 'Consulta, crea y administra técnicos vinculados al registro territorial y sociocultural de la plataforma.'
-          }
+          description="Consulta, crea y administra técnicos vinculados al registro territorial y sociocultural de la plataforma."
           stats={[
             {
               label: 'visibles',
@@ -135,9 +133,9 @@ export default function TecnicosPage() {
             Solo visible para técnico de campo.
             El panel contiene su propia consulta, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        {usuario.rol === 'investigador' && (
+        {usuario.rol === 'investigador' || usuario.rol === 'administrador' ? (
           <UsuariosVisualizadoresPanel />
-        )}
+        ) : null}
 
         {/* ── Técnicos ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.
@@ -205,9 +203,7 @@ export default function TecnicosPage() {
             <p>
               ¿Eliminar a{' '}
               <strong>
-                {confirmEliminar.nombres}{' '}
-                {confirmEliminar.apellido_paterno}{' '}
-                {confirmEliminar.apellido_materno}
+                {confirmEliminar.nombre_completo}
               </strong>
               ?
             </p>

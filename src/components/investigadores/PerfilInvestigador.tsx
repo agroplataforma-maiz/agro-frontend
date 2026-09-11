@@ -51,8 +51,10 @@ export default function PerfilInvestigador({ id, onVolver }: Props) {
     </div>
   )
 
-  const nombre = nombreCompleto(investigador.nombres, investigador.apellido_paterno, investigador.apellido_materno)
-  const edad   = investigador.fecha_nacimiento ? calcularEdad(investigador.fecha_nacimiento) : null
+  const nombre = nombreCompleto(investigador.nombre_completo,
+  //  investigador.apellido_paterno, investigador.apellido_materno
+  )
+  //const edad   = investigador.fecha_nacimiento ? calcularEdad(investigador.fecha_nacimiento) : null
   const ini    = iniciales(nombre)
 
   const irASeccion = (key: string) => {
@@ -108,16 +110,16 @@ export default function PerfilInvestigador({ id, onVolver }: Props) {
               <h1 className={styles.nombre}>{nombre}</h1>
             </div>
             <div className={styles.meta}>
-              {edad              && <span className={styles.metaItem}>🎂 {edad} años</span>}
+              {/*edad              && <span className={styles.metaItem}>🎂 {edad} años</span>}
               {investigador.genero  && <span className={styles.metaItem}>👤 {investigador.genero}</span>}
               {investigador.municipio_nombre && <span className={styles.metaItem}>📍 {investigador.municipio_nombre}</span>}
-              {investigador.localidad_nombre && <span className={styles.metaItem}>🏠 {investigador.localidad_nombre}</span>}
+              {investigador.localidad_nombre && <span className={styles.metaItem}>🏠 {investigador.localidad_nombre}</span>*/}
             </div>
           </div>
         </div>
       </div>
 
-      {/* Stats rápidas */}
+      {/* Stats rápidas }
       <div className={styles.statsGrid}>
         <StatPerfil emoji="🩺" label="ID"          valor={String(investigador.id)} />
         <StatPerfil emoji="🌽" label="Experiencia"

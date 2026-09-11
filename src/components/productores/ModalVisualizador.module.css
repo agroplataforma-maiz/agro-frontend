@@ -1,0 +1,112 @@
+
+/* src/components/productores/ModalVisualizador.module.css */
+
+/* Información del usuario seleccionado */
+.usuarioSeleccionado {
+  padding: 14px 16px;
+  background: var(--crema-dark);
+  border: 1px solid var(--borde);
+  border-radius: 10px;
+}
+
+.usuarioTitulo {
+  font-weight: 800;
+  color: var(--tierra);
+  margin-bottom: 6px;
+}
+
+.usuarioDato {
+  margin: 2px 0;
+  color: var(--gris);
+  font-size: 14px;
+}
+
+.usuarioId {
+  margin: 6px 0 0;
+  color: var(--gris);
+  font-size: 12px;
+  word-break: break-all;
+}
+
+/* Formulario */
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+}
+
+.grid2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 16px 20px;
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.campo label {
+  font-size: 14px;
+  font-weight: 700;
+  color: var(--tierra);
+}
+
+.campo input,
+.campo select {
+  width: 100%;
+  min-height: 40px;
+  padding: 9px 11px;
+  border: 1px solid var(--borde);
+  border-radius: 8px;
+  background: var(--crema);
+  color: var(--tierra);
+  font: inherit;
+  box-sizing: border-box;
+  transition:
+    border-color 0.15s,
+    box-shadow 0.15s;
+}
+
+.campo input:focus,
+.campo select:focus {
+  outline: none;
+  border-color: var(--maiz);
+  box-shadow: 0 0 0 3px rgba(218, 165, 32, 0.12);
+}
+
+.campo input::placeholder {
+  color: var(--gris);
+}
+
+/* Texto de sección */
+.seccionTitulo {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--tierra);
+}
+
+/* Nota sobre campos que todavía no existen */
+.nota {
+  margin: -4px 0 0;
+  padding: 10px 12px;
+  border-radius: 8px;
+  background: var(--crema-dark);
+  color: var(--gris);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .grid2 {
+    grid-template-columns: 1fr;
+  }
+
+  .usuarioSeleccionado {
+    padding: 12px;
+  }
+}
+

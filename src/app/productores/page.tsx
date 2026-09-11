@@ -11,6 +11,7 @@ import ModalProductor from '@/components/productores/ModalProductor'
 import PerfilProductor from '@/components/productores/PerfilProductor'
 import UsuariosVisualizadoresPanel from '@/components/productores/UsuariosVisualizadoresPanel'
 import ProductoresPanel from '@/components/productores/ProductoresPanel'
+import TecnicoProductorPanel from '@/components/productores/TecnicoProductorPanel'
 
 import type { Productor } from '@/types'
 import styles from './productores.module.css'
@@ -73,7 +74,10 @@ export default function ProductoresPage() {
   }
 
   const esAdmin = usuario.rol === 'administrador'
-  const puedeCrear = !esAdmin
+  const puedeCrear =
+    usuario.rol === 'administrador' ||
+    usuario.rol === 'investigador' ||
+    usuario.rol === 'tecnico_campo'
 
   function abrirEdicion(productor: Productor) {
     setEditando(productor)
@@ -116,11 +120,7 @@ export default function ProductoresPage() {
               Gestión de <em>Productores</em> 🌽
             </>
           }
-          description={
-            esAdmin
-              ? 'Consulta, actualiza o depura productores existentes. Las altas iniciales están reservadas para investigadores y técnicos de campo.'
-              : 'Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma.'
-          }
+          description="Consulta, crea y administra productores vinculados al registro territorial y sociocultural de la plataforma."
           stats={[
             {
               label: 'visibles',
@@ -134,12 +134,13 @@ export default function ProductoresPage() {
         />
 
         {/* ── Usuarios visualizadores ────────────────────────────────────────
-            Solo visible para técnico de campo.
             El panel contiene su propia consulta, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        {usuario.rol === 'tecnico_campo' && (
+        {usuario.rol === 'tecnico_campo' || usuario.rol === 'administrador' || usuario.rol === 'investigador' ? (
           <UsuariosVisualizadoresPanel />
-        )}
+        ) : null}
+
+        <br />
 
         {/* ── Productores ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.
@@ -154,6 +155,10 @@ export default function ProductoresPage() {
           onEliminar={confirmarEliminar}
           onVerPerfil={verPerfil}
         />
+
+        <br />
+
+        <TecnicoProductorPanel />
 
         {/* ── Modal de productor ─────────────────────────────────────────── */}
         {modalAbierto && (puedeCrear || Boolean(editando)) && (

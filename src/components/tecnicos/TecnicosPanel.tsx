@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
-import { GET } from '@/lib/api'
+import { GET, DEL } from '@/lib/api'
 import { useAppStore } from '@/store/useAppStore'
 import { calcularEdad, dash, nombreCompleto } from '@/lib/utils'
 
@@ -37,21 +37,18 @@ export default function TecnicosPanel({
     isLoading,
   } = useQuery<TecnicoCampo[]>({
     queryKey: ['tecnicos'],
-    queryFn: () => GET('/tecnicos/lista'),
+    queryFn: () => GET('/social/tecnicos'),
   })
 
   // ── Filtro de técnicos ─────────────────────────────────────────────────
   const filtrados = tecnicos.filter(p => {
     const nombre = nombreCompleto(
-      p.nombres,
-      p.apellido_paterno,
-      p.apellido_materno
+      p.nombre_completo
     )
 
     const texto = [
       nombre,
-      p.telefono,
-      p.correo_electronico,
+      p.email
     ]
       .filter(Boolean)
       .join(' ')
@@ -61,38 +58,45 @@ export default function TecnicosPanel({
   })
 
   // ── Columnas de técnicos ───────────────────────────────────────────────
-  const columnas: Columna<TecnicoCampo>[] = [
-    /*  
+  const columnas: Columna<TecnicoCampo>[] = [  
     {
-      key: 'id',
-      header: 'ID',
-      width: '60px',
+      key: 'username',
+      header: 'username',
+      render: p => p.username || '—',
       hideOnMobile: true,
-      hideOnTablet: true,
     },
-    */
+    {
+      key: 'email',
+      header: 'Correo',
+      render: p => p.email || '—',
+      hideOnMobile: true,
+    },
     {
       key: 'nombres',
       header: 'Nombre',
       render: p =>
         nombreCompleto(
-          p.nombres,
-          p.apellido_paterno,
-          p.apellido_materno
+          p.nombre_completo
         ),
     },
     {
-      key: 'telefono',
-      header: 'Teléfono',
-      render: p => p.telefono || '—',
+      key: 'activo',
+      header: 'Activo',
+      render: p => (p.activo ? 'Sí' : 'No'),
       hideOnMobile: true,
     },
     {
-      key: 'correo_electronico',
-      header: 'Correo',
-      render: p => p.correo_electronico || '—',
+      key: 'institucion',
+      header: 'Institución',
+      render: p => p.institucion || '—',
       hideOnMobile: true,
     },
+    {
+      key: 'especialidad',
+      header: 'Especialidad',
+      render: p => p.especialidad || '—',
+      hideOnMobile: true,
+    }
   ]
 
   return (

@@ -62,6 +62,8 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
     ? normalizedPath
     : `${API_BASE}${normalizedPath}`
 
+  
+
   const res = await fetch(url, {
     ...rest,
     headers: reqHeaders,

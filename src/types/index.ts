@@ -124,6 +124,19 @@ export interface TecnicoProductor {
   actualizado_en: string
 }
 
+export interface Organizacion{
+  id: UUID
+  nombre: string
+  descripcion: string
+  activo?: boolean
+}
+
+export interface OrganizacionMiembro{
+  id: UUID
+  organizacion_id: UUID
+  usuario_id: UUID
+  activo?: boolean
+}
 
 export interface Municipio {
   id: number

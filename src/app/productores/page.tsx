@@ -145,6 +145,12 @@ export default function ProductoresPage() {
         {/* ── Productores ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
+
+        <p className={styles.nota}>
+            Este campo es opcional. Puedes indicar el motivo de la asignación,
+            actividades de seguimiento u otra información relevante.
+          </p> 
+
         <ProductoresPanel
           puedeCrear={puedeCrear}
           onNuevo={() => {

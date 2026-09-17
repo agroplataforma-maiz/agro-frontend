@@ -10,6 +10,7 @@ export interface PuntoMapaHuasteca {
   latitud: number
   longitud: number
   imagenUrl?: string | null;
+  poligono?: string | null;
 }
 
 interface MapaHuastecaProps {

@@ -13,6 +13,7 @@ interface PuntoMapaHuasteca {
   latitud: number;
   longitud: number;
   imagenUrl?: string | null
+  poligono?: string | null;
 }
 
 interface PopupInfo extends PuntoMapaHuasteca {
@@ -40,6 +41,88 @@ interface MapaHuastecaMaplibreClientProps {
   isMobile?: boolean;
   selectedId?: number | string | null;
   onSelectPoint?: (id: number | string) => void;
+}
+
+// ─── Conversión de las coordenadas del polígono ─────────────────────────────────────────────────────
+
+function wktPolygonToGeoJSON(
+  wkt: string | null | undefined
+): GeoJSON.Feature<GeoJSON.Polygon> | null {
+  if (!wkt) return null;
+
+  const match = wkt.match(
+    /^\s*POLYGON\s*\(\((.*)\)\)\s*$/i
+  );
+
+  if (!match) {
+    return null;
+  }
+
+  const coordinates = match[1]
+    .split(',')
+    .map((pair) => {
+      const [lng, lat] = pair.trim().split(/\s+/).map(Number);
+
+      if (!Number.isFinite(lng) || !Number.isFinite(lat)) {
+        return null;
+      }
+
+      return [lng, lat] as [number, number];
+    })
+    .filter(
+      (coord): coord is [number, number] => coord !== null
+    );
+
+  if (coordinates.length < 4) {
+    return null;
+  }
+
+  return {
+    type: 'Feature',
+    properties: {},
+    geometry: {
+      type: 'Polygon',
+      coordinates: [coordinates],
+    },
+  };
+}
+
+function fitMapToPolygon(
+  mapRef: React.MutableRefObject<MapRef | null>,
+  polygon: GeoJSON.Feature<GeoJSON.Polygon>
+) {
+  const coordinates = polygon.geometry.coordinates[0];
+
+  if (!coordinates.length) {
+    return;
+  }
+
+  const bounds = coordinates.reduce(
+    (acc, coordinate) => {
+      const [lng, lat] = coordinate;
+
+      return [
+        [
+          Math.min(acc[0][0], lng),
+          Math.min(acc[0][1], lat),
+        ],
+        [
+          Math.max(acc[1][0], lng),
+          Math.max(acc[1][1], lat),
+        ],
+      ] as [[number, number], [number, number]];
+    },
+    [
+      [coordinates[0][0], coordinates[0][1]],
+      [coordinates[0][0], coordinates[0][1]],
+    ] as [[number, number], [number, number]]
+  );
+
+  mapRef.current?.fitBounds(bounds, {
+    padding: 80,
+    maxZoom: 17,
+    duration: 900,
+  });
 }
 
 // ─── Constantes ───────────────────────────────────────────────────────────────
@@ -179,6 +262,22 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
     () => puntos.filter((p) => Number.isFinite(p.latitud) && Number.isFinite(p.longitud)),
     [puntos],
   );
+
+  const poligonoSeleccionado = useMemo(() => {
+    if (selectedId === null || selectedId === undefined) {
+      return null;
+    }
+
+    const puntoSeleccionado = puntosValidos.find(
+      (punto) => punto.id === selectedId
+    );
+
+    if (!puntoSeleccionado?.poligono) {
+      return null;
+    }
+
+    return wktPolygonToGeoJSON(puntoSeleccionado.poligono);
+  }, [puntosValidos, selectedId]);
 
   // Municipio activo (para highlight en el mapa)
   const municipioActivo =
@@ -782,6 +881,33 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
           </Source>
         )}
 
+        {poligonoSeleccionado && (
+          <Source
+            id="parcela-seleccionada"
+            type="geojson"
+            data={poligonoSeleccionado}
+          >
+            <Layer
+              id="parcela-seleccionada-fill"
+              type="fill"
+              paint={{
+                'fill-color': '#C8820A',
+                'fill-opacity': 0.22,
+              }}
+            />
+
+            <Layer
+              id="parcela-seleccionada-outline"
+              type="line"
+              paint={{
+                'line-color': '#8B5A08',
+                'line-width': 3,
+                'line-opacity': 0.95,
+              }}
+            />
+          </Source>
+        )}
+
         {/* Marcadores */}
         {!geoJsonLoading &&
           puntosValidos.map((punto, idx) => {
@@ -800,8 +926,17 @@ const MapaHuastecaMaplibreClient: React.FC<MapaHuastecaMaplibreClientProps> = ({
                 anchor="center"
                 onClick={(e) => {
                   e.originalEvent.stopPropagation();
+
                   setPopupInfo({ ...punto, idx });
                   onSelectPoint?.(punto.id);
+
+                  if (punto.poligono) {
+                    const polygon = wktPolygonToGeoJSON(punto.poligono);
+
+                    if (polygon) {
+                      fitMapToPolygon(mapRef, polygon);
+                    }
+                  }
                 }}
                 style={{ cursor: 'pointer', zIndex: isActive ? 10 : 5 }}
               >

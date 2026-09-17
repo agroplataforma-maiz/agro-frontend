@@ -1052,3 +1052,80 @@ footer {
   footer { padding: 30px 5vw; align-items: flex-start; }
   .foot-der { text-align: left; }
 }
+
+/* Selector de etapas */
+.etapas-selector {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 12px;
+    margin: 0 0 32px;
+}
+
+.etapas-selector label {
+    font-family: 'DM Mono', monospace;
+    font-size: 0.72rem;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--tinta-suave);
+}
+
+.etapas-selector select {
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+
+    min-width: 280px;
+    max-width: 100%;
+    padding: 12px 42px 12px 16px;
+
+    border: 1px solid rgba(42, 61, 44, 0.2);
+    border-radius: 6px;
+
+    background-color: var(--crema);
+    color: var(--tinta);
+
+    font-family: 'Nunito', sans-serif;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    background-image:
+        linear-gradient(45deg, transparent 50%, var(--tinta) 50%),
+        linear-gradient(135deg, var(--tinta) 50%, transparent 50%);
+    background-position:
+        calc(100% - 20px) 17px,
+        calc(100% - 14px) 17px;
+    background-size:
+        6px 6px,
+        6px 6px;
+    background-repeat: no-repeat;
+
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.etapas-selector select:hover {
+    border-color: var(--verde);
+}
+
+.etapas-selector select:focus {
+    outline: none;
+    border-color: var(--verde);
+    box-shadow: 0 0 0 3px rgba(74, 103, 65, 0.12);
+}
+
+@media (max-width: 600px) {
+    .etapas-selector {
+        align-items: stretch;
+        flex-direction: column;
+        justify-content: flex-start;
+        gap: 8px;
+        margin-bottom: 24px;
+    }
+
+    .etapas-selector select {
+        width: 100%;
+        min-width: 0;
+    }
+}

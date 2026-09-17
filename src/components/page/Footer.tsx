@@ -22,8 +22,8 @@ export default function Footer() {
       </div>
       <div className="foot-der">
         <div>Eje 2 · Mejoramiento de Cultivos de Maíz y Frijol</div>
-        <div>Etapa 1 en curso · 2025–2026</div>
-        <div style={{ marginTop: 6, opacity: .5 }}>alfredo.barron@tecvalles.mx · 481 391 8309</div>
+        <div>Etapa 2 en curso · 2025–2027</div>
+        <div style={{ marginTop: 6, opacity: .5 }}>alfredo.br@cdvalles.tecnm.mx · 481 391 8309</div>
       </div>
     </footer>
   );

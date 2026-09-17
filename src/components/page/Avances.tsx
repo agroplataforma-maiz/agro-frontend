@@ -27,7 +27,7 @@ type Etapa = {
 
 const ETAPAS: Etapa[] = [
     {
-        nombre: "Etapa 1 · Diagnóstico",
+        nombre: "Etapa 1 · Diagnóstico territorial y sistematización de datos",
         estado: "Terminada",
         estadoClase: "badge-completado",
         duracion: "Duración: 5 meses · 2025",

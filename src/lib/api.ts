@@ -5,7 +5,8 @@
 const DEFAULT_API_BASE =
   process.env.NODE_ENV === 'production'
     ? 'https://agromaiz.mx'
-    : 'http://localhost:8000'
+    : 'https://74.208.139.245:8080'
+    //: 'http://localhost:8000'
 
 export const API_BASE = (process.env.NEXT_PUBLIC_API_URL || DEFAULT_API_BASE).replace(/\/$/, '')
 

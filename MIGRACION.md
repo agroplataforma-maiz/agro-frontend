@@ -29,7 +29,7 @@ NEXT_PUBLIC_API_URL=http://localhost:8000
 
 En producción cambia a:
 ```env
-NEXT_PUBLIC_API_URL=https://agromaiz.mx
+NEXT_PUBLIC_API_URL=https://agromaiz.mx/api
 ```
 
 > Esto reemplaza los 5 valores de API hardcodeados que hay en el proyecto actual.

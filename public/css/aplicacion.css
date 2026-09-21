@@ -322,7 +322,7 @@ main {
 
     color: var(--tierra);
 
-    font-size: clamp(36px, 5vw, 58px);
+    font-size: clamp(36px, 5vw, 32px);
     line-height: 1.05;
     letter-spacing: -0.025em;
 
@@ -335,7 +335,7 @@ main {
     color: var(--tierra);
 
     font-family: 'Fraunces', Georgia, serif;
-    font-size: clamp(20px, 2.4vw, 27px);
+    font-size: clamp(20px, 2.4vw, 18px);
     line-height: 1.45;
 
     margin-bottom: 24px;
@@ -638,7 +638,7 @@ main {
 
     color: var(--tierra);
 
-    font-size: clamp(38px, 5vw, 60px);
+    font-size: clamp(38px, 5vw, 32px);
     line-height: 1.05;
 
     margin-bottom: 15px;
@@ -659,6 +659,8 @@ main {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
     gap: 20px;
+    max-width: 75%;
+    max-height: 75%;
 }
 
 .captura-card {
@@ -691,7 +693,7 @@ main {
     align-items: center;
     justify-content: center;
 
-    gap: 8px;
+    gap: 5px;
 
 
     background:
@@ -732,20 +734,20 @@ main {
 }
 
 .captura-info {
-    padding: 22px;
+    padding: 10px;
 }
 
 .captura-info h3 {
     font-family: 'Fraunces', Georgia, serif;
 
-    font-size: 20px;
-    margin-bottom: 7px;
+    font-size: 15px;
+    margin-bottom: 5px;
 }
 
 .captura-info p {
     color: var(--gris);
 
-    font-size: 13px;
+    font-size: 12px;
     line-height: 1.65;
 }
 

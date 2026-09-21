@@ -111,7 +111,9 @@ export default function UsuariosPanel() {
   });
 
   const guardarUsuario = useMutation({
+    
     mutationFn: async (data: UsuarioSavePayload) => {
+      
       if (modalUsuario.usuario) return PUT(`/auth/usuario/${modalUsuario.usuario.id}`, data);
       return POST('/auth/register', data);
     },

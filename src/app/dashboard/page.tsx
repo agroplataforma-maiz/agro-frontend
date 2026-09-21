@@ -88,25 +88,53 @@ export default function DashboardPage() {
           {/* Hero bienvenida */}
           <div className={styles['dash-hero']} role="region" aria-label="Bienvenida">
             <div className={styles['dash-hero-txt']}>
-              <div className={styles['dash-hero-saludo']}>Panel de trabajo · Etapa 1 en curso</div>
+              <div className={styles['dash-hero-saludo']}>Panel de trabajo · Etapa 2 en curso</div>
               <h1 className={styles['dash-hero-nombre']}>Bienvenido/a, <em>{nombreRol}</em> 🌽</h1>
               <p className={styles['dash-hero-desc']}>Desde aquí puedes acceder a todos los módulos de la plataforma, registrar productores, consultar catálogos y monitorear el avance del proyecto.</p>
             </div>
-            <div className={styles['dash-hero-right']}>
-              <div className={styles['dash-etapa-pill']} role="status" aria-label="Etapa 1 activa">
-                <span className={styles['etapa-pulse']} aria-hidden="true"></span>
-                Etapa 1 · En curso
+            <div className={styles['dash-hero-etapas']}>
+
+              <div className={styles['dash-hero-right']}>
+
+              <div className={styles['dash-etapa-done']} role="status" aria-label="Etapa 1 terminada">
+                <span className={styles['etapa-done']} aria-hidden="true"></span>
+                Etapa 1 · Terminada
               </div>
+              
               {!esVisualizador && (
               <div className={styles['dash-prog-wrap']} aria-label="Progreso de la etapa 1">
                 <div className={styles['dash-prog-label']}>Progreso Etapa 1</div>
-                <div className={styles['dash-prog-track']} role="progressbar" aria-valuenow={68} aria-valuemin={0} aria-valuemax={100} aria-label="68% completado">
-                  <div className={styles['dash-prog-fill']} style={{ width: '68%' }}></div>
+                <div className={styles['dash-prog-track']} role="progressbar" aria-valuenow={100} aria-valuemin={0} aria-valuemax={100} aria-label="100% completado">
+                  <div className={styles['dash-prog-fill']} style={{ width: '100%' }}></div>
                 </div>
-                <div className={styles['dash-prog-pct']}>68%</div>
+                <div className={styles['dash-prog-pct']}>100%</div>
               </div>
+              
               )}
+
             </div>
+
+            <div className={styles['dash-hero-right']}>
+                <div className={styles['dash-etapa-pill']} role="status" aria-label="Etapa 2 en curso">
+                <span className={styles['etapa-pulse']} aria-hidden="true"></span>
+                Etapa 2 · En curso
+              </div>
+              
+              {!esVisualizador && (
+              <div className={styles['dash-prog-wrap']} aria-label="Progreso de la etapa 2">
+                <div className={styles['dash-prog-label']}>Progreso Etapa 2</div>
+                <div className={styles['dash-prog-track']} role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100} aria-label="0% completado">
+                  <div className={styles['dash-prog-fill']} style={{ width: '0%' }}></div>
+                </div>
+                <div className={styles['dash-prog-pct']}>0%</div>
+              </div>
+              
+              )} 
+
+              </div>
+
+            </div>
+            
           </div>
           {/* Banner bienvenida invitado/visualizador */}
           {mostrarBannerInvitado && (

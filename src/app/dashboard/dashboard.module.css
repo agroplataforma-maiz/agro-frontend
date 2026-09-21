@@ -613,6 +613,15 @@
   gap: 10px;
 }
 
+.dash-hero-etapas {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  gap: 10px;
+}
+
 .dash-etapa-pill {
   display: inline-flex;
   align-items: center;
@@ -626,6 +635,21 @@
   color: var(--maiz-cl);
   letter-spacing: .06em;
 }
+
+.dash-etapa-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(19, 200, 10, 0.2);
+  border: 1px solid rgba(200,130,10,.3);
+  padding: 8px 16px;
+  border-radius: 100px;
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  color: var(--maiz-cl);
+  letter-spacing: .06em;
+}
+
 .etapa-pulse {
   width: 8px; height: 8px;
   border-radius: 50%;
@@ -635,6 +659,11 @@
 @keyframes pulse-dot {
   0%,100% { opacity:1; transform:scale(1); }
   50% { opacity:.5; transform:scale(.7); }
+}
+.etapa-done {
+  width: 8px; height: 8px;
+  border-radius: 50%;
+  background: var(--verde-cl);
 }
 
 .dash-prog-wrap { text-align: right; }

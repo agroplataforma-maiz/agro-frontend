@@ -40,8 +40,9 @@ export default function Hero() {
                 <div className="hero-acciones">
                     <Link className="btn-hero-primary" href="/login">🔐 Acceder a la plataforma</Link>
                     <a className="btn-hero-ghost" href="/divulgacion.html">🌽 Para comunidades</a>
-                    <a className="btn-hero-ghost" href="/apk/agromaizV1-0-2.apk" download>
-                    📱 Descargar aplicación </a>
+                    <Link className="btn-hero-ghost" href="/aplicacion.html">
+                        📱 Aplicación Móvil
+                    </Link>
                 </div>
             </div>
         </section>

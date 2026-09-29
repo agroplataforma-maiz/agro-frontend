@@ -146,11 +146,11 @@ export default function InvestigadoresPage() {
             },
           ]}
         />
-
-        {usuario.rol === 'administrador' && (
+        
+        {/*usuario.rol === 'administrador' && (
           <UsuariosVisualizadoresPanel />
-        )}
-
+        )*/}
+        
         <InvestigadoresPanel
           investigadores={investigadores}
           cargando={investigadoresLoading}

@@ -13,6 +13,7 @@
   font-size: 54px;
   margin-bottom: 24px;
   filter: drop-shadow(0 0 32px #ffe066) drop-shadow(0 0 12px #fffbe8);
+  animation: spin 1.1s linear infinite;
 }
 
 .text {

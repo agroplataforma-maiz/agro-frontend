@@ -1,20 +1,18 @@
-// Componente reutilizable para mostrar el nombre de la comunidad con estilos consistentes (igual que los modales)
 'use client'
 
 import React from 'react';
 
 interface NombreComunidadProps {
   nombre: string;
-  dark?: boolean;
   style?: React.CSSProperties;
 }
 
-export default function NombreComunidad({ nombre, dark, style }: NombreComunidadProps) {
+export default function NombreComunidad({ nombre, style }: NombreComunidadProps) {
   return (
     <span
       style={{
         fontSize: 15,
-        color: dark ? '#FFD600' : '#3D2208',
+        color: 'var(--tierra)',
         fontFamily: 'Nunito, Arial, sans-serif',
         fontWeight: 700,
         marginRight: 3,

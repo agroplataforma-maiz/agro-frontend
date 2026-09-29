@@ -42,7 +42,7 @@ export default function SidebarComunidades({
   setModalNuevaOpen,
 }: SidebarComunidadesProps) {
 
-  const [sidebarAbierto, setSidebarAbierto] = useState(true);
+  const [sidebarAbierto, setSidebarAbierto] = useState(false);
 
   /*
    * Cuando el sidebar está cerrado, solamente mostramos
@@ -57,212 +57,232 @@ export default function SidebarComunidades({
         aria-label="Mostrar panel de comunidades"
         title="Mostrar comunidades"
       >
-        ☰
+        <img
+          src="/img/punto_ubicacion.png"
+          alt=""
+          width={36}
+          height={36}
+          style={{
+            display: 'block',
+            objectFit: 'contain',
+          }}
+        />
       </button>
     );
   }
 
   return (
-    <aside className={styles.sidebar}>
-
-      {/* Botón para ocultar el sidebar */}
+    <>
+      {/* Botón para cerrar el sidebar */}
       <button
         type="button"
-        className={styles.sidebarClose}
+        style={{
+          top: 18,
+        }}
+        className={styles.sidebarToggle}
         onClick={() => setSidebarAbierto(false)}
         aria-label="Ocultar panel de comunidades"
         title="Ocultar comunidades"
       >
-        ‹
+        ×
       </button>
 
       {/* =====================================================
-          PARTE SUPERIOR:
-          búsqueda + filtro de municipios
+          SIDEBAR
           ===================================================== */}
-      <div className={styles.municipiosSection}>
+      {sidebarAbierto && (
+        <aside className={styles.sidebar}>
 
-        <div className={styles.header}>
+          {/* =====================================================
+              PARTE SUPERIOR:
+              búsqueda + filtro de municipios
+              ===================================================== */}
+          <div className={styles.municipiosSection}>
 
-          <div className={styles.headerRow}>
-            <h2 className={styles.title}>
-              Comunidades
-            </h2>
+            <div className={styles.header}>
 
-            {(rol === 'tecnico_campo' || rol === 'investigador') && (
-              <Button
-                variante="primario"
-                tamaño="sm"
-                className={styles.addBtn}
-                onClick={() => setModalNuevaOpen(true)}
-              >
-                + Agregar nueva
-              </Button>
-            )}
-          </div>
+              <div className={styles.headerRow}>
+                <h2 className={styles.title}>
+                  Comunidades
+                </h2>
 
-          <p className={styles.count}>
-            {ubicacionesFiltradas.length} puntos georreferenciados
-          </p>
+                {(rol === 'tecnico_campo' || rol === 'investigador') && (
+                  <Button
+                    variante="primario"
+                    tamaño="sm"
+                    className={styles.addBtn}
+                    onClick={() => setModalNuevaOpen(true)}
+                    disabled={true}
+                  >
+                    + Agregar nueva
+                  </Button>
+                )}
+              </div>
 
-          <input
-            type="text"
-            value={busqueda}
-            onChange={e => setBusqueda(e.target.value)}
-            placeholder="Buscar comunidad o municipio…"
-            className={styles.input}
-          />
+              <p className={styles.count}>
+                {ubicacionesFiltradas.length} puntos georreferenciados
+              </p>
 
-          <div className={styles.filtrosRow}>
+              <input
+                type="text"
+                value={busqueda}
+                onChange={e => setBusqueda(e.target.value)}
+                placeholder="Buscar parcela…"
+                className={styles.input}
+              />
 
-            <Button
-              type="button"
-              className={
-                municipioFiltro === 'todos'
-                  ? styles.filtroBtnActivo
-                  : styles.filtroBtn
-              }
-              onClick={() => setMunicipioFiltro('todos')}
-            >
-              Toda la Huasteca
-            </Button>
+              <div className={styles.filtrosRow}>
 
-            {municipiosMapa.map(municipio => (
-              <button
-                key={municipio}
-                type="button"
-                className={
-                  municipioFiltro === municipio
-                    ? styles.filtroBtnActivo
-                    : styles.filtroBtn
-                }
-                onClick={() => setMunicipioFiltro(municipio)}
-              >
-                {municipio}
-              </button>
-            ))}
-
-          </div>
-
-        </div>
-
-      </div>
-
-      {/* =====================================================
-          PARTE INFERIOR:
-          municipios + parcelas
-          ===================================================== */}
-      <div className={styles.listaComunidades}>
-
-        {municipiosMapa.map(municipio => {
-
-          const comunidades = ubicacionesFiltradas.filter(
-            p => p.municipio === municipio
-          );
-
-          const municipioActivo = comunidades.some(
-            p => p.id === puntoActivoId
-          );
-
-          return (
-            <div
-              key={municipio}
-              className={
-                municipioActivo
-                  ? styles.municipioBoxActivo
-                  : styles.municipioBox
-              }
-            >
-
-              <div
-                className={
-                  municipioActivo
-                    ? styles.municipioHeaderActivo
-                    : styles.municipioHeader
-                }
-                tabIndex={0}
-                role="button"
-                aria-pressed={municipioActivo}
-                onClick={() => {
-                  const first = comunidades[0];
-
-                  if (first) {
-                    setPuntoActivoId(first.id);
+                <Button
+                  type="button"
+                  className={
+                    municipioFiltro === 'todos'
+                      ? styles.filtroBtnActivo
+                      : styles.filtroBtn
                   }
-                }}
-                onKeyDown={e => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
+                  onClick={() => setMunicipioFiltro('todos')}
+                >
+                  Toda la Huasteca
+                </Button>
 
-                    const first = comunidades[0];
-
-                    if (first) {
-                      setPuntoActivoId(first.id);
+                {municipiosMapa.map(municipio => (
+                  <button
+                    key={municipio}
+                    type="button"
+                    className={
+                      municipioFiltro === municipio
+                        ? styles.filtroBtnActivo
+                        : styles.filtroBtn
                     }
-                  }
-                }}
-              >
-
-                <span className={styles.municipioNombre}>
-                  {municipio}
-                </span>
-
-                <span className={styles.municipioCount}>
-                  {comunidades.length}{' '}
-                  parcela{comunidades.length !== 1 ? 's' : ''}
-                </span>
+                    onClick={() => setMunicipioFiltro(municipio)}
+                  >
+                    {municipio}
+                  </button>
+                ))}
 
               </div>
 
-              <ul className={styles.comunidadesList}>
+            </div>
 
-                {comunidades.map(punto => (
-                  <li
-                    key={punto.id}
+          </div>
+
+          {/* =====================================================
+              PARTE INFERIOR:
+              municipios + parcelas
+              ===================================================== */}
+          <div className={styles.listaComunidades}>
+
+            {municipiosMapa.map(municipio => {
+
+              const comunidades = ubicacionesFiltradas.filter(
+                p => p.municipio === municipio
+              );
+
+              const municipioActivo = comunidades.some(
+                p => p.id === puntoActivoId
+              );
+
+              return (
+                <div
+                  key={municipio}
+                  className={
+                    municipioActivo
+                      ? styles.municipioBoxActivo
+                      : styles.municipioBox
+                  }
+                >
+
+                  <div
                     className={
-                      puntoActivoId === punto.id
-                        ? styles.comunidadItemActivo
-                        : styles.comunidadItem
+                      municipioActivo
+                        ? styles.municipioHeaderActivo
+                        : styles.municipioHeader
                     }
                     tabIndex={0}
                     role="button"
-                    aria-pressed={puntoActivoId === punto.id}
-                    onClick={() => setPuntoActivoId(punto.id)}
+                    aria-pressed={municipioActivo}
+                    onClick={() => {
+                      const first = comunidades[0];
+
+                      if (first) {
+                        setPuntoActivoId(first.id);
+                      }
+                    }}
                     onKeyDown={e => {
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
-                        setPuntoActivoId(punto.id);
+
+                        const first = comunidades[0];
+
+                        if (first) {
+                          setPuntoActivoId(first.id);
+                        }
                       }
                     }}
                   >
 
-                    <span className={styles.comunidadIcono}>
-                      📍
+                    <span className={styles.municipioNombre}>
+                      {municipio}
                     </span>
 
-                    <NombreComunidad
-                      nombre={punto.comunidad}
-                    />
-
-                    <span className={styles.comunidadMunicipio}>
-                      {punto.municipio}
+                    <span className={styles.municipioCount}>
+                      {comunidades.length}{' '}
+                      parcela{comunidades.length !== 1 ? 's' : ''}
                     </span>
 
-                    <small className={styles.comunidadCoords}>
-                      {punto.latitud.toFixed(6)}, {punto.longitud.toFixed(6)}
-                    </small>
+                  </div>
 
-                  </li>
-                ))}
+                  <ul className={styles.comunidadesList}>
 
-              </ul>
+                    {comunidades.map(punto => (
+                      <li
+                        key={punto.id}
+                        className={
+                          puntoActivoId === punto.id
+                            ? styles.comunidadItemActivo
+                            : styles.comunidadItem
+                        }
+                        tabIndex={0}
+                        role="button"
+                        aria-pressed={puntoActivoId === punto.id}
+                        onClick={() => setPuntoActivoId(punto.id)}
+                        onKeyDown={e => {
+                          if (e.key === 'Enter' || e.key === ' ') {
+                            e.preventDefault();
+                            setPuntoActivoId(punto.id);
+                          }
+                        }}
+                      >
 
-            </div>
-          );
-        })}
+                        <span className={styles.comunidadIcono}>
+                          📍
+                        </span>
 
-      </div>
+                        <NombreComunidad
+                          nombre={punto.comunidad}
+                        />
 
-    </aside>
+                        <span className={styles.comunidadMunicipio}>
+                          {punto.municipio}
+                        </span>
+
+                        <small className={styles.comunidadCoords}>
+                          {punto.latitud.toFixed(6)}, {punto.longitud.toFixed(6)}
+                        </small>
+
+                      </li>
+                    ))}
+
+                  </ul>
+
+                </div>
+              );
+            })}
+
+          </div>
+
+        </aside>
+      )}
+    </>
   );
 }

@@ -119,3 +119,15 @@
 :global(html.dark) .btn-danger:hover  { background: rgba(220,38,38,.25); }
 :global(html.dark) .btn-edit:hover    { background: rgba(200,130,10,.25); }
 :global(html.dark) .btn-back:hover    { background: rgba(255,255,255,.08); }
+
+/* ── Dark mode ── */
+
+:global(html.dark) .primario {
+  background: var(--verde);
+  color: #fff;
+}
+
+:global(html.dark) .primario:hover:not(:disabled) {
+  background: var(--maiz);
+  color: #fff;
+}

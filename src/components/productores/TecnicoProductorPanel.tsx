@@ -7,25 +7,77 @@ import { GET } from '@/lib/api'
 
 import Tabla, { type Columna } from '@/components/ui/Tabla'
 import SearchInput from '@/components/ui/SearchInput'
-import type { TecnicoProductor } from '@/types'
+import type {
+  TecnicoProductor,
+  TecnicoCampo,
+  Productor,
+} from '@/types'
 import styles from '@/app/productores/productores.module.css'
 
 export default function TecnicoProductorPanel() {
   const [busqueda, setBusqueda] = useState('')
 
+  // Asignaciones técnico-productor
   const {
     data: asignaciones = [],
-    isLoading,
+    isLoading: asignacionesLoading,
   } = useQuery<TecnicoProductor[]>({
     queryKey: ['tecnico-productor'],
     queryFn: () => GET('/social/tecnico-productor'),
   })
 
+  // Técnicos de campo
+  const {
+    data: tecnicos = [],
+    isLoading: tecnicosLoading,
+  } = useQuery<TecnicoCampo[]>({
+    queryKey: ['tecnicos'],
+    queryFn: () => GET('/social/tecnicos'),
+  })
+
+  // Productores
+  const {
+    data: productores = [],
+    isLoading: productoresLoading,
+  } = useQuery<Productor[]>({
+    queryKey: ['productores-lista'],
+    queryFn: () => GET('/productores/lista'),
+  })
+
+  // Mapas para resolver rápidamente los UUID a nombres
+  const tecnicoPorId = new Map(
+    tecnicos.map(tecnico => [
+      tecnico.id,
+      tecnico.nombre_completo,
+    ]),
+  )
+
+  const productorPorId = new Map(
+    productores.map(productor => [
+      productor.id,
+      [
+        productor.nombres,
+        productor.apellido_paterno,
+        productor.apellido_materno,
+      ]
+        .filter(Boolean)
+        .join(' '),
+    ]),
+  )
+
   const asignacionesFiltradas = asignaciones.filter(asignacion => {
+    const nombreTecnico =
+      tecnicoPorId.get(asignacion.tecnico_campo_id) ?? ''
+
+    const nombreProductor =
+      productorPorId.get(asignacion.productor_id) ?? ''
+
     const texto = [
       asignacion.id,
       asignacion.tecnico_campo_id,
       asignacion.productor_id,
+      nombreTecnico,
+      nombreProductor,
       asignacion.estado,
       asignacion.notas,
     ]
@@ -40,12 +92,16 @@ export default function TecnicoProductorPanel() {
     {
       key: 'tecnico_campo_id',
       header: 'Técnico',
-      render: asignacion => asignacion.tecnico_campo_id,
+      render: asignacion =>
+        tecnicoPorId.get(asignacion.tecnico_campo_id) ??
+        asignacion.tecnico_campo_id,
     },
     {
       key: 'productor_id',
       header: 'Productor',
-      render: asignacion => asignacion.productor_id,
+      render: asignacion =>
+        productorPorId.get(asignacion.productor_id) ??
+        asignacion.productor_id,
     },
     {
       key: 'estado',
@@ -57,9 +113,9 @@ export default function TecnicoProductorPanel() {
       header: 'Fecha de asignación',
       render: asignacion =>
         asignacion.fecha_asignacion
-          ? new Date(asignacion.fecha_asignacion).toLocaleDateString(
-              'es-MX',
-            )
+          ? new Date(
+              asignacion.fecha_asignacion,
+            ).toLocaleDateString('es-MX')
           : '—',
       hideOnMobile: true,
     },
@@ -82,6 +138,11 @@ export default function TecnicoProductorPanel() {
     },
   ]
 
+  const cargando =
+    asignacionesLoading ||
+    tecnicosLoading ||
+    productoresLoading
+
   return (
     <section className={styles.panel}>
       <header className={styles.panelHeader}>
@@ -102,7 +163,7 @@ export default function TecnicoProductorPanel() {
       <Tabla
         datos={asignacionesFiltradas}
         columnas={columnas}
-        cargando={isLoading}
+        cargando={cargando}
         vacio="No hay asignaciones técnico-productor registradas"
       />
     </section>

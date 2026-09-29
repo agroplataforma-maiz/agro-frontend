@@ -23,19 +23,20 @@ interface Props {
  *
  *   POST /productores
  *
- * Payload mínimo:
+ * Payload:
  *
  * {
  *   "nombres": "...",
  *   "apellido_paterno": "...",
  *   "apellido_materno": "...",
  *   "telefono": "...",
- *   "correo_electronico": "..."
+ *   "correo_electronico": "...",
+ *   "username": "...",
+ *   "password": "..."
  * }
  *
- * Estos campos de contacto todavía no forman parte del tipo Productor
- * general de src/types/index.ts, por eso utilizamos un tipo específico
- * para el formulario.
+ * Username y password permiten crear/asociar la cuenta de usuario
+ * del productor desde el mismo registro.
  * ─────────────────────────────────────────────────────────────────────────
  */
 interface ProductorForm {
@@ -44,6 +45,9 @@ interface ProductorForm {
   apellido_materno: string
   telefono: string
   correo_electronico: string
+  username: string
+  password: string
+  confirm: string
 }
 
 const EMPTY: ProductorForm = {
@@ -52,6 +56,9 @@ const EMPTY: ProductorForm = {
   apellido_materno: '',
   telefono: '',
   correo_electronico: '',
+  username: '',
+  password: '',
+  confirm: '',
 }
 
 export default function ModalProductor({
@@ -118,29 +125,48 @@ export default function ModalProductor({
     /*
      * Validación mínima en frontend.
      *
-     * Nombres y ambos apellidos forman parte del registro mínimo definido.
+     * Nombres, ambos apellidos, datos de contacto, username y contraseña
+     * forman parte del registro requerido.
      */
     if (
       !form.nombres.trim() ||
       !form.apellido_paterno.trim() ||
       !form.apellido_materno.trim() ||
       !form.telefono.trim() ||
-      !form.correo_electronico.trim()
+      !form.correo_electronico.trim() ||
+      !form.username.trim() ||
+      !form.password
     ) {
       setError('Completa todos los campos requeridos.')
+      return
+    }
+
+    if (form.password.length < 8) {
+      setError('La contraseña debe tener al menos 8 caracteres.')
+      return
+    }
+
+    if (!form.confirm) {
+      setError('Debes confirmar la contraseña.')
+      return
+    }
+
+    if (form.password !== form.confirm) {
+      setError('Las contraseñas no coinciden.')
       return
     }
 
     setLoading(true)
 
     try {
-      
       await POST('/productores', {
         nombres: form.nombres.trim(),
         apellido_paterno: form.apellido_paterno.trim(),
         apellido_materno: form.apellido_materno.trim(),
         telefono: form.telefono.trim(),
         correo_electronico: form.correo_electronico.trim(),
+        username: form.username.trim(),
+        password: form.password,
       })
 
       onSaved()
@@ -232,6 +258,34 @@ export default function ModalProductor({
             value={form.correo_electronico}
             onChange={update('correo_electronico')}
             required
+          />
+
+          <Field
+            label="Nombre de usuario"
+            name="username"
+            value={form.username}
+            onChange={update('username')}
+            required
+          />
+
+          <Field
+            label="Contraseña"
+            name="password"
+            type="password"
+            value={form.password}
+            onChange={update('password')}
+            required
+            placeholder="Mínimo 8 caracteres"
+          />
+
+          <Field
+            label="Confirmar contraseña"
+            name="confirm"
+            type="password"
+            value={form.confirm}
+            onChange={update('confirm')}
+            required
+            placeholder="Repite la contraseña"
           />
         </div>
 

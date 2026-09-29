@@ -66,6 +66,7 @@ export default function Navbar() {
           </div>
         </a>
         <div className="nav-links">
+          <a className="nav-link" href="aplicacion.html">Aplicación móvil</a>
           <a className="nav-link" href="#modulos">Módulos</a>
           <a className="nav-link" href="#avances">Avances</a>
           <a className="nav-link" href="#mapa">Cobertura</a>

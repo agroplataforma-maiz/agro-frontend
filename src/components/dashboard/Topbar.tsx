@@ -171,7 +171,13 @@ export const Topbar: React.FC<TopbarProps> = ({
           aria-label="Abrir menú de navegación"
           aria-controls="sidebar"
           onClick={onSidebarToggle}
-        >≡</button>
+        ><img src="/img/hamburger.png" alt=""
+          width={36}
+          height={36}
+          style={{
+            display: 'block',
+            objectFit: 'contain',
+          }} /></button>
       )}
 
       {/* Breadcrumb dinámico multi-nivel */}

@@ -91,13 +91,28 @@ export default function UsuariosPanel() {
   const esAdmin = usuarioSesion?.rol === 'administrador';
 
   type UsuarioSavePayload = {
-    nombre_completo?: string;
-    username?: string;
-    email?: string;
-    password?: string;
-    rol?: string;
-    activo?: boolean;
-  };
+  nombre_completo?: string;
+  username?: string;
+  email?: string;
+  password?: string;
+  rol?: string;
+  activo?: boolean;
+
+  // Productor
+  nombres?: string;
+  apellido_paterno?: string;
+  apellido_materno?: string;
+  telefono?: string;
+  correo_electronico?: string;
+
+  // Técnico / investigador
+  institucion?: string;
+  especialidad?: string;
+  notas?: string;
+
+  // Investigador
+  orcid?: string;
+};
 
   // Queries y mutaciones
   const { data: usuarios = [], isLoading, isError, error, refetch } = useQuery<Usuario[]>({
@@ -111,15 +126,97 @@ export default function UsuariosPanel() {
   });
 
   const guardarUsuario = useMutation({
-    
-    mutationFn: async (data: UsuarioSavePayload) => {
-      
-      if (modalUsuario.usuario) return PUT(`/auth/usuario/${modalUsuario.usuario.id}`, data);
-      return POST('/auth/register', data);
-    },
-    onSuccess: () => { cerrarModalUsuario(); qc.invalidateQueries({ queryKey: ['usuarios'] }); addToast('Usuario guardado', 'ok'); },
-    onError: () => addToast('Error al guardar usuario', 'err'),
-  });
+  mutationFn: async (data: UsuarioSavePayload) => {
+    /*
+     * EDICIÓN
+     *
+     * Se conserva exactamente el flujo existente.
+     */
+    if (modalUsuario.usuario) {
+      return PUT(
+        `/auth/usuario/${modalUsuario.usuario.id}`,
+        data
+      );
+    }
+
+    /*
+     * CREACIÓN
+     *
+     * El rol determina qué endpoint especializado utilizar.
+     */
+
+    // PRODUCTOR
+    if (data.rol === 'productor') {
+      return POST('/productores', {
+        nombres: data.nombres,
+        apellido_paterno: data.apellido_paterno,
+        apellido_materno: data.apellido_materno,
+        telefono: data.telefono,
+        correo_electronico: data.correo_electronico,
+        username: data.username,
+        password: data.password,
+      });
+    }
+
+    // TÉCNICO DE CAMPO
+    if (data.rol === 'tecnico_campo') {
+      return POST('/social/tecnicos', {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        nombre_completo: data.nombre_completo,
+        institucion: data.institucion,
+        especialidad: data.especialidad,
+        notas: data.notas,
+      });
+    }
+
+    // INVESTIGADOR
+    if (data.rol === 'investigador') {
+      return POST('/social/investigadores', {
+        username: data.username,
+        email: data.email,
+        password: data.password,
+        nombre_completo: data.nombre_completo,
+        institucion: data.institucion,
+        especialidad: data.especialidad,
+        orcid: data.orcid,
+        //pais: data.pais,
+        notas: data.notas,
+      });
+    }
+
+    /*
+     * ADMINISTRADOR / VISUALIZADOR
+     *
+     * Ambos utilizan /auth/register.
+     * En administrador enviamos explícitamente el rol.
+     */
+    return POST('/auth/register', {
+      username: data.username,
+      email: data.email,
+      password: data.password,
+      nombre_completo: data.nombre_completo,
+      rol: data.rol,
+    });
+  },
+
+  onSuccess: () => {
+    cerrarModalUsuario();
+
+    qc.invalidateQueries({
+      queryKey: ['usuarios'],
+    });
+
+    addToast('Usuario guardado', 'ok');
+  },
+
+  onError: (e: Error) =>
+    addToast(
+      e.message || 'Error al guardar usuario',
+      'err'
+    ),
+});
 
   const activarUsuario = useMutation({
     mutationFn: (id: string) => PUT(`/auth/usuarios/${id}/activar`, {}),

@@ -45,9 +45,9 @@ function normalizarUsuario(usuario: Usuario): Usuario {
 }
 
 export function useAuth() {
-  const router  = useRouter()
+  const router = useRouter()
   const setUsuario = useAppStore(s => s.setUsuario)
-  const addToast   = useAppStore(s => s.addToast)
+  const addToast = useAppStore(s => s.addToast)
 
   // Sincroniza el token de localStorage a cookie para que el middleware lo lea
   function syncTokenCookie(token: string) {
@@ -69,7 +69,7 @@ export function useAuth() {
   }
 
   function mostrarOverlayTransicion(texto: string) {
-    if (typeof document === 'undefined') return () => {}
+    if (typeof document === 'undefined') return () => { }
 
     // Elimina estilos previos si existen
     const prevStyle = document.getElementById('agro-auth-transition-style')
@@ -140,6 +140,10 @@ export function useAuth() {
     syncTokenCookie(responseNormalizada.access_token)
     syncRolCookie(responseNormalizada.usuario.rol)
     setUsuario(responseNormalizada.usuario)
+
+    localStorage.setItem('tema', 'dark')
+    document.documentElement.classList.add('dark')
+
     return responseNormalizada
   }
 
@@ -149,6 +153,10 @@ export function useAuth() {
     clearTokenCookie()
     clearRolCookie()
     setUsuario(null)
+
+    localStorage.setItem('tema', 'light')
+    document.documentElement.classList.remove('dark')
+
     await new Promise(resolve => setTimeout(resolve, 1200))
     limpiarOverlay()
     // Redirigir a login tras logout y limpiar la URL
@@ -158,7 +166,7 @@ export function useAuth() {
   // Inicializa el store desde localStorage al montar la app
   function inicializarSesion() {
     const usuario = getUsuario()
-    const token   = getToken()
+    const token = getToken()
     if (usuario && token) {
       const usuarioNormalizado = normalizarUsuario(usuario)
       setUsuario(usuarioNormalizado)

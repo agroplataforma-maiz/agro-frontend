@@ -124,20 +124,6 @@ export interface TecnicoProductor {
   actualizado_en: string
 }
 
-export interface Organizacion{
-  id: UUID
-  nombre: string
-  descripcion: string
-  activo?: boolean
-}
-
-export interface OrganizacionMiembro{
-  id: UUID
-  organizacion_id: UUID
-  usuario_id: UUID
-  activo?: boolean
-}
-
 export interface Municipio {
   id: number
   nombre: string
@@ -204,7 +190,7 @@ export const ROL_COLOR: Record<Rol, string> = {
 export const ROL_RUTAS_PERMITIDAS: Record<Rol, string[]> = {
   administrador: ['*'],
   investigador:  ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/admin/catalogos', '/mi-perfil'],
-  tecnico_campo: ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/mi-perfil'],
+  tecnico_campo: ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/mi-perfil', '/organizaciones'],
   visualizador:  ['/dashboard', '/mi-perfil', '/comunidades'],
   productor:     ['/dashboard', '/mi-perfil', '/comunidades'],
   invitado:      ['/dashboard', '/comunidades'],
@@ -218,4 +204,32 @@ export const ROL_HOME: Record<Rol, string> = {
   visualizador:  '/dashboard',
   productor:     '/dashboard',
   invitado:      '/dashboard',
+}
+
+// ─────────────────────────────────────────────────────────────
+// Organizaciones
+// ─────────────────────────────────────────────────────────────
+
+export interface Organizacion {
+  id: string;
+  nombre: string;
+  descripcion: string;
+  propietario_id: string;
+  activo?: boolean;
+}
+
+export interface OrganizacionPropietario {
+  organizacion_id: string;
+  organizacion_nombre: string;
+  propietario_id: string;
+  propietario_nombre: string;
+  propietario_email: string;
+}
+
+export interface OrganizacionMiembro {
+  id: string;
+  organizacion_id: string;
+  usuario_id: string;
+  fecha_ingreso: string;
+  activo?: boolean;
 }

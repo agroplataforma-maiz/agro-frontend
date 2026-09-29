@@ -133,9 +133,9 @@ export default function TecnicosPage() {
             Solo visible para técnico de campo.
             El panel contiene su propia consulta, búsqueda y tabla.
             ───────────────────────────────────────────────────────────────── */}
-        {usuario.rol === 'investigador' || usuario.rol === 'administrador' ? (
+        {/*usuario.rol === 'investigador' || usuario.rol === 'administrador' ? (
           <UsuariosVisualizadoresPanel />
-        ) : null}
+        ) : null*/}
 
         {/* ── Técnicos ────────────────────────────────────────────────────
             El panel contiene la consulta pendiente, búsqueda y tabla.

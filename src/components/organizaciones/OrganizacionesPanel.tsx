@@ -163,6 +163,20 @@ export default function OrganizacionesPanel() {
         return propietariosMap.get(organizacion.propietario_id);
     };
 
+    const investigadoresDisponibles = useMemo(() => {
+        const propietariosIds = new Set(
+            organizaciones.map(
+                organizacion => organizacion.propietario_id
+            )
+        );
+
+        return investigadores.filter(
+            investigador =>
+                investigador.user_id &&
+                !propietariosIds.has(investigador.user_id)
+        );
+    }, [investigadores, organizaciones]);
+
     // ─────────────────────────────────────────────────────────────
     // Desactivar organización
     // ─────────────────────────────────────────────────────────────
@@ -1183,8 +1197,8 @@ export default function OrganizacionesPanel() {
                                 value: '',
                                 label: 'Selecciona un investigador',
                             },
-                            ...investigadores.map(investigador => ({
-                                value: investigador.user_id,
+                            ...investigadoresDisponibles.map(investigador => ({
+                                value: investigador.user_id!,
                                 label: `${investigador.nombre_completo} — ${investigador.email}`,
                             })),
                         ]}

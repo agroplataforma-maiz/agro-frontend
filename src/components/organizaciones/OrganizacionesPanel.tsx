@@ -12,6 +12,13 @@ import type {
     Investigador,
 } from '@/types';
 
+type UsuarioOrganizacion = {
+    id: string;
+    nombre_completo: string;
+    email: string;
+    activo: boolean;
+};
+
 import Paginacion from '@/components/ui/Paginacion';
 import Modal from '@/components/ui/Modal';
 import Button from '@/components/ui/Button';
@@ -351,16 +358,18 @@ export default function OrganizacionesPanel() {
         data: usuarios = [],
         isLoading: isLoadingUsuarios,
         refetch: refetchUsuarios,
-    } = useQuery({
+    } = useQuery<UsuarioOrganizacion[]>({
         queryKey: ['usuarios'],
         queryFn: () => GET('/auth/usuarios'),
         retry: 1,
         select: (d: unknown) => {
-            const data = d as any[] | {
-                count?: number;
-                items?: any[];
-                results?: any[];
-            };
+            const data = d as
+                | UsuarioOrganizacion[]
+                | {
+                    count?: number;
+                    items?: UsuarioOrganizacion[];
+                    results?: UsuarioOrganizacion[];
+                };
 
             return Array.isArray(data)
                 ? data
@@ -967,16 +976,16 @@ export default function OrganizacionesPanel() {
                                 },
                                 ...usuarios
                                     .filter(
-                                        (usuario: any) =>
+                                        usuario =>
                                             usuario.activo &&
                                             !miembros.some(
                                                 miembro => miembro.usuario_id === usuario.id
                                             )
                                     )
-                                    .map((usuario: any) => ({
+                                    .map(usuario => ({
                                         value: usuario.id,
                                         label: `${usuario.nombre_completo} — ${usuario.email}`,
-                                    })),
+                                    }))
                             ]}
                             disabled={
                                 isLoadingUsuarios ||
@@ -1051,7 +1060,7 @@ export default function OrganizacionesPanel() {
                                         <tr key={miembro.id}>
                                             <td className={styles.tdMiembroUsuario}>
                                                 {usuarios.find(
-                                                    (usuario: any) => usuario.id === miembro.usuario_id
+                                                    usuario => usuario.id === miembro.usuario_id
                                                 )?.nombre_completo ?? miembro.usuario_id}
                                             </td>
 

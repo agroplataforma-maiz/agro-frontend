@@ -813,7 +813,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
     // ─── Handler: medios de parcela ─────────────────────────────────────────────
 
-    const handleMedioClick = (event: any) => {
+    const handleMedioClick = (event: MapLayerMouseEvent) => {
       const feature = event.features?.[0];
 
       if (!feature) return;

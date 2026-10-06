@@ -8,6 +8,8 @@ import styles from './MapaHuastecaMapLibreClient.module.css';
 import PopupParcela from "./PopupParcela";
 import PopupMedio from './PopupMedio';
 import ListaPuntosCercanos from './ListaPuntosCercanos';
+import type { ExpressionSpecification } from 'maplibre-gl';
+import '@/lib/maplibre';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -1087,7 +1089,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                 ],
                 '#FFD600',
                 '#D1D5DB',
-              ] as maplibregl.ExpressionSpecification,
+              ] as ExpressionSpecification,
               'fill-opacity': 0.15,
             },
           }
@@ -2056,7 +2058,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
                 top: isMobile
                   ? 'auto'
-                  : 'calc(var(--topbar-h, 64px) + 68px)',
+                  : 'calc(var(--topbar-h, 64px) + 60px)',
 
                 bottom: isMobile
                   ? 'calc(var(--topbar-h, 64px) + 144px)'

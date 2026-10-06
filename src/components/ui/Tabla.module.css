@@ -6,9 +6,10 @@
   background: var(--blanco);
   border: 1px solid var(--borde);
   border-radius: 12px;
-  overflow: hidden;
-  box-shadow: var(--sombra);
   overflow-x: auto;
+  overflow-y: hidden;
+  -webkit-overflow-scrolling: touch;
+  box-shadow: var(--sombra);
 }
 .tableInfo {
   padding: 12px 20px;
@@ -23,7 +24,8 @@
   color: var(--gris);
 }
 .tabla {
-  width: 100%;
+  width: max-content;
+  min-width: 100%;
   border-collapse: collapse;
 }
 .theadTr {

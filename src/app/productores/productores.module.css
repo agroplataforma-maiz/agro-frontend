@@ -239,7 +239,8 @@
   background: var(--blanco);
   border: 1px solid var(--borde);
   border-radius: 12px;
-  overflow: hidden;
+  overflow-x: auto;
+  overflow-y: hidden;
   box-shadow: var(--sombra);
 }
 .table-info {

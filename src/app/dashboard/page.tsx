@@ -234,7 +234,7 @@ export default function DashboardPage() {
             <div className={`${styles['kpi-card']} ${styles['maiz']}`} tabIndex={0} aria-label="Días del proyecto">
               <div className={styles['kpi-n']}>{diasProyecto}</div>
               <div className={styles['kpi-label']}>Días del<br/>proyecto</div>
-              <div className={`${styles['kpi-trend']} ${styles['trend-up']}`} aria-label="De 150 días en etapa 1">de 150 E1</div>
+              <div className={`${styles['kpi-trend']} ${styles['trend-up']}`} aria-label="De 150 días en etapa 1">de 515 E2</div>
             </div>
           </div>
           {/* Módulos */}

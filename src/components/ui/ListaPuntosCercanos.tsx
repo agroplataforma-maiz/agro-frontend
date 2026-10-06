@@ -61,7 +61,7 @@ export default function ListaPuntosCercanos({
                         : 'none',
                     top: isMobile ? 'auto' : 'auto',
                     bottom: isMobile
-                        ? 'calc(var(--topbar-h, 64px) + 120px)'
+                        ? 'calc(var(--topbar-h, 64px) + 100px)'
                         : 75,
                     width: isMobile
                         ? 'min(320px, calc(100vw - 24px))'
@@ -85,7 +85,7 @@ export default function ListaPuntosCercanos({
                     style={{
                         position: 'relative',
                         flexShrink: 0,
-                        height: 30,
+                        height: 15,
                         marginBottom: 4,
                     }}
                 >
@@ -95,7 +95,7 @@ export default function ListaPuntosCercanos({
                         aria-label="Cerrar"
                         style={{
                             position: 'absolute',
-                            top: -2,
+                            top: -3,
                             right: 0,
                             background: 'none',
                             border: 'none',

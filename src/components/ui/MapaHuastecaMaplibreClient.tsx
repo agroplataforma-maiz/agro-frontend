@@ -324,6 +324,24 @@ const MapaHuastecaMaplibreClient: React.FC<
       data: mediosParcela = [],
     } = useMedioParcela();
 
+    const idsParcelasPermitidas = useMemo(
+      () =>
+        new Set(
+          puntos.map((punto) => String(punto.id))
+        ),
+      [puntos]
+    );
+
+    const mediosVisibles = useMemo(
+      () =>
+        mediosParcela.filter((medio) =>
+          idsParcelasPermitidas.has(
+            String(medio.parcela_id)
+          )
+        ),
+      [mediosParcela, idsParcelasPermitidas]
+    );
+
     const [municipiosGeoJson, setMunicipiosGeoJson] =
       useState<MunicipiosGeoJson | null>(null);
 
@@ -419,7 +437,7 @@ const MapaHuastecaMaplibreClient: React.FC<
       });
 
       if (showMediosParcela) {
-        mediosParcela.forEach((medio) => {
+        mediosVisibles.forEach((medio) => {
           const latitud = medio.ubicacion?.latitud;
           const longitud = medio.ubicacion?.longitud;
 
@@ -445,14 +463,14 @@ const MapaHuastecaMaplibreClient: React.FC<
       }
 
       return elementos;
-    }, [puntosValidos, mediosParcela, showMediosParcela]);
+    }, [puntosValidos, mediosVisibles, showMediosParcela]);
 
     // ─── Medios de parcela como GeoJSON ─────────────────────────────────────────
 
     const mediosParcelaGeoJson = useMemo(
       () => ({
         type: 'FeatureCollection' as const,
-        features: mediosParcela
+        features: mediosVisibles
           .filter((medio) => {
             const lat = medio.ubicacion?.latitud;
             const lng = medio.ubicacion?.longitud;
@@ -484,7 +502,7 @@ const MapaHuastecaMaplibreClient: React.FC<
             },
           })),
       }),
-      [mediosParcela]
+      [mediosVisibles]
     );
 
     // ─── Polígono seleccionado ──────────────────────────────────────────────────
@@ -818,7 +836,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
       if (!feature) return;
 
-      const medio = mediosParcela.find(
+      const medio = mediosVisibles.find(
         (item) => item.id === feature.properties?.id
       );
 

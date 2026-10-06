@@ -102,20 +102,20 @@ export default function ModalProductor({
 
   const update =
     (campo: keyof ProductorForm) =>
-    (
-      e: React.ChangeEvent<
-        HTMLInputElement |
-        HTMLSelectElement |
-        HTMLTextAreaElement
-      >
-    ) => {
-      const value = e.target.value
+      (
+        e: React.ChangeEvent<
+          HTMLInputElement |
+          HTMLSelectElement |
+          HTMLTextAreaElement
+        >
+      ) => {
+        const value = e.target.value
 
-      setForm(actual => ({
-        ...actual,
-        [campo]: value,
-      }))
-    }
+        setForm(actual => ({
+          ...actual,
+          [campo]: value,
+        }))
+      }
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault()
@@ -211,13 +211,7 @@ export default function ModalProductor({
         id="form-productor"
         onSubmit={handleSubmit}
       >
-        <div
-          style={{
-            display: 'grid',
-            gridTemplateColumns: '1fr 1fr',
-            gap: '16px',
-          }}
-        >
+        <div className={styles.formGrid}>
           <Field
             label="Nombres"
             name="nombres"

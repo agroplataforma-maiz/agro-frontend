@@ -272,7 +272,7 @@ export default function ComunidadesPage() {
 
         const parcelas = lista.filter(
           ubicacion =>
-            ubicacion.tipo_ubicacion === 'parcela' &&
+            ubicacion.tipo_ubicacion === 'parcela' || ubicacion.tipo_ubicacion === 'muestreo' &&
             Number.isFinite(Number(ubicacion.latitud)) &&
             Number.isFinite(Number(ubicacion.longitud))
         );
@@ -301,11 +301,24 @@ export default function ComunidadesPage() {
   }, []);
 
   useEffect(() => {
+    // Esperamos a que el usuario esté hidratado antes de
+    // decidir qué endpoint de parcelas utilizar.
+    if (!usuario) {
+      return;
+    }
+
     let activo = true;
 
     setParcelasLoading(true);
 
-    GET('/parcelas')
+    const endpointParcelas =
+      usuario.rol === 'productor'
+        ? '/parcelas/mis-parcelas'
+        : usuario.rol === 'tecnico_campo'
+          ? '/parcelas/asignadas'
+          : '/parcelas';
+
+    GET(endpointParcelas)
       .then((data: unknown) => {
         if (!activo) return;
 
@@ -334,7 +347,7 @@ export default function ComunidadesPage() {
     return () => {
       activo = false;
     };
-  }, []);
+  }, [usuario]);
 
   useEffect(() => {
     let activo = true;
@@ -408,21 +421,21 @@ export default function ComunidadesPage() {
     });
 
     return puntos;
-}, [parcelas, ubicacionesParcela, municipiosGeoJson]);
+  }, [parcelas, ubicacionesParcela, municipiosGeoJson]);
 
-const municipiosMapa = useMemo(() => {
-  if (!municipiosGeoJson) {
-    return [];
-  }
+  const municipiosMapa = useMemo(() => {
+    if (!municipiosGeoJson) {
+      return [];
+    }
 
-  return municipiosGeoJson.features
-    .map(feature => feature.properties?.municipio)
-    .filter(
-      (municipio): municipio is string =>
-        typeof municipio === 'string' && municipio.trim().length > 0
-    )
-    .sort((a, b) => a.localeCompare(b));
-}, [municipiosGeoJson]);
+    return municipiosGeoJson.features
+      .map(feature => feature.properties?.municipio)
+      .filter(
+        (municipio): municipio is string =>
+          typeof municipio === 'string' && municipio.trim().length > 0
+      )
+      .sort((a, b) => a.localeCompare(b));
+  }, [municipiosGeoJson]);
 
   // Estados y lógica para filtros y selección
   const [busqueda, setBusqueda] = useState('');
@@ -519,21 +532,21 @@ const municipiosMapa = useMemo(() => {
   // Filtrar comunidades según búsqueda y municipio.
   // Esta lógica se conserva temporalmente para SidebarComunidades.
   const ubicacionesFiltradas = puntosParcela.filter(p => {
-  const coincideBusqueda =
-    p.comunidad.toLowerCase().includes(busqueda.toLowerCase()) ||
-    p.municipio.toLowerCase().includes(busqueda.toLowerCase());
+    const coincideBusqueda =
+      p.comunidad.toLowerCase().includes(busqueda.toLowerCase()) ||
+      p.municipio.toLowerCase().includes(busqueda.toLowerCase());
 
-  const coincideMunicipio =
-    municipioFiltro === 'todos' ||
-    p.municipio === municipioFiltro;
+    const coincideMunicipio =
+      municipioFiltro === 'todos' ||
+      p.municipio === municipioFiltro;
 
-  return coincideBusqueda && coincideMunicipio;
-});
+    return coincideBusqueda && coincideMunicipio;
+  });
 
   // Municipios únicos para los filtros del sidebar.
   // Se conserva temporalmente porque SidebarComunidades todavía utiliza
   // los datos mock.
-  
+
 
   // Adaptar datos para la tabla (admin)
   const comunidadesTabla = comunidades;
@@ -685,7 +698,7 @@ const municipiosMapa = useMemo(() => {
               setMunicipioFiltro={setMunicipioFiltro}
               municipiosMapa={municipiosMapa}
               ubicacionesFiltradas={ubicacionesFiltradas}
-              
+
               puntoActivoId={puntoActivoId}
               setPuntoActivoId={setPuntoActivoId}
               setModalNuevaOpen={setModalNuevaOpen}

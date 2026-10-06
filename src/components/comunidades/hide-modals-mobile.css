@@ -2,18 +2,16 @@
    Solo aplica en pantallas <= 700px de ancho. */
 
 @media (max-width: 700px) {
-  /* Oculta cualquier overlay/modal por clase, rol o estructura */
-  [class*="overlay"],
-  [class*="modal"],
-  div[role="dialog"],
-  [aria-modal="true"],
-  .Modal_overlay,
-  .Modal_modal {
+  [class*="overlay"]:not(.mapa-imagen-ampliada),
+  [class*="modal"]:not(.mapa-imagen-ampliada),
+  div[role="dialog"]:not(.mapa-imagen-ampliada),
+  [aria-modal="true"]:not(.mapa-imagen-ampliada),
+  .Modal_overlay:not(.mapa-imagen-ampliada),
+  .Modal_modal:not(.mapa-imagen-ampliada) {
     display: none !important;
     visibility: hidden !important;
     opacity: 0 !important;
     pointer-events: none !important;
     z-index: -1 !important;
   }
-
 }

@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import type { MedioParcela } from '@/hooks/useMedioParcela';
+import { createPortal } from 'react-dom';
 
 interface PopupMedioProps {
   medio: MedioParcela;
@@ -167,72 +168,77 @@ export default function PopupMedio({
       </div>
 
       {/* Visor de imagen ampliada */}
-      {imagenAmpliada && medio.url_temporal && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label="Imagen ampliada"
-          onClick={() => setImagenAmpliada(false)}
-          style={{
-            position: 'fixed',
-            inset: 0,
-            zIndex: 10000,
-            background: 'rgba(0, 0, 0, 0.82)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            padding: isMobile
-              ? '64px 16px 16px'
-              : 32,
-            boxSizing: 'border-box',
-          }}
-        >
-          {/* Botón cerrar imagen */}
-          <button
-            type="button"
+      {imagenAmpliada &&
+        medio.url_temporal &&
+        typeof document !== 'undefined' &&
+        createPortal(
+          <div
+            className="mapa-imagen-ampliada"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Imagen ampliada"
             onClick={() => setImagenAmpliada(false)}
-            aria-label="Cerrar imagen ampliada"
             style={{
-              position: 'absolute',
-              top: isMobile ? 16 : 24,
-              right: isMobile ? 16 : 24,
-              width: 40,
-              height: 40,
-              border: 'none',
-              borderRadius: '50%',
-              background: 'rgba(0, 0, 0, 0.55)',
-              color: 'var(--blanco)',
-              fontSize: 28,
-              lineHeight: 1,
-              cursor: 'pointer',
-              zIndex: 10001,
+              position: 'fixed',
+              top: 0,
+              left: 0,
+              width: '100vw',
+              height: '100dvh',
+              zIndex: 2147483647,
+              background: 'rgba(0, 0, 0, 0.90)',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              boxSizing: 'border-box',
+              overflow: 'hidden',
+              isolation: 'isolate',
+              padding: isMobile ? '56px 12px 12px' : 32,
             }}
           >
-            ×
-          </button>
+            {/* Botón cerrar imagen */}
+            <button
+              type="button"
+              onClick={() => setImagenAmpliada(false)}
+              aria-label="Cerrar imagen ampliada"
+              style={{
+                position: 'fixed',
+                top: isMobile ? 10 : 24,
+                right: isMobile ? 10 : 24,
+                width: 40,
+                height: 40,
+                border: 'none',
+                borderRadius: '50%',
+                background: 'rgba(0, 0, 0, 0.70)',
+                color: 'var(--blanco)',
+                fontSize: 28,
+                lineHeight: 1,
+                cursor: 'pointer',
+                zIndex: 2147483648,
+              }}
+            >
+              ×
+            </button>
 
-          {/* Imagen ampliada */}
-          <img
-            src={medio.url_temporal}
-            alt={medio.nombre_archivo || 'Imagen de parcela ampliada'}
-            onClick={(event) => event.stopPropagation()}
-            style={{
-              display: 'block',
-              width: 'auto',
-              height: 'auto',
-              maxWidth: isMobile
-                ? 'calc(100vw - 32px)'
-                : 'calc(100vw - 64px)',
-              maxHeight: isMobile
-                ? 'calc(100vh - 80px)'
-                : 'calc(100vh - 64px)',
-              objectFit: 'contain',
-              borderRadius: 10,
-              boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
-            }}
-          />
-        </div>
-      )}
+            {/* Imagen ampliada */}
+            <img
+              src={medio.url_temporal}
+              alt={medio.nombre_archivo || 'Imagen de parcela ampliada'}
+              onClick={(event) => event.stopPropagation()}
+              style={{
+                display: 'block',
+                width: 'auto',
+                height: 'auto',
+                maxWidth: 'calc(100vw - 24px)',
+                maxHeight: 'calc(100dvh - 68px)',
+                objectFit: 'contain',
+                borderRadius: 10,
+                boxShadow: '0 12px 40px rgba(0,0,0,0.45)',
+                flex: '0 1 auto',
+              }}
+            />
+          </div>,
+          document.body
+        )}
     </>
   );
 }

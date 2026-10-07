@@ -5,12 +5,19 @@ import dynamic from 'next/dynamic'
 
 export interface PuntoMapaHuasteca {
   id: number | string
+  tipo?: 'parcela' | 'comunidad'
   comunidad: string
   municipio: string
   latitud: number
   longitud: number
-  imagenUrl?: string | null;
-  poligono?: string | null;
+  imagenUrl?: string | null
+  poligono?: string | null
+
+   // Datos de parcela
+  superficie_ha?: number | string | null;
+  tenencia?: string | null;
+  topografia?: string | null;
+  densidad_plantas_ha?: number | null;
 }
 
 interface MapaHuastecaProps {

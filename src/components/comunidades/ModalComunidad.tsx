@@ -1,6 +1,6 @@
 'use client'
 
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { POST, PUT } from '@/lib/api'
 import type { Comunidad } from '@/types'
 
@@ -57,6 +57,35 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
 
+  useEffect(() => {
+    if (!comunidad) return
+
+    setForm({
+      nombre: comunidad.nombre ?? '',
+      nombre_lengua_orig: comunidad.nombre_lengua_orig ?? '',
+      tipo: comunidad.tipo,
+      municipio_id: comunidad.municipio_id,
+
+      presencia_maiz_nativo: comunidad.presencia_maiz_nativo ?? false,
+      presencia_historica_maiz: comunidad.presencia_historica_maiz ?? false,
+
+      diversidad_ecologica_score:
+        comunidad.diversidad_ecologica_score ?? 3,
+
+      riqueza_cultural_score:
+        comunidad.riqueza_cultural_score ?? 3,
+
+      prioridad_muestreo:
+        comunidad.prioridad_muestreo ?? 'media',
+
+      poblacion_total: comunidad.poblacion_total,
+      num_localidades: comunidad.num_localidades,
+
+      fuente: comunidad.fuente ?? 'INEGI 2020',
+      activo: comunidad.activo ?? true,
+    })
+  }, [comunidad])
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -68,37 +97,50 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
   // =========================
   const update =
     (k: keyof Comunidad) =>
-    (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+      (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
 
-      let value: string | number | undefined = e.target.value
+        let value: string | number | undefined = e.target.value
 
-      if (
-        k === 'municipio_id' ||
-        k === 'poblacion_total' ||
-        k === 'num_localidades' ||
-        k === 'diversidad_ecologica_score' ||
-        k === 'riqueza_cultural_score'
-      ) {
-        value = value === '' ? undefined : Number(value)
+        if (
+          k === 'municipio_id' ||
+          k === 'poblacion_total' ||
+          k === 'num_localidades' ||
+          k === 'diversidad_ecologica_score' ||
+          k === 'riqueza_cultural_score'
+        ) {
+          value = value === '' ? undefined : Number(value)
+        }
+
+        if (typeof value === 'object') return
+
+        setForm(prev => ({
+          ...prev,
+          [k]: value
+        }))
       }
-
-      if (typeof value === 'object') return
-
-      setForm(prev => ({
-        ...prev,
-        [k]: value
-      }))
-    }
 
   // =========================
   // SUBMIT REAL (SOLO FINAL)
   // =========================
   const handleSubmitFinal = async () => {
+    if (!form.nombre?.trim()) {
+      setError('El nombre de la comunidad es obligatorio')
+      return
+    }
 
-    const payload = {
-      ...form,
-      latitud: lat,
-      longitud: lng,
+    if (!form.tipo) {
+      setError('Selecciona el tipo de comunidad')
+      return
+    }
+
+    if (!form.municipio_id) {
+      setError('Selecciona un municipio')
+      return
+    }
+
+    if (lat == null || lng == null) {
+      setError('Selecciona una ubicación en el mapa')
+      return
     }
 
     setLoading(true)
@@ -106,14 +148,102 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
 
     try {
       if (comunidad?.id) {
-        await PUT(`/core/comunidad/${comunidad.id}`, payload)
+        const payload = {
+          nombre: form.nombre,
+          nombre_lengua_orig: form.nombre_lengua_orig || null,
+          tipo: form.tipo,
+          municipio_id: form.municipio_id,
+
+          presencia_maiz_nativo:
+            form.presencia_maiz_nativo ?? false,
+
+          presencia_historica_maiz:
+            form.presencia_historica_maiz ?? false,
+
+          diversidad_ecologica_score:
+            form.diversidad_ecologica_score ?? null,
+
+          riqueza_cultural_score:
+            form.riqueza_cultural_score ?? null,
+
+          prioridad_muestreo:
+            form.prioridad_muestreo ?? 'media',
+
+          poblacion_total:
+            form.poblacion_total ?? null,
+
+          num_localidades:
+            form.num_localidades ?? null,
+
+          fuente:
+            form.fuente || null,
+
+          activo:
+            form.activo ?? true,
+        }
+
+        await PUT(`/core/comunidades/${comunidad.id}`, payload)
       } else {
-        await POST(`/core/comunidad`, payload)
+        // ==========================================
+        // 1. CREAR LA UBICACIÓN
+        // ==========================================
+        const ubicacion = await POST<{
+          id: string
+        }>('/ubicaciones', {
+          nombre: form.nombre,
+          tipo_ubicacion: 'comunidad',
+          descripcion: `Ubicación de la comunidad ${form.nombre}`,
+          latitud: lat,
+          longitud: lng,
+          altitud_m: null,
+          altitud_fuente: null,
+          precision_gps: null,
+          municipio_id: form.municipio_id,
+          sistema_referencia: 'WGS84',
+          fuente_captura_id: null,
+          tags: ['comunidad'],
+        })
+
+        // ==========================================
+        // 2. CREAR LA COMUNIDAD
+        // ==========================================
+        await POST('/core/comunidades', {
+          nombre: form.nombre,
+          nombre_lengua_orig: form.nombre_lengua_orig || null,
+          tipo: form.tipo,
+          municipio_id: form.municipio_id,
+          ubicacion_id: ubicacion.id,
+
+          presencia_maiz_nativo: form.presencia_maiz_nativo ?? false,
+          presencia_historica_maiz: form.presencia_historica_maiz ?? false,
+
+          diversidad_ecologica_score:
+            form.diversidad_ecologica_score ?? null,
+
+          riqueza_cultural_score:
+            form.riqueza_cultural_score ?? null,
+
+          prioridad_muestreo:
+            form.prioridad_muestreo ?? 'media',
+
+          poblacion_total:
+            form.poblacion_total ?? null,
+
+          num_localidades:
+            form.num_localidades ?? null,
+
+          fuente:
+            form.fuente || null,
+        })
       }
 
       onSaved()
     } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : 'Error al guardar')
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'Error al guardar la comunidad'
+      )
     } finally {
       setLoading(false)
     }
@@ -152,6 +282,20 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
               label="Nombre"
               value={form.nombre ?? ''}
               onChange={update('nombre')}
+            />
+
+            <SelectField
+              name="municipio_id"
+              label="Municipio"
+              value={form.municipio_id != null ? String(form.municipio_id) : ''}
+              onChange={update('municipio_id')}
+              options={[
+                { value: '', label: '— Selecciona —' },
+                ...municipios.map(m => ({
+                  value: String(m.id),
+                  label: m.nombre,
+                })),
+              ]}
             />
 
             <SelectField
@@ -243,7 +387,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
               label="Diversidad"
               value={String(form.diversidad_ecologica_score ?? 3)}
               onChange={update('diversidad_ecologica_score')}
-              options={[1,2,3,4,5].map(n => ({
+              options={[1, 2, 3, 4, 5].map(n => ({
                 value: String(n),
                 label: String(n)
               }))}
@@ -254,7 +398,7 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
               label="Riqueza cultural"
               value={String(form.riqueza_cultural_score ?? 3)}
               onChange={update('riqueza_cultural_score')}
-              options={[1,2,3,4,5].map(n => ({
+              options={[1, 2, 3, 4, 5].map(n => ({
                 value: String(n),
                 label: String(n)
               }))}

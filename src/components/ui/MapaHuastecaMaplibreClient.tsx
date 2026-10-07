@@ -15,12 +15,19 @@ import '@/lib/maplibre';
 
 interface PuntoMapaHuasteca {
   id: number | string;
+  tipo?: 'parcela' | 'comunidad';
   comunidad: string;
   municipio: string;
   latitud: number;
   longitud: number;
   imagenUrl?: string | null;
   poligono?: string | null;
+
+  // Datos específicos de parcela
+  superficie_ha?: number | string | null;
+  tenencia?: string | null;
+  topografia?: string | null;
+  densidad_plantas_ha?: number | null;
 }
 
 interface PopupInfo extends PuntoMapaHuasteca {
@@ -30,7 +37,7 @@ interface PopupInfo extends PuntoMapaHuasteca {
 export interface ElementoMapa {
   key: string;
   id: number | string;
-  tipo: 'parcela' | 'medio';
+  tipo: 'parcela' | 'comunidad' | 'medio';
   nombre: string;
   latitud: number;
   longitud: number;
@@ -329,7 +336,9 @@ const MapaHuastecaMaplibreClient: React.FC<
     const idsParcelasPermitidas = useMemo(
       () =>
         new Set(
-          puntos.map((punto) => String(punto.id))
+          puntos
+            .filter(punto => (punto.tipo ?? 'parcela') === 'parcela')
+            .map(punto => String(punto.id))
         ),
       [puntos]
     );
@@ -427,11 +436,13 @@ const MapaHuastecaMaplibreClient: React.FC<
       const elementos: ElementoMapa[] = [];
 
       puntosValidos.forEach((punto) => {
+        const tipoPunto = punto.tipo ?? 'parcela';
+
         elementos.push({
-          key: `parcela-${punto.id}`,
+          key: `${tipoPunto}-${punto.id}`,
           id: punto.id,
-          tipo: 'parcela',
-          nombre: punto.comunidad || 'Parcela',
+          tipo: tipoPunto,
+          nombre: punto.comunidad,
           latitud: punto.latitud,
           longitud: punto.longitud,
           punto,
@@ -518,7 +529,9 @@ const MapaHuastecaMaplibreClient: React.FC<
       }
 
       const puntoSeleccionado = puntosValidos.find(
-        (punto) => punto.id === selectedId
+        (punto) =>
+          (punto.tipo ?? 'parcela') === 'parcela' &&
+          punto.id === selectedId
       );
 
       if (!puntoSeleccionado?.poligono) {
@@ -861,6 +874,33 @@ const MapaHuastecaMaplibreClient: React.FC<
       );
     };
 
+    const seleccionarMedio = (medio: MedioParcela) => {
+      const elemento = elementosMapa.find(
+        (item) =>
+          item.tipo === 'medio' &&
+          item.id === medio.id
+      );
+
+      if (!elemento) return;
+
+      const map = mapRef.current?.getMap?.();
+
+      if (!map) return;
+
+      const puntoPantalla = map.project([
+        elemento.longitud,
+        elemento.latitud,
+      ]);
+
+      seleccionarElementoContextual(
+        elemento,
+        {
+          x: puntoPantalla.x,
+          y: puntoPantalla.y,
+        }
+      );
+    };
+
     const limpiarSeleccionContextual = () => {
       setElementosCercanos([]);
       setListaCercanosAbierta(false);
@@ -882,7 +922,11 @@ const MapaHuastecaMaplibreClient: React.FC<
         radio: RADIO_SELECCION,
       });
 
-      if (elemento.tipo === 'parcela' && elemento.punto) {
+      if (
+        (elemento.tipo === 'parcela' ||
+          elemento.tipo === 'comunidad') &&
+        elemento.punto
+      ) {
         setMedioPopup(null);
         setActiveId(elemento.punto.id);
 
@@ -962,9 +1006,11 @@ const MapaHuastecaMaplibreClient: React.FC<
     const seleccionarPunto = (
       punto: PuntoMapaHuasteca
     ) => {
+      const tipoPunto = punto.tipo ?? 'parcela';
+
       const elemento = elementosMapa.find(
         (elemento) =>
-          elemento.tipo === 'parcela' &&
+          elemento.tipo === tipoPunto &&
           elemento.id === punto.id
       );
 
@@ -1610,11 +1656,6 @@ const MapaHuastecaMaplibreClient: React.FC<
             ...(showMunicipios
               ? ['municipios']
               : []),
-            ...(showMediosParcela
-              ? [
-                'medios-parcela-puntos',
-              ]
-              : []),
           ]}
           onLoad={() => {
             applyTerrain();
@@ -1642,13 +1683,6 @@ const MapaHuastecaMaplibreClient: React.FC<
             handleStyleData
           }
           onClick={(event) => {
-            const clickedLayer = event.features?.[0]?.layer?.id;
-
-            if (clickedLayer === 'medios-parcela-puntos') {
-              handleMedioClick(event);
-              return;
-            }
-
             const municipioFeature = (event.features ?? []).find(
               (feature) =>
                 feature.layer?.id === 'municipios'
@@ -1853,6 +1887,70 @@ const MapaHuastecaMaplibreClient: React.FC<
 
           {/* Medios de parcela */}
           {showMediosParcela &&
+            mediosVisibles.map((medio) => {
+              const latitud = medio.ubicacion?.latitud;
+              const longitud = medio.ubicacion?.longitud;
+
+              if (
+                !Number.isFinite(latitud) ||
+                !Number.isFinite(longitud)
+              ) {
+                return null;
+              }
+
+              return (
+                <Marker
+                  key={`medio-${medio.id}`}
+                  longitude={longitud}
+                  latitude={latitud}
+                  anchor="center"
+                  onClick={(e) => {
+                    e.originalEvent.stopPropagation();
+                    seleccionarMedio(medio);
+                  }}
+                  style={{
+                    cursor: 'pointer',
+                    zIndex: 10,
+                  }}
+                >
+                  <div
+                    title={
+                      medio.descripcion ||
+                      medio.nombre_archivo ||
+                      medio.subtipo ||
+                      medio.tipo_medio ||
+                      'Medio de parcela'
+                    }
+                    style={{
+                      fontSize: 18,
+                      lineHeight: 1,
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      cursor: 'pointer',
+                      filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))',
+                    }}
+                  >
+                    📷
+                    <span
+                      style={{
+                        fontSize: 18,
+                        lineHeight: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        filter:
+                          'drop-shadow(0 1px 1px rgba(0,0,0,0.25))',
+                      }}
+                    >
+                      📷
+                    </span>
+                  </div>
+                </Marker>
+              );
+            })}
+          {/*}
+          {showMediosParcela &&
             mediosParcelaGeoJson
               .features.length >
             0 && (
@@ -1879,6 +1977,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                 />
               </Source>
             )}
+            */}
 
           {/* Ubicación actual del usuario */}
           {ubicacionUsuario && (
@@ -1947,7 +2046,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
                 return (
                   <Marker
-                    key={punto.id}
+                    key={`${punto.tipo ?? 'parcela'}-${punto.id}`}
                     longitude={
                       punto.longitud
                     }
@@ -1968,30 +2067,30 @@ const MapaHuastecaMaplibreClient: React.FC<
                     <div
                       title={`${punto.comunidad} (${punto.municipio})`}
                       style={{
-                        width: size,
-                        height: size,
-                        borderRadius:
-                          '50%',
-                        background:
-                          colorMunicipio[
-                          municipioKey
-                          ] ??
-                          '#FFD600',
-                        border:
-                          '1.5px solid rgba(255,255,255,0.8)',
-                        boxShadow:
-                          '0 1px 4px rgba(0,0,0,0.25)',
-                        display:
-                          'flex',
-                        alignItems:
-                          'center',
-                        justifyContent:
-                          'center',
-                        transition:
-                          'all 0.15s',
+                        fontSize: Math.round(size * 0.7),
+                        lineHeight: 1,
+                        display: 'flex',
+                        alignItems: 'center',
+                        justifyContent: 'center',
+                        cursor: 'pointer',
+                        filter: 'drop-shadow(0 1px 2px rgba(0,0,0,0.35))',
+                        transition: 'transform 0.15s',
                       }}
                     >
+                      <span
+                        style={{
+                          fontSize: Math.round(size * 1.22),
+                          lineHeight: 1,
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          filter: 'drop-shadow(0 1px 1px rgba(0,0,0,0.25))',
+                        }}
+                      >
+                        {punto.tipo === 'comunidad' ? '🏘️' : '📍'}
+                      </span>
                       {/* Ícono grano de maíz */}
+                      {/*
                       <svg
                         width={Math.round(
                           size * 0.5
@@ -2012,6 +2111,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                           strokeWidth="1.5"
                         />
                       </svg>
+                      */}
                     </div>
                   </Marker>
                 );
@@ -2032,7 +2132,10 @@ const MapaHuastecaMaplibreClient: React.FC<
             >
               <PopupParcela
                 info={popupInfo}
-                onClose={() => setPopupInfo(null)}
+                onClose={() => {
+                  setPopupInfo(null);
+                  setCirculoSeleccion(null);
+                }}
                 onAcercar={() => {
                   const polygon =
                     wktPolygonToGeoJSON(
@@ -2087,7 +2190,11 @@ const MapaHuastecaMaplibreClient: React.FC<
               <PopupMedio
                 medio={medioPopup}
                 isMobile={isMobile}
-                onClose={() => setMedioPopup(null)}
+                onClose={() => {
+                  setMedioPopup(null);
+                  setCirculoSeleccion(null);
+                }
+                }
                 onAcercar={() => {
                   fitMapToMedio(mapRef, medioPopup);
                 }}
@@ -2153,7 +2260,10 @@ const MapaHuastecaMaplibreClient: React.FC<
                 >
                   <PopupParcela
                     info={popupInfo}
-                    onClose={() => setPopupInfo(null)}
+                    onClose={() => {
+                      setPopupInfo(null);
+                      setCirculoSeleccion(null);
+                    }}
                     onAcercar={() => {
                       const polygon =
                         wktPolygonToGeoJSON(
@@ -2181,10 +2291,10 @@ const MapaHuastecaMaplibreClient: React.FC<
             onCerrar={() => {
               setListaCercanosAbierta(false);
               setPopupInfo(null);
+              setCirculoSeleccion(null);
             }}
           />
         )}
-
       </div>
     );
   };

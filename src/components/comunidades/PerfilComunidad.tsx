@@ -20,7 +20,7 @@ export default function PerfilComunidad({ id, onVolver, onEdit }: Props) {
   const rol = usuario?.rol;
   const { data: comunidad, isLoading } = useQuery<Comunidad>({
     queryKey: ['comunidad', id],
-    queryFn: () => GET(`/core/comunidad/${id}`),
+    queryFn: () => GET(`/core/comunidades/${id}`),
   })
 
   const { data: productores = [] } = useQuery<Productor[]>({

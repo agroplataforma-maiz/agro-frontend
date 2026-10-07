@@ -55,7 +55,7 @@ export default function TablaComunidades({ comunidades, onEdit, onDelete }: Prop
             title="Eliminar"
             onClick={async () => {
               if (window.confirm('¿Seguro que deseas eliminar esta comunidad?')) {
-                await DEL(`/core/comunidad/${row.id}`)
+                await DEL(`/core/comunidades/${row.id}`)
                 onDelete?.(row.id)
               }
             }}

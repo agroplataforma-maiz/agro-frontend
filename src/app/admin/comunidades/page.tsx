@@ -10,6 +10,8 @@ import TablaComunidades from '@/components/comunidades/TablaComunidades'
 import PerfilComunidad from '@/components/comunidades/PerfilComunidad'
 import ModuleHero from '@/components/ui/ModuleHero'
 import type { Comunidad } from '@/types'
+import { useQuery, useQueryClient } from '@tanstack/react-query'
+import { GET } from '@/lib/api'
 
 export default function AdminComunidadesPage() {
   const usuario = useAppStore(s => s.usuario)
@@ -18,7 +20,32 @@ export default function AdminComunidadesPage() {
   const [comunidadEdit, setComunidadEdit] = useState<Comunidad | null>(null)
   const [perfilId, setPerfilId] = useState<string | null>(null)
   // Simulación de datos para KPIs
-  const [comunidades, setComunidades] = useState<Comunidad[]>([])
+  //const [comunidades, setComunidades] = useState<Comunidad[]>([])
+  const {
+    data: comunidades = [],
+    isLoading: comunidadesLoading,
+  } = useQuery<Comunidad[]>({
+    queryKey: ['comunidades'],
+    queryFn: async () => {
+      const data = await GET<
+        Comunidad[] | { results?: Comunidad[]; items?: Comunidad[] }
+      >('/core/comunidades')
+
+      if (Array.isArray(data)) return data
+
+      return data.results ?? data.items ?? []
+    },
+  })
+  const queryClient = useQueryClient()
+  const comunidadesTabla = comunidades.map(c => ({
+    id: c.id,
+    nombre: c.nombre,
+    municipio_nombre: c.municipio_nombre,
+    localidad_nombre: '',
+    lengua_indigena: c.nombre_lengua_orig,
+    poblacion: c.poblacion_total,
+    num_productores: undefined,
+  }))
   const productoresVinculados = 0
   // const productoresVinculados = comunidades.reduce((acc, c) => acc + (c.num_productores || 0), 0)
   const municipios = Array.from(new Set(comunidades.map(c => c.municipio_nombre))).filter(Boolean)
@@ -55,9 +82,13 @@ export default function AdminComunidadesPage() {
             />
           ) : (
             <TablaComunidades
-              comunidades={comunidades}
+              comunidades={comunidadesTabla}
               onEdit={comunidad => setPerfilId(comunidad.id)}
-              onDelete={id => setComunidades(prev => prev.filter(c => c.id !== id))}
+              onDelete={id => {
+                queryClient.invalidateQueries({
+                  queryKey: ['comunidades'],
+                })
+              }}
             />
           )}
         </div>
@@ -73,7 +104,9 @@ export default function AdminComunidadesPage() {
           onSaved={() => {
             setModalOpen(false)
             setComunidadEdit(null)
-            // Recargar comunidades si es necesario
+            queryClient.invalidateQueries({
+              queryKey: ['comunidades'],
+            })
           }}
         />
       )}

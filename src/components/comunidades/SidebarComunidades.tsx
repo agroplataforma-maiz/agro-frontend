@@ -8,6 +8,7 @@ import styles from './SidebarComunidades.module.css';
 
 interface PuntoMapaHuasteca {
   id: number | string;
+  tipo?: 'parcela' | 'comunidad';
   comunidad: string;
   municipio: string;
   latitud: number;
@@ -112,7 +113,7 @@ export default function SidebarComunidades({
                     tamaño="sm"
                     className={styles.addBtn}
                     onClick={() => setModalNuevaOpen(true)}
-                    disabled={true}
+                    disabled={false}
                   >
                     + Agregar nueva
                   </Button>
@@ -127,7 +128,7 @@ export default function SidebarComunidades({
                 type="text"
                 value={busqueda}
                 onChange={e => setBusqueda(e.target.value)}
-                placeholder="Buscar parcela…"
+                placeholder="Buscar comunidad o parcela…"
                 className={styles.input}
               />
 
@@ -174,11 +175,11 @@ export default function SidebarComunidades({
 
             {municipiosMapa.map(municipio => {
 
-              const comunidades = ubicacionesFiltradas.filter(
+              const puntosMunicipio = ubicacionesFiltradas.filter(
                 p => p.municipio === municipio
               );
 
-              const municipioActivo = comunidades.some(
+              const municipioActivo = puntosMunicipio.some(
                 p => p.id === puntoActivoId
               );
 
@@ -202,7 +203,7 @@ export default function SidebarComunidades({
                     role="button"
                     aria-pressed={municipioActivo}
                     onClick={() => {
-                      const first = comunidades[0];
+                      const first = puntosMunicipio[0];
 
                       if (first) {
                         setPuntoActivoId(first.id);
@@ -212,7 +213,7 @@ export default function SidebarComunidades({
                       if (e.key === 'Enter' || e.key === ' ') {
                         e.preventDefault();
 
-                        const first = comunidades[0];
+                        const first = puntosMunicipio[0];
 
                         if (first) {
                           setPuntoActivoId(first.id);
@@ -226,15 +227,15 @@ export default function SidebarComunidades({
                     </span>
 
                     <span className={styles.municipioCount}>
-                      {comunidades.length}{' '}
-                      parcela{comunidades.length !== 1 ? 's' : ''}
+                      {puntosMunicipio.length}{' '}
+                      parcela{puntosMunicipio.length !== 1 ? 's' : ''}
                     </span>
 
                   </div>
 
                   <ul className={styles.comunidadesList}>
 
-                    {comunidades.map(punto => (
+                    {puntosMunicipio.map(punto => (
                       <li
                         key={punto.id}
                         className={
@@ -255,7 +256,7 @@ export default function SidebarComunidades({
                       >
 
                         <span className={styles.comunidadIcono}>
-                          📍
+                          {punto.tipo === 'comunidad' ? '🏘️' : '📍'}
                         </span>
 
                         <NombreComunidad

@@ -5,7 +5,7 @@ export default function Equipo() {
             <div className="equipo-inner">
                 <div className="sec-kicker reveal">Grupo de investigación</div>
                 <h2 className="sec-titulo reveal">El equipo <em>detrás</em> del proyecto</h2>
-                <p className="sec-desc reveal">Once investigadoras e investigadores del Instituto Tecnológico de Ciudad Valles con especialidades en computación, agroecología, nutrición, fitopatología y ciencias ambientales.</p>
+                <p className="sec-desc reveal">Doce investigadoras e investigadores del Instituto Tecnológico de Ciudad Valles con especialidades en computación, agroecología, nutrición, fitopatología y ciencias ambientales.</p>
                 <div className="equipo-grid">
                     <div className="eq-card reveal" style={{ animationDelay: '.05s' }}><div className="eq-inicial">AB</div><div className="eq-nombre">Alfredo Barrón Rodríguez</div><div className="eq-esp">Responsable técnico</div><span className="eq-sni">SNII Nivel C</span></div>
                     <div className="eq-card reveal" style={{ animationDelay: '.1s' }}><div className="eq-inicial">SR</div><div className="eq-nombre">Sofía del Rosario Romero Ramos</div><div className="eq-esp">Industrias alimentarias</div></div>

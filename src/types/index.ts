@@ -9,47 +9,87 @@ export type Rol =
 type UUID = string;
 
 export interface Usuario {
-  id: UUID 
+  id: UUID
   username: string
   nombre_completo?: string
   email?: string
   rol: Rol
   activo: boolean
   ultimo_acceso?: string | null
-  last_login?: string | null       
+  last_login?: string | null
   creado_en?: string | null
 }
 
 export interface Ubicacion {
-  id: UUID 
-  // Tipo de geometría (clave para SIG)
-  tipo: 'punto' | 'poligono'
+  id: UUID
+
+  // Identificación
+  nombre?: string
+  tipo_ubicacion?: string
+  descripcion?: string
+
   // Coordenadas
   latitud?: number
   longitud?: number
-  // Para mapas más avanzados (GeoJSON)
+  altitud_m?: number | null
+  altitud_fuente?: string | null
+  precision_gps?: number | null
+
+  // Referencias
+  municipio_id?: number
+  sistema_referencia?: string
+  fuente_captura_id?: number | null
+  tags?: string[] | null
+
+  // Geometría
+  geom?: string | null
   geojson?: unknown
-  // Metadatos
-  referencia?: string // ej: "Centro de la comunidad"
+
+  // Compatibilidad con código existente
+  tipo?: 'punto' | 'poligono'
+  referencia?: string
+
+  // Estado
+  activo?: boolean
+  creado_en?: string | null
+  actualizado_en?: string | null
 }
 
 export interface Comunidad {
-  id: UUID 
+  id: UUID
   nombre: string
   nombre_lengua_orig?: string
-  tipo?: 'indigena' | 'campesina' | 'ejidal' | 'mestiza' | 'mixta' | 'urbana' | 'rancheria' | 'otro'
+
+  tipo?:
+  | 'indigena'
+  | 'campesina'
+  | 'ejidal'
+  | 'mestiza'
+  | 'mixta'
+  | 'urbana'
+  | 'rancheria'
+  | 'otro'
+
   municipio_id: number
   municipio_nombre?: string
-  ubicacion_id?: string // UUID relación
+
+  ubicacion_id?: UUID
+
   presencia_maiz_nativo?: boolean
   presencia_historica_maiz?: boolean
-  diversidad_ecologica_score?: number // 1-5
-  riqueza_cultural_score?: number // 1-5
+
+  diversidad_ecologica_score?: number
+  riqueza_cultural_score?: number
   prioridad_muestreo?: 'alta' | 'media' | 'baja'
+
   poblacion_total?: number
   num_localidades?: number
+
   fuente?: string
   activo?: boolean
+
+  creado_en?: string | null
+  actualizado_en?: string | null
 }
 
 export interface Productor {
@@ -170,40 +210,40 @@ export interface AuthResponse {
 // Roles UI
 export const ROL_LABELS: Record<Rol, string> = {
   administrador: '👑 Administrador',
-  investigador:  '🔬 Investigador',
+  investigador: '🔬 Investigador',
   tecnico_campo: '🌾 Técnico de campo',
-  visualizador:  '📊 Consultor',
-  productor:     '🌽 Productor / Comunidad',
-  invitado:      '👁️ Invitado',
+  visualizador: '📊 Consultor',
+  productor: '🌽 Productor / Comunidad',
+  invitado: '👁️ Invitado',
 }
 
 export const ROL_COLOR: Record<Rol, string> = {
   administrador: '#3D2208',
-  investigador:  '#2A5C3F',
+  investigador: '#2A5C3F',
   tecnico_campo: '#C8820A',
-  visualizador:  '#1D4ED8',
-  productor:     '#6B3D1E',
-  invitado:      '#888888',
+  visualizador: '#1D4ED8',
+  productor: '#6B3D1E',
+  invitado: '#888888',
 }
 
 // Rutas permitidas por rol (prefijos). '*' = acceso total.
 export const ROL_RUTAS_PERMITIDAS: Record<Rol, string[]> = {
   administrador: ['*'],
-  investigador:  ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/admin/catalogos', '/mi-perfil'],
+  investigador: ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/admin/catalogos', '/mi-perfil'],
   tecnico_campo: ['/dashboard', '/productores', '/comunidades', '/sociocultural', '/fenotipo', '/mi-perfil', '/organizaciones'],
-  visualizador:  ['/dashboard', '/mi-perfil', '/comunidades'],
-  productor:     ['/dashboard', '/mi-perfil', '/comunidades'],
-  invitado:      ['/dashboard', '/comunidades'],
+  visualizador: ['/dashboard', '/mi-perfil', '/comunidades'],
+  productor: ['/dashboard', '/mi-perfil', '/comunidades'],
+  invitado: ['/dashboard', '/comunidades'],
 }
 
 // Página de inicio tras login según rol
 export const ROL_HOME: Record<Rol, string> = {
   administrador: '/admin/dashboard',
-  investigador:  '/dashboard',
+  investigador: '/dashboard',
   tecnico_campo: '/dashboard',
-  visualizador:  '/dashboard',
-  productor:     '/dashboard',
-  invitado:      '/dashboard',
+  visualizador: '/dashboard',
+  productor: '/dashboard',
+  invitado: '/dashboard',
 }
 
 // ─────────────────────────────────────────────────────────────

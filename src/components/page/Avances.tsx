@@ -116,7 +116,7 @@ const ETAPAS: Etapa[] = [
         nombre: "Etapa 2 · Desarrollo tecnológico, validación y difusión comunitaria",
         estado: "Actual",
         estadoClase: "badge-en-curso",
-        duracion: "Duración: 11 meses · Enero – Noviembre 2026",
+        duracion: "Duración: 11 meses · octubre 2026 – septiembre 2027",
         progreso: "0%",
 
         avances: [
@@ -125,8 +125,8 @@ const ETAPAS: Etapa[] = [
                 titulo: "Diseño y desarrollo de la agroplataforma",
                 descripcion:
                     "Diseño de la base de datos geoespacial, interfaces UX/UI y arquitectura tecnológica.",
-                estado: "En curso",
-                estadoClase: "badge-en-curso",
+                estado: "Completada",
+                estadoClase: "badge-completado",
             },
             {
                 fecha: "FASE 2",

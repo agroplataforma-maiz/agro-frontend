@@ -197,7 +197,7 @@ const SECCIONES = [
             <span className={styles['contacto-ico']}>📋</span>
             <strong>Proyecto PEE-2025-G-369</strong>
             <span>Conservación de Maíz Nativo</span>
-            <span>Huasteca Potosina · Etapa 1</span>
+            <span>Huasteca Potosina · Etapa 2</span>
           </div>
         </div>
         <div className={styles['ayuda-highlight']} style={{ marginTop: 20 }}>

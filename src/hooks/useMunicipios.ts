@@ -2,37 +2,38 @@
 
 import { useEffect, useState } from 'react'
 import { GET } from '@/lib/api'
-
-export interface Municipio {
-  id: number
-  nombre: string
-}
-
-interface MunicipioResponse {
-  count: number
-  results: Municipio[]
-}
+import type { Municipio } from '@/types'
 
 export function useMunicipios() {
   const [municipios, setMunicipios] = useState<Municipio[]>([])
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    (async () => {
-      try {
-        const res: Municipio[] | MunicipioResponse = await GET('/catalogo/municipio')
+    let activo = true
 
-        if (Array.isArray(res)) {
-          setMunicipios(res)
-        } else {
-          setMunicipios(res.results ?? [])
+    async function cargarMunicipios() {
+      try {
+        const res = await GET<Municipio[]>('/core/comunidades/municipios')
+
+        if (activo) {
+          setMunicipios(Array.isArray(res) ? res : [])
         }
       } catch {
-        setMunicipios([])
+        if (activo) {
+          setMunicipios([])
+        }
       } finally {
-        setLoading(false)
+        if (activo) {
+          setLoading(false)
+        }
       }
-    })()
+    }
+
+    cargarMunicipios()
+
+    return () => {
+      activo = false
+    }
   }, [])
 
   return { municipios, loading }

@@ -87,6 +87,10 @@ interface ParcelaApi {
   observaciones_sitio?: string | null;
 }
 
+interface ComunidadApi extends Comunidad {
+  ubicacion_id?: string | null;
+}
+
 interface MunicipiosGeoJson {
   type: 'FeatureCollection';
   features: Array<{
@@ -239,6 +243,19 @@ export default function ComunidadesPage() {
   const [mounted, setMounted] = useState(false);
   const setMunicipios = useAppStore(s => s.setMunicipios);
   const municipiosStore = useAppStore(s => s.municipios);
+
+  const municipiosPorId = useMemo(
+    () =>
+      new Map(
+        municipiosStore.map(municipio => [
+          municipio.id,
+          municipio.nombre,
+        ])
+      ),
+    [municipiosStore]
+  );
+
+
   const router = useRouter();
 
   // Ubicaciones reales provenientes del backend
@@ -248,6 +265,11 @@ export default function ComunidadesPage() {
   const [parcelasLoading, setParcelasLoading] = useState(true);
   const [municipiosGeoJson, setMunicipiosGeoJson] =
     useState<MunicipiosGeoJson | null>(null);
+
+  const [comunidadesApi, setComunidadesApi] = useState<ComunidadApi[]>([]);
+  const [comunidadesLoading, setComunidadesLoading] = useState(true);
+  const [ubicacionesComunidad, setUbicacionesComunidad] = useState<UbicacionApi[]>([]);
+  const [recargaComunidades, setRecargaComunidades] = useState(0);
 
   // Obtener únicamente las ubicaciones que representan parcelas
   useEffect(() => {
@@ -272,7 +294,10 @@ export default function ComunidadesPage() {
 
         const parcelas = lista.filter(
           ubicacion =>
-            ubicacion.tipo_ubicacion === 'parcela' || ubicacion.tipo_ubicacion === 'muestreo' &&
+            (
+              ubicacion.tipo_ubicacion === 'parcela' ||
+              ubicacion.tipo_ubicacion === 'muestreo'
+            ) &&
             Number.isFinite(Number(ubicacion.latitud)) &&
             Number.isFinite(Number(ubicacion.longitud))
         );
@@ -299,6 +324,100 @@ export default function ComunidadesPage() {
       activo = false;
     };
   }, []);
+
+  // Obtener las ubicaciones asociadas a comunidades
+  useEffect(() => {
+    let activo = true;
+
+    const cargarUbicacionesComunidad = async () => {
+      try {
+        const data = await GET('/ubicaciones');
+
+        let lista: UbicacionApi[] = [];
+
+        if (Array.isArray(data)) {
+          lista = data as UbicacionApi[];
+        } else if (typeof data === 'object' && data !== null) {
+          const respuesta = data as Partial<ApiLista<UbicacionApi>>;
+
+          lista = Array.isArray(respuesta.results)
+            ? respuesta.results
+            : [];
+        }
+
+        const comunidades = lista.filter(
+          ubicacion =>
+            ubicacion.tipo_ubicacion === 'comunidad' &&
+            Number.isFinite(Number(ubicacion.latitud)) &&
+            Number.isFinite(Number(ubicacion.longitud))
+        );
+
+        if (activo) {
+          setUbicacionesComunidad(comunidades);
+        }
+      } catch (error) {
+        console.error(
+          'Error al cargar ubicaciones de comunidades:',
+          error
+        );
+
+        if (activo) {
+          setUbicacionesComunidad([]);
+        }
+      }
+    };
+
+    cargarUbicacionesComunidad();
+
+    return () => {
+      activo = false;
+    };
+  }, [recargaComunidades]);
+
+  // Obtener comunidades reales desde el backend
+  useEffect(() => {
+    let activo = true;
+
+    const cargarComunidades = async () => {
+      setComunidadesLoading(true);
+
+      try {
+        const data = await GET('/core/comunidades');
+
+        let lista: ComunidadApi[] = [];
+
+        if (Array.isArray(data)) {
+          lista = data as ComunidadApi[];
+        } else if (typeof data === 'object' && data !== null) {
+          const respuesta = data as Partial<ApiLista<ComunidadApi>>;
+
+          lista = Array.isArray(respuesta.results)
+            ? respuesta.results
+            : [];
+        }
+
+        if (activo) {
+          setComunidadesApi(lista);
+        }
+      } catch (error) {
+        console.error('Error al cargar comunidades:', error);
+
+        if (activo) {
+          setComunidadesApi([]);
+        }
+      } finally {
+        if (activo) {
+          setComunidadesLoading(false);
+        }
+      }
+    };
+
+    cargarComunidades();
+
+    return () => {
+      activo = false;
+    };
+  }, [recargaComunidades]);
 
   useEffect(() => {
     // Esperamos a que el usuario esté hidratado antes de
@@ -378,6 +497,34 @@ export default function ComunidadesPage() {
     };
   }, []);
 
+  // Cargar municipios reales de comunidades si todavía no están
+  if (municipiosStore.length === 0) {
+    GET('/core/comunidades/municipios')
+      .then((data: unknown) => {
+        if (!Array.isArray(data)) {
+          return;
+        }
+
+        const municipiosValidos = data.filter(
+          (municipio): municipio is Municipio =>
+            typeof municipio === 'object' &&
+            municipio !== null &&
+            'id' in municipio &&
+            typeof (municipio as { id?: unknown }).id === 'number' &&
+            'nombre' in municipio &&
+            typeof (municipio as { nombre?: unknown }).nombre === 'string'
+        );
+
+        setMunicipios(municipiosValidos);
+      })
+      .catch(error => {
+        console.error(
+          'Error al cargar municipios de comunidades:',
+          error
+        );
+      });
+  }
+
   // Adaptar temporalmente las ubicaciones reales al formato
   // que actualmente utiliza MapaHuasteca.
   const puntosParcela = useMemo<PuntoMapaHuasteca[]>(() => {
@@ -411,31 +558,99 @@ export default function ComunidadesPage() {
 
       puntos.push({
         id: parcela.id,
+        tipo: 'parcela',
         comunidad: parcela.nombre || 'Parcela',
         municipio,
         latitud,
         longitud,
         imagenUrl: null,
         poligono: parcela.poligono ?? null,
+
+        superficie_ha: parcela.superficie_ha,
+        tenencia: parcela.tenencia,
+        topografia: parcela.topografia,
+        densidad_plantas_ha: parcela.densidad_plantas_ha,
       });
     });
 
     return puntos;
   }, [parcelas, ubicacionesParcela, municipiosGeoJson]);
 
-  const municipiosMapa = useMemo(() => {
-    if (!municipiosGeoJson) {
-      return [];
-    }
+  const puntosComunidad = useMemo<PuntoMapaHuasteca[]>(() => {
+    const puntos: PuntoMapaHuasteca[] = [];
 
-    return municipiosGeoJson.features
-      .map(feature => feature.properties?.municipio)
-      .filter(
-        (municipio): municipio is string =>
-          typeof municipio === 'string' && municipio.trim().length > 0
-      )
-      .sort((a, b) => a.localeCompare(b));
-  }, [municipiosGeoJson]);
+    comunidadesApi.forEach((comunidad) => {
+      if (!comunidad.ubicacion_id) {
+        return;
+      }
+
+      const ubicacion = ubicacionesComunidad.find(
+        (u) => u.id === comunidad.ubicacion_id
+      );
+
+      if (!ubicacion) {
+        return;
+      }
+
+      const latitud = Number(ubicacion.latitud);
+      const longitud = Number(ubicacion.longitud);
+
+      if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) {
+        return;
+      }
+
+      const municipio =
+        comunidad.municipio_nombre ||
+        municipiosPorId.get(comunidad.municipio_id) ||
+        obtenerMunicipioPorCoordenadas(
+          longitud,
+          latitud,
+          municipiosGeoJson
+        ) ||
+        'Sin municipio';
+
+      puntos.push({
+        id: comunidad.id,
+        tipo: 'comunidad',
+        comunidad: comunidad.nombre,
+        municipio,
+        latitud,
+        longitud,
+        imagenUrl: null,
+        poligono: null,
+      });
+    });
+
+    return puntos;
+  }, [
+    comunidadesApi,
+    ubicacionesComunidad,
+    municipiosPorId,
+    municipiosGeoJson,
+  ]);
+
+  // Todos los puntos que pueden aparecer en el mapa/sidebar.
+  const puntosMapa = useMemo(
+    () => [
+      ...puntosParcela,
+      ...puntosComunidad,
+    ],
+    [puntosParcela, puntosComunidad]
+  );
+
+
+  const municipiosMapa = useMemo(
+    () =>
+      municipiosStore
+        .map(municipio => municipio.nombre)
+        .filter(
+          (nombre): nombre is string =>
+            typeof nombre === 'string' &&
+            nombre.trim().length > 0
+        )
+        .sort((a, b) => a.localeCompare(b)),
+    [municipiosStore]
+  );
 
   // Estados y lógica para filtros y selección
   const [busqueda, setBusqueda] = useState('');
@@ -490,38 +705,32 @@ export default function ComunidadesPage() {
       return () => clearTimeout(timeout);
     }
 
-    // Cargar municipios si no hay
+    // Cargar municipios reales de comunidades si todavía no están
     if (municipiosStore.length === 0) {
-      GET('/catalogo/municipio')
+      GET('/core/comunidades/municipios')
         .then((data: unknown) => {
-          let lista: unknown[] = [];
-
-          if (Array.isArray(data)) {
-            lista = data;
-          } else if (typeof data === 'object' && data !== null) {
-            const d = data as {
-              items?: unknown[];
-              results?: unknown[];
-            };
-
-            lista = d.items ?? d.results ?? [];
+          if (!Array.isArray(data)) {
+            return;
           }
 
-          function isMunicipio(m: unknown): m is Municipio {
-            return (
-              typeof m === 'object' &&
-              m !== null &&
-              'id' in m &&
-              typeof (m as { id?: unknown }).id === 'number' &&
-              'nombre' in m &&
-              typeof (m as { nombre?: unknown }).nombre === 'string'
-            );
-          }
+          const municipiosValidos = data.filter(
+            (municipio): municipio is Municipio =>
+              typeof municipio === 'object' &&
+              municipio !== null &&
+              'id' in municipio &&
+              typeof (municipio as { id?: unknown }).id === 'number' &&
+              'nombre' in municipio &&
+              typeof (municipio as { nombre?: unknown }).nombre === 'string'
+          );
 
-          const municipiosValidos = (lista as unknown[]).filter(isMunicipio);
           setMunicipios(municipiosValidos);
         })
-        .catch(() => { });
+        .catch(error => {
+          console.error(
+            'Error al cargar municipios de comunidades:',
+            error
+          );
+        });
     }
   }, [usuario, router, municipiosStore.length, setMunicipios]);
 
@@ -530,11 +739,13 @@ export default function ComunidadesPage() {
   if (!mounted) return null;
 
   // Filtrar comunidades según búsqueda y municipio.
-  // Esta lógica se conserva temporalmente para SidebarComunidades.
-  const ubicacionesFiltradas = puntosParcela.filter(p => {
+
+  const ubicacionesFiltradas = puntosMapa.filter(p => {
+    const termino = busqueda.toLowerCase();
+
     const coincideBusqueda =
-      p.comunidad.toLowerCase().includes(busqueda.toLowerCase()) ||
-      p.municipio.toLowerCase().includes(busqueda.toLowerCase());
+      p.comunidad.toLowerCase().includes(termino) ||
+      p.municipio.toLowerCase().includes(termino);
 
     const coincideMunicipio =
       municipioFiltro === 'todos' ||
@@ -606,7 +817,7 @@ export default function ComunidadesPage() {
                   onSaved={() => {
                     setModalNuevaOpen(false);
                     setComunidadEdit(null);
-                    // Aquí podrías recargar la lista desde el backend si fuera necesario
+                    setRecargaComunidades(prev => prev + 1);
                   }}
                 />
               )}
@@ -714,7 +925,7 @@ export default function ComunidadesPage() {
           onClose={() => setModalNuevaOpen(false)}
           onSaved={() => {
             setModalNuevaOpen(false);
-            // Aquí podrías recargar la lista si fuera necesario
+            setRecargaComunidades(prev => prev + 1);
           }}
         />
       )}

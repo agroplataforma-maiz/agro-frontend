@@ -11,6 +11,12 @@ export interface PopupParcelaInfo {
   imagenUrl?: string | null;
   poligono?: string | null;
   idx: number;
+
+  // Datos de parcela
+  superficie_ha?: number | string | null;
+  tenencia?: string | null;
+  topografia?: string | null;
+  densidad_plantas_ha?: number | null;
 }
 
 interface PopupParcelaProps {
@@ -59,12 +65,12 @@ export default function PopupParcela({
           padding: 0,
         }}
         onMouseOver={(e) =>
-          (e.currentTarget.style.color =
-            "#B91C1C")
+        (e.currentTarget.style.color =
+          "#B91C1C")
         }
         onMouseOut={(e) =>
-          (e.currentTarget.style.color =
-            "#C8820A")
+        (e.currentTarget.style.color =
+          "#C8820A")
         }
       >
         ×
@@ -126,6 +132,42 @@ export default function PopupParcela({
           >
             {info.municipio}
           </span>
+
+          <div
+            style={{
+              marginTop: 10,
+              padding: "10px 12px",
+              borderRadius: 10,
+              background: "#F7F3EA",
+              border: "1px solid #E8DCC8",
+              fontSize: 13,
+              color: "#3D2208",
+            }}
+          >
+            <div style={{ marginBottom: 5 }}>
+              <strong>Superficie:</strong>{" "}
+              {info.superficie_ha != null
+                ? `${info.superficie_ha} ha`
+                : "—"}
+            </div>
+
+            <div style={{ marginBottom: 5 }}>
+              <strong>Tenencia:</strong>{" "}
+              {info.tenencia || "—"}
+            </div>
+
+            <div style={{ marginBottom: 5 }}>
+              <strong>Topografía:</strong>{" "}
+              {info.topografia || "—"}
+            </div>
+
+            <div>
+              <strong>Densidad:</strong>{" "}
+              {info.densidad_plantas_ha != null
+                ? `${info.densidad_plantas_ha.toLocaleString()} plantas/ha`
+                : "—"}
+            </div>
+          </div>
 
           <div
             style={{

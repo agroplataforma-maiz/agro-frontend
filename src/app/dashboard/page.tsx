@@ -484,7 +484,7 @@ export default function DashboardPage() {
               <div className={styles['etapa-mini']}>
                 <div className={styles['etapa-mini-header']}>
                   <span className={styles['etapa-mini-nombre']}>Etapa 1 · Diagnóstico</span>
-                  <span className={`${styles['etapa-mini-estado']} ${styles['est-activa']}`} role="status">En curso</span>
+                  <span className={`${styles['etapa-mini-estado']} ${styles['est-activa']}`} role="status">Completada</span>
                 </div>
                 <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={68} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 68% completado">
                   <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '68%' }}></div>

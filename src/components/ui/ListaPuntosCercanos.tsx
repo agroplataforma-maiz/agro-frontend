@@ -152,40 +152,18 @@ export default function ListaPuntosCercanos({
                                     width: 32,
                                     height: 32,
                                     minWidth: 32,
-                                    borderRadius: '50%',
                                     display: 'flex',
                                     alignItems: 'center',
                                     justifyContent: 'center',
-                                    background:
-                                        elemento.tipo === 'parcela'
-                                            ? '#FEF3DC'
-                                            : '#E8F4EC',
-                                    border:
-                                        elemento.tipo === 'parcela'
-                                            ? '1px solid #C8820A'
-                                            : '1px solid #4A8C64',
+                                    fontSize: 21,
+                                    lineHeight: 1,
                                 }}
                             >
-                                {elemento.tipo === 'parcela' ? (
-                                    <svg
-                                        width="18"
-                                        height="22"
-                                        viewBox="0 0 12 16"
-                                        fill="none"
-                                    >
-                                        <ellipse
-                                            cx="6"
-                                            cy="8"
-                                            rx="5"
-                                            ry="7"
-                                            fill="#FFD600"
-                                            stroke="#C8820A"
-                                            strokeWidth="1.5"
-                                        />
-                                    </svg>
-                                ) : (
-                                    <span style={{ fontSize: 16 }}>▧</span>
-                                )}
+                                {elemento.tipo === 'comunidad'
+                                    ? '🏘️'
+                                    : elemento.tipo === 'medio'
+                                        ? '📷'
+                                        : '📍'}
                             </span>
 
                             <span

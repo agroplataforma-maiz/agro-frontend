@@ -296,7 +296,8 @@ export default function ComunidadesPage() {
           ubicacion =>
             (
               ubicacion.tipo_ubicacion === 'parcela' ||
-              ubicacion.tipo_ubicacion === 'muestreo'
+              ubicacion.tipo_ubicacion === 'muestreo' ||
+              ubicacion.tipo_ubicacion === 'germoplasma'
             ) &&
             Number.isFinite(Number(ubicacion.latitud)) &&
             Number.isFinite(Number(ubicacion.longitud))

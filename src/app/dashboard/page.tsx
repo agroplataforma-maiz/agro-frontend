@@ -486,23 +486,23 @@ export default function DashboardPage() {
                   <span className={styles['etapa-mini-nombre']}>Etapa 1 · Diagnóstico</span>
                   <span className={`${styles['etapa-mini-estado']} ${styles['est-activa']}`} role="status">Completada</span>
                 </div>
-                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={68} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 68% completado">
-                  <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '68%' }}></div>
+                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={100} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 1: 100% completado">
+                  <div className={`${styles['prog-bar-fill']} ${styles['fill-verde']}`} style={{ width: '100%' }}></div>
                 </div>
                 <div className={styles['prog-meta']} aria-hidden="true">
-                  <span>0%</span><span>68% completado</span><span>100%</span>
+                  <span>0%</span><span>100% completado</span><span>100%</span>
                 </div>
               </div>
               <div className={styles['etapa-mini']}>
                 <div className={styles['etapa-mini-header']}>
                   <span className={styles['etapa-mini-nombre']}>Etapa 2 · Desarrollo</span>
-                  <span className={`${styles['etapa-mini-estado']} ${styles['est-pronto']}`} role="status">Próxima</span>
+                  <span className={`${styles['etapa-mini-estado']} ${styles['est-pronto']}`} role="status">En curso</span>
                 </div>
-                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={0} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 2: aún no iniciada">
-                  <div className={`${styles['prog-bar-fill']} ${styles['fill-gris']}`} style={{ width: '0%' }}></div>
+                <div className={styles['prog-bar-track']} role="progressbar" aria-valuenow={35} aria-valuemin={0} aria-valuemax={100} aria-label="Etapa 2: 35% completado">
+                  <div className={`${styles['prog-bar-fill']} ${styles['fill-maiz']}`} style={{ width: '35%' }}></div>
                 </div>
                 <div className={styles['prog-meta']} aria-hidden="true">
-                  <span>Pendiente</span><span>11 meses</span>
+                   <span>0%</span><span>35% completado</span><span>100%</span>
                 </div>
               </div>
               <div style={{ padding: '14px 20px' }}>

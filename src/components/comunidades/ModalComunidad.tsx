@@ -1,8 +1,8 @@
 'use client'
 
 import React, { useEffect, useState } from 'react'
-import { POST, PUT } from '@/lib/api'
-import type { Comunidad } from '@/types'
+import { GET, POST, PUT } from '@/lib/api'
+import type { Comunidad, Ubicacion } from '@/types'
 
 import Modal from '@/components/ui/Modal'
 import Field from '@/components/ui/Field'
@@ -17,6 +17,11 @@ interface Props {
   comunidad: Partial<Comunidad> | null
   onClose: () => void
   onSaved: () => void
+}
+
+interface UbicacionesResponse {
+  count: number
+  results: Ubicacion[]
 }
 
 const STEPS = [
@@ -57,7 +62,21 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
   const [lat, setLat] = useState<number | null>(null)
   const [lng, setLng] = useState<number | null>(null)
 
-  useEffect(() => {
+  const [ubicacionOriginal, setUbicacionOriginal] =
+    useState<Ubicacion | null>(null)
+
+  const [ubicacionIdActual, setUbicacionIdActual] =
+    useState<string | null>(null)
+
+useEffect(() => {
+  let cancelado = false
+
+  const cargarComunidad = async () => {
+    setUbicacionOriginal(null)
+    setUbicacionIdActual(null)
+    setLat(null)
+    setLng(null)
+
     if (!comunidad) return
 
     setForm({
@@ -84,7 +103,47 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
       fuente: comunidad.fuente ?? 'INEGI 2020',
       activo: comunidad.activo ?? true,
     })
-  }, [comunidad])
+
+    if (!comunidad.ubicacion_id) return
+
+    try {
+      const respuesta =
+        await GET<UbicacionesResponse>('/ubicaciones')
+
+      if (cancelado) return
+
+      const ubicacion = respuesta.results.find(
+        u => u.id === comunidad.ubicacion_id
+      )
+
+      if (!ubicacion) {
+        setError(
+          'No se encontró la ubicación asociada a esta comunidad.'
+        )
+        return
+      }
+
+      setUbicacionOriginal(ubicacion)
+      setUbicacionIdActual(ubicacion.id)
+      setLat(ubicacion.latitud ?? null)
+      setLng(ubicacion.longitud ?? null)
+    } catch (err: unknown) {
+      if (cancelado) return
+
+      setError(
+        err instanceof Error
+          ? err.message
+          : 'No se pudo cargar la ubicación de la comunidad.'
+      )
+    }
+  }
+
+  void cargarComunidad()
+
+  return () => {
+    cancelado = true
+  }
+}, [comunidad])
 
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
@@ -138,10 +197,10 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
       return
     }
 
-    if (lat == null || lng == null) {
-      setError('Selecciona una ubicación en el mapa')
-      return
-    }
+    //if (lat == null || lng == null) {
+    //  setError('Selecciona una ubicación en el mapa')
+    //  return
+    //}
 
     setLoading(true)
     setError('')
@@ -154,11 +213,11 @@ export default function ModalComunidad({ comunidad, onClose, onSaved }: Props) {
           tipo: form.tipo,
           municipio_id: form.municipio_id,
 
-          presencia_maiz_nativo:
-            form.presencia_maiz_nativo ?? false,
+          // IMPORTANTE: conservar la ubicación asociada.
+          ubicacion_id: comunidad.ubicacion_id ?? null,
 
-          presencia_historica_maiz:
-            form.presencia_historica_maiz ?? false,
+          presencia_maiz_nativo: form.presencia_maiz_nativo ?? false,
+          presencia_historica_maiz: form.presencia_historica_maiz ?? false,
 
           diversidad_ecologica_score:
             form.diversidad_ecologica_score ?? null,

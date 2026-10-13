@@ -338,3 +338,12 @@ html.dark {
   color: var(--maiz);
   transform: scale(1.04);
 }
+
+.sinUbicaciones {
+  padding: 20px 16px;
+  margin: 0;
+  color: var(--texto-secundario, #64748b);
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: center;
+}

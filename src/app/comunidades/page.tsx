@@ -430,13 +430,17 @@ export default function ComunidadesPage() {
     let activo = true;
 
     setParcelasLoading(true);
+    /*
+        const endpointParcelas =
+          usuario.rol === 'productor'
+            ? '/parcelas/mis-parcelas'
+            : usuario.rol === 'tecnico_campo'
+              ? '/parcelas/asignadas'
+              : '/parcelas';
+    */
 
-    const endpointParcelas =
-      usuario.rol === 'productor'
-        ? '/parcelas/mis-parcelas'
-        : usuario.rol === 'tecnico_campo'
-          ? '/parcelas/asignadas'
-          : '/parcelas';
+    const endpointParcelas = '/parcelas';
+
 
     GET(endpointParcelas)
       .then((data: unknown) => {
@@ -497,34 +501,6 @@ export default function ComunidadesPage() {
       activo = false;
     };
   }, []);
-
-  // Cargar municipios reales de comunidades si todavía no están
-  if (municipiosStore.length === 0) {
-    GET('/core/comunidades/municipios')
-      .then((data: unknown) => {
-        if (!Array.isArray(data)) {
-          return;
-        }
-
-        const municipiosValidos = data.filter(
-          (municipio): municipio is Municipio =>
-            typeof municipio === 'object' &&
-            municipio !== null &&
-            'id' in municipio &&
-            typeof (municipio as { id?: unknown }).id === 'number' &&
-            'nombre' in municipio &&
-            typeof (municipio as { nombre?: unknown }).nombre === 'string'
-        );
-
-        setMunicipios(municipiosValidos);
-      })
-      .catch(error => {
-        console.error(
-          'Error al cargar municipios de comunidades:',
-          error
-        );
-      });
-  }
 
   // Adaptar temporalmente las ubicaciones reales al formato
   // que actualmente utiliza MapaHuasteca.
@@ -617,6 +593,10 @@ export default function ComunidadesPage() {
         municipio,
         latitud,
         longitud,
+        tipo_comunidad: comunidad.tipo ?? null,
+        nombre_lengua_orig: comunidad.nombre_lengua_orig ?? null,
+        poblacion_total: comunidad.poblacion_total ?? null,
+        fuente: comunidad.fuente ?? null,
         imagenUrl: null,
         poligono: null,
       });

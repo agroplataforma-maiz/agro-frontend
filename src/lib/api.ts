@@ -81,7 +81,17 @@ async function api<T = unknown>(path: string, opts: ApiOptions = {}): Promise<T>
       const redirect = encodeURIComponent(window.location.pathname)
       window.location.href = `/login?redirect=${redirect}&expired=1`
     }
-    throw new Error(err.detail || `Error ${res.status}`)
+    const detail = err?.detail
+
+if (typeof detail === 'string') {
+  throw new Error(detail)
+}
+
+if (detail != null) {
+  throw new Error(JSON.stringify(detail))
+}
+
+throw new Error(`Error ${res.status}`)
   }
 
   if (res.status === 204) return null as T

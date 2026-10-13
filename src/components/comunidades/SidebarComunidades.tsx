@@ -147,6 +147,7 @@ export default function SidebarComunidades({
                 </Button>
 
                 {municipiosMapa.map(municipio => (
+
                   <button
                     key={municipio}
                     type="button"
@@ -171,116 +172,133 @@ export default function SidebarComunidades({
               PARTE INFERIOR:
               municipios + parcelas
               ===================================================== */}
+
           <div className={styles.listaComunidades}>
 
-            {municipiosMapa.map(municipio => {
+            {ubicacionesFiltradas.length === 0 ? (
+              <p className={styles.sinUbicaciones}>
+                {municipioFiltro !== 'todos'
+                  ? `No existen ubicaciones en el municipio de ${municipioFiltro}.`
+                  : busqueda.trim()
+                    ? 'No hay ubicaciones que coincidan con la búsqueda.'
+                    : 'No existen ubicaciones georreferenciadas.'}
+              </p>
+            ) : (
+              municipiosMapa.map(municipio => {
 
-              const puntosMunicipio = ubicacionesFiltradas.filter(
-                p => p.municipio === municipio
-              );
+                const puntosMunicipio = ubicacionesFiltradas.filter(
+                  p => p.municipio === municipio
+                );
 
-              const municipioActivo = puntosMunicipio.some(
-                p => p.id === puntoActivoId
-              );
+                // No mostrar municipios sin puntos que coincidan con la búsqueda.
+                if (puntosMunicipio.length === 0) {
+                  return null;
+                }
 
-              return (
-                <div
-                  key={municipio}
-                  className={
-                    municipioActivo
-                      ? styles.municipioBoxActivo
-                      : styles.municipioBox
-                  }
-                >
+                const municipioActivo = puntosMunicipio.some(
+                  p => p.id === puntoActivoId
+                );
 
+                return (
                   <div
+                    key={municipio}
                     className={
                       municipioActivo
-                        ? styles.municipioHeaderActivo
-                        : styles.municipioHeader
+                        ? styles.municipioBoxActivo
+                        : styles.municipioBox
                     }
-                    tabIndex={0}
-                    role="button"
-                    aria-pressed={municipioActivo}
-                    onClick={() => {
-                      const first = puntosMunicipio[0];
+                  >
 
-                      if (first) {
-                        setPuntoActivoId(first.id);
+                    <div
+                      className={
+                        municipioActivo
+                          ? styles.municipioHeaderActivo
+                          : styles.municipioHeader
                       }
-                    }}
-                    onKeyDown={e => {
-                      if (e.key === 'Enter' || e.key === ' ') {
-                        e.preventDefault();
-
+                      tabIndex={0}
+                      role="button"
+                      aria-pressed={municipioActivo}
+                      onClick={() => {
                         const first = puntosMunicipio[0];
 
                         if (first) {
                           setPuntoActivoId(first.id);
                         }
-                      }
-                    }}
-                  >
+                      }}
+                      onKeyDown={e => {
+                        if (e.key === 'Enter' || e.key === ' ') {
+                          e.preventDefault();
 
-                    <span className={styles.municipioNombre}>
-                      {municipio}
-                    </span>
+                          const first = puntosMunicipio[0];
 
-                    <span className={styles.municipioCount}>
-                      {puntosMunicipio.length}{' '}
-                      parcela{puntosMunicipio.length !== 1 ? 's' : ''}
-                    </span>
+                          if (first) {
+                            setPuntoActivoId(first.id);
+                          }
+                        }
+                      }}
+                    >
+
+                      <span className={styles.municipioNombre}>
+                        {municipio}
+                      </span>
+
+                      <span className={styles.municipioCount}>
+                        {puntosMunicipio.length}{' '}
+                        {puntosMunicipio.length === 1 ? 'punto' : 'puntos'}
+                      </span>
+
+                    </div>
+
+                    <ul className={styles.comunidadesList}>
+
+                      {puntosMunicipio.map(punto => (
+                        <li
+                          key={punto.id}
+                          className={
+                            puntoActivoId === punto.id
+                              ? styles.comunidadItemActivo
+                              : styles.comunidadItem
+                          }
+                          tabIndex={0}
+                          role="button"
+                          aria-pressed={puntoActivoId === punto.id}
+                          onClick={() => setPuntoActivoId(punto.id)}
+                          onKeyDown={e => {
+                            if (e.key === 'Enter' || e.key === ' ') {
+                              e.preventDefault();
+                              setPuntoActivoId(punto.id);
+                            }
+                          }}
+                        >
+
+                          <span className={styles.comunidadIcono}>
+                            {punto.tipo === 'comunidad' ? '🏘️' : '📍'}
+                          </span>
+
+                          <NombreComunidad
+                            nombre={punto.comunidad}
+                          />
+
+                          {/*<span className={styles.comunidadMunicipio}>
+                  {punto.municipio}
+                </span>*/}
+
+                          {/*<small className={styles.comunidadCoords}>
+                  {punto.latitud.toFixed(6)}, {punto.longitud.toFixed(6)}
+                </small>*/}
+
+                        </li>
+                      ))}
+
+                    </ul>
 
                   </div>
-
-                  <ul className={styles.comunidadesList}>
-
-                    {puntosMunicipio.map(punto => (
-                      <li
-                        key={punto.id}
-                        className={
-                          puntoActivoId === punto.id
-                            ? styles.comunidadItemActivo
-                            : styles.comunidadItem
-                        }
-                        tabIndex={0}
-                        role="button"
-                        aria-pressed={puntoActivoId === punto.id}
-                        onClick={() => setPuntoActivoId(punto.id)}
-                        onKeyDown={e => {
-                          if (e.key === 'Enter' || e.key === ' ') {
-                            e.preventDefault();
-                            setPuntoActivoId(punto.id);
-                          }
-                        }}
-                      >
-
-                        <span className={styles.comunidadIcono}>
-                          {punto.tipo === 'comunidad' ? '🏘️' : '📍'}
-                        </span>
-
-                        <NombreComunidad
-                          nombre={punto.comunidad}
-                        />
-
-                        <span className={styles.comunidadMunicipio}>
-                          {punto.municipio}
-                        </span>
-
-                        <small className={styles.comunidadCoords}>
-                          {punto.latitud.toFixed(6)}, {punto.longitud.toFixed(6)}
-                        </small>
-
-                      </li>
-                    ))}
-
-                  </ul>
-
-                </div>
-              );
-            })}
+                );
+              })
+            )}
 
           </div>
+
 
         </aside>
       )}

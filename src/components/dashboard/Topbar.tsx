@@ -104,9 +104,10 @@ export const Topbar: React.FC<TopbarProps> = ({
 
   const { data: notifs = [] } = useQuery<Notificacion[]>({
     queryKey: ['notificaciones'],
-    queryFn: () => GET<Notificacion[]>('/sociales/notificaciones'),
-    refetchInterval: 60_000,   // refresca cada minuto
-    staleTime:       30_000,
+    queryFn: () => GET<Notificacion[]>('/social/notificaciones'),
+    //refetchInterval: 60_000,   // refresca cada minuto
+    //staleTime:       30_000,
+    enabled: false, // Desactivado temporalmente hasta que exista el endpoint
     retry: false,              // no reintentar si el endpoint aún no existe
   });
 

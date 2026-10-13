@@ -1,0 +1,753 @@
+
+/* src/app/germoplasma/[id]/ficha.module.css */
+
+.page {
+  min-height: 100vh;
+  padding: 28px clamp(16px, 3vw, 36px) 48px;
+  background: var(--crema);
+  color: var(--tierra);
+  font-family: 'Nunito', sans-serif;
+}
+
+.page * {
+  box-sizing: border-box;
+}
+
+.header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-bottom: 24px;
+}
+
+.volver {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin-bottom: 22px;
+  color: var(--verde);
+  text-decoration: none;
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.volver:hover {
+  color: var(--maiz);
+}
+
+.etiqueta {
+  display: block;
+  margin-bottom: 8px;
+  color: var(--maiz);
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.header h1 {
+  margin: 0;
+  color: var(--tierra);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: clamp(28px, 3vw, 40px);
+  font-weight: 400;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
+}
+
+.subtitulo {
+  margin-top: 9px;
+  color: var(--gris);
+  font-size: 12px;
+  line-height: 1.6;
+}
+
+.navegacion {
+  display: flex;
+  gap: 22px;
+  overflow-x: auto;
+  margin-bottom: 18px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.navegacion a {
+  flex: 0 0 auto;
+  padding: 0 2px 12px;
+  color: var(--gris);
+  font-size: 12px;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+}
+
+.navegacion a:hover,
+.navegacion a:focus-visible {
+  color: var(--verde);
+  border-bottom-color: var(--maiz);
+}
+
+/* Distribución principal inspirada en Figma */
+.gridFicha {
+  display: grid;
+  grid-template-columns: minmax(0, 1.45fr) minmax(270px, 0.72fr);
+  gap: 16px;
+  align-items: stretch;
+}
+
+.panel {
+  min-width: 0;
+  overflow: hidden;
+  background: var(--blanco);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  box-shadow: var(--sombra-sm);
+}
+
+.panelTitulo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  padding: 21px 24px 0;
+}
+
+.panelTitulo h2 {
+  margin: 4px 0 0;
+  color: var(--tierra);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 21px;
+  font-weight: 400;
+}
+
+.panelTitulo p {
+  margin-top: 5px;
+  color: var(--gris);
+  font-size: 12px;
+}
+
+.codigo {
+  display: inline-flex;
+  align-items: center;
+  max-width: 100%;
+  padding: 7px 10px;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  background: var(--crema);
+  color: var(--verde);
+  font-family: 'DM Mono', monospace;
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* Datos en cuadrícula */
+.datosGrid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 24px;
+  padding: 12px 24px 22px;
+}
+
+.dato {
+  min-width: 0;
+  padding: 14px 0;
+  border-bottom: 1px solid var(--borde);
+}
+
+.dato span {
+  display: block;
+  margin-bottom: 6px;
+  color: var(--gris);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+.dato strong {
+  display: block;
+  color: var(--tierra);
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.55;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+}
+
+.dato small {
+  display: block;
+  margin-top: 4px;
+  color: var(--gris);
+  font-size: 11px;
+  overflow-wrap: anywhere;
+}
+
+/* Tarjetas que acompañan a la identificación */
+.columnaDerecha {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  min-width: 0;
+}
+
+.columnaDerecha .panel {
+  flex: 0 0 auto;
+}
+
+
+.panelIdentidad {
+  display: grid;
+  grid-template-columns: minmax(0, 0.95fr) minmax(0, 1.05fr);
+  min-height: 330px;
+}
+
+.visualMuestra {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  justify-content: flex-start;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--verde-pal);
+  border-right: 1px solid var(--borde);
+}
+
+/* Se desactivan los círculos decorativos para despejar la fotografía */
+.visualMuestra::before,
+.visualMuestra::after {
+  content: none;
+}
+
+/* La galería ocupa todo el ancho disponible */
+.visualMuestra .galeriaImagenes {
+  position: relative;
+  z-index: 1;
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  gap: 0;
+}
+
+/* El encabezado con el identificador */
+.encabezadoMuestra {
+  position: relative;
+  z-index: 1;
+  padding: 18px 20px 14px;
+  border-bottom: 1px solid var(--borde);
+}
+
+.identificadorMuestra {
+  display: block;
+  color: var(--verde);
+  font-size: clamp(14px, 1.4vw, 18px);
+  font-weight: 800;
+  line-height: 1.4;
+  overflow-wrap: anywhere;
+}
+
+/* Pie para el código de accesión */
+.pieMuestra {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-top: auto;
+  padding: 16px 20px 18px;
+  border-top: 1px solid var(--borde);
+}
+
+.pieMuestra strong {
+  color: var(--verde);
+  font-family: 'DM Mono', monospace;
+  font-size: 13px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+/* El botón ocupa el ancho completo de la galería */
+.visualMuestra .botonImagen {
+  width: 100%;
+  min-width: 0;
+  min-height: 0;
+  padding: 0;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+/* Imagen a ancho completo, manteniendo su proporción original */
+.visualMuestra .imagenPrincipal {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 100%;
+  max-height: none;
+  object-fit: contain;
+}
+
+
+.identidadContenido {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+}
+
+.identidadContenido .datosGrid {
+  flex: 1;
+}
+
+.custodio {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0 20px 20px;
+  padding: 13px;
+  background: var(--crema);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+}
+
+.custodioInfo {
+  min-width: 0;
+}
+
+.custodioInfo span,
+.custodioInfo strong {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.custodioInfo span {
+  margin-bottom: 4px;
+  color: var(--gris);
+  font-size: 10px;
+}
+
+.custodioInfo strong {
+  color: var(--tierra);
+  font-size: 12px;
+}
+
+
+/* Procedencia y minimapa */
+.minimapa {
+  width: 100%;
+  height: 220px;
+  min-height: 220px;
+  flex-shrink: 0;
+  overflow: hidden;
+  border-top: 1px solid var(--borde);
+  border-bottom: 1px solid var(--borde);
+  background: var(--crema);
+}
+
+.minimapa iframe {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.minimapaVacio {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 160px;
+  padding: 20px;
+  color: var(--gris);
+  background: var(--crema);
+  text-align: center;
+}
+
+.minimapaVacio span {
+  color: var(--tierra);
+  font-size: 13px;
+  font-weight: 700;
+}
+
+.minimapaVacio p {
+  max-width: 300px;
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.5;
+}
+
+@media (max-width: 650px) {
+  .minimapa {
+    height: 200px;
+  }
+}
+
+
+/* Ubicación */
+.enlaceMapa {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 24px 22px;
+  color: var(--verde);
+  font-size: 12px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+.enlaceMapa:hover {
+  color: var(--maiz);
+  text-decoration: underline;
+}
+
+/* Estado y mensajes */
+.estado {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  width: fit-content;
+  max-width: 100%;
+  padding: 5px 9px;
+  border-radius: 20px;
+  background: var(--verde-pal);
+  color: var(--verde);
+  font-size: 11px;
+  font-weight: 700;
+  overflow-wrap: anywhere;
+}
+
+.nota {
+  margin: 0 24px 22px;
+  padding: 12px 14px;
+  background: var(--crema);
+  border-left: 3px solid var(--maiz);
+  border-radius: 0 var(--radio-sm) var(--radio-sm) 0;
+  color: var(--tierra);
+  font-size: 12px;
+  line-height: 1.65;
+  overflow-wrap: anywhere;
+}
+
+.error {
+  padding: 16px;
+  border: 1px solid var(--rojo);
+  border-radius: var(--radio);
+  background: var(--rojo-pal);
+  color: var(--rojo);
+  font-size: 13px;
+}
+
+.pie {
+  margin-top: 20px;
+  color: var(--gris);
+  font-size: 11px;
+  text-align: right;
+}
+
+/* Tarjetas de ancho completo */
+.panelCompleto {
+  grid-column: 1 / -1;
+}
+
+/* Adaptación a tablet */
+@media (max-width: 1000px) {
+  .gridFicha {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .columnaDerecha {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .panelIdentidad {
+    grid-template-columns: minmax(180px, 0.75fr) minmax(0, 1.25fr);
+  }
+}
+
+/* Adaptación a móvil */
+@media (max-width: 650px) {
+  .page {
+    padding: 20px 14px 32px;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  .panelIdentidad {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .visualMuestra {
+    min-height: 0;
+    border-right: 0;
+    border-bottom: 1px solid var(--borde);
+  }
+
+  .encabezadoMuestra {
+    padding: 14px 16px 12px;
+  }
+
+  .pieMuestra {
+    padding: 14px 16px;
+  }
+
+  .columnaDerecha {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .datosGrid {
+    grid-template-columns: minmax(0, 1fr);
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .panelTitulo {
+    padding-right: 18px;
+    padding-left: 18px;
+  }
+
+  .enlaceMapa,
+  .nota {
+    margin-right: 18px;
+    margin-left: 18px;
+  }
+
+  .navegacion {
+    gap: 18px;
+  }
+
+  .pie {
+    text-align: left;
+  }
+}
+
+
+/* Las dos tarjetas inferiores comparten la fila */
+.panelMitad {
+  min-width: 0;
+}
+
+/* Área visual de la accesión */
+.ilustracionMaiz {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-height: 130px;
+  font-size: clamp(4rem, 8vw, 6.5rem);
+  line-height: 1;
+}
+
+/* Ajustes para pantallas pequeñas */
+@media (max-width: 650px) {
+  .panelMitad {
+    grid-column: 1 / -1;
+  }
+
+  .ilustracionMaiz {
+    min-height: 90px;
+  }
+}
+
+
+.galeriaImagenes {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  min-width: 0;
+}
+
+.botonImagen {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  min-height: 200px;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid var(--borde);
+  border-radius: var(--radio);
+  background: var(--crema);
+  cursor: zoom-in;
+}
+
+.imagenPrincipal {
+  display: block;
+  width: 100%;
+  height: 260px;
+  object-fit: contain;
+}
+
+.indicadorAmpliar {
+  position: absolute;
+  right: 10px;
+  bottom: 10px;
+  padding: 6px 10px;
+  color: white;
+  background: rgba(0, 0, 0, 0.65);
+  border-radius: var(--radio-sm);
+  font-size: 0.8rem;
+}
+
+.controlesGaleria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  font-size: 0.85rem;
+}
+
+.controlesGaleria button {
+  padding: 7px 10px;
+  color: var(--verde);
+  background: var(--verde-pal);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+
+.descripcionImagen {
+  margin: 0;
+  color: var(--gris);
+  font-size: 0.85rem;
+}
+
+.sinImagen {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 220px;
+  color: var(--gris);
+  background: var(--crema);
+  border: 1px dashed var(--borde-dark);
+  border-radius: var(--radio);
+  aspect-ratio: 3 / 4;
+  width: 100%;
+}
+
+.sinImagen span {
+  font-size: 4rem;
+}
+
+.sinImagen p {
+  margin: 0;
+  font-size: 0.9rem;
+}
+
+.modalImagen {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(0, 0, 0, 0.82);
+}
+
+.contenidoImagenAmpliada {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: min(100%, 1000px);
+  max-height: 90vh;
+  padding: 18px;
+  color: var(--tierra);
+  background: var(--blanco);
+  border-radius: var(--radio);
+}
+
+.imagenAmpliada {
+  display: block;
+  width: 100%;
+  height: min(70vh, 750px);
+  object-fit: contain;
+}
+
+.contenidoImagenAmpliada p {
+  margin: 0;
+  text-align: center;
+}
+
+.cerrarImagen {
+  align-self: flex-end;
+  padding: 6px 12px;
+  color: var(--tierra);
+  background: var(--crema);
+  border: 1px solid var(--borde);
+  border-radius: var(--radio-sm);
+  cursor: pointer;
+}
+
+@media (max-width: 650px) {
+  .imagenPrincipal {
+    height: 220px;
+  }
+
+  .modalImagen {
+    padding: 10px;
+  }
+
+  .contenidoImagenAmpliada {
+    padding: 12px;
+  }
+
+  .imagenAmpliada {
+    height: 65vh;
+  }
+}
+
+/* Espaciado uniforme para encabezados de los paneles */
+.columnaDerecha > .panel > .etiqueta {
+  margin: 20px 24px 8px;
+}
+
+.columnaDerecha > .panel > .datosGrid {
+  padding-top: 8px;
+}
+
+@media (max-width: 650px) {
+  .columnaDerecha > .panel > .etiqueta {
+    margin: 18px 18px 8px;
+  }
+}
+
+/* Encabezados de Caracterización, Custodia y Registro */
+.panel > .etiqueta {
+  margin: 20px 24px 8px;
+}
+
+@media (max-width: 650px) {
+  .panel > .etiqueta {
+    margin: 18px 18px 8px;
+  }
+}
+
+/* Espaciado uniforme para títulos de las tarjetas */
+.panel > h2 {
+  margin: 4px 24px 12px;
+}
+
+/* En las tarjetas inferiores, el título mantiene
+   la misma alineación que el contenido */
+.panelMitad > h2 {
+  margin-left: 24px;
+  margin-right: 24px;
+}
+
+@media (max-width: 650px) {
+  .panel > h2 {
+    margin-left: 18px;
+    margin-right: 18px;
+  }
+}

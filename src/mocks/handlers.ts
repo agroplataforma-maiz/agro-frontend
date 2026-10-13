@@ -460,6 +460,6 @@ export const handlers = [
     }),
   ),
 
-  http.get('*/core/comunidad', () => HttpResponse.json(MOCK_COMUNIDADES)),
+  http.get('*/core/comunidades', () => HttpResponse.json(MOCK_COMUNIDADES)),
   http.get('*/core/productor', () => HttpResponse.json(MOCK_PRODUCTORES)),
 ]

@@ -7,9 +7,13 @@ import { useMedioParcela, type MedioParcela } from '@/hooks/useMedioParcela';
 import styles from './MapaHuastecaMapLibreClient.module.css';
 import PopupParcela from "./PopupParcela";
 import PopupMedio from './PopupMedio';
+import PopupComunidad from './PopupComunidad';
 import ListaPuntosCercanos from './ListaPuntosCercanos';
 import type { ExpressionSpecification } from 'maplibre-gl';
 import '@/lib/maplibre';
+
+import { useGermoplasmaMapa, type GermoplasmaMapa } from '@/hooks/useGermoplasmaMapa';
+import PopupGermoplasma from './PopupGermoplasma';
 
 // ─── Tipos ────────────────────────────────────────────────────────────────────
 
@@ -28,6 +32,13 @@ interface PuntoMapaHuasteca {
   tenencia?: string | null;
   topografia?: string | null;
   densidad_plantas_ha?: number | null;
+
+  // Comunidad
+  tipo_comunidad?: string | null;
+  nombre_lengua_orig?: string | null;
+  poblacion_total?: number | null;
+  fuente?: string | null;
+  presencia_maiz_nativo?: boolean | null;
 }
 
 interface PopupInfo extends PuntoMapaHuasteca {
@@ -37,12 +48,13 @@ interface PopupInfo extends PuntoMapaHuasteca {
 export interface ElementoMapa {
   key: string;
   id: number | string;
-  tipo: 'parcela' | 'comunidad' | 'medio';
+  tipo: 'parcela' | 'comunidad' | 'medio' | 'germoplasma';
   nombre: string;
   latitud: number;
   longitud: number;
   punto?: PuntoMapaHuasteca;
   medio?: MedioParcela;
+  germoplasma?: GermoplasmaMapa;
 }
 
 interface MunicipiosGeoJson {
@@ -159,6 +171,47 @@ function fitMapToMedio(
 
   if (
     !Number.isFinite(lat) ||
+    !Number.isFinite(lng)
+  ) {
+    return;
+  }
+
+  mapRef.current?.flyTo({
+    center: [lng, lat],
+    zoom: 18,
+    duration: 800,
+  });
+}
+
+function fitMapToComunidad(
+  mapRef: React.MutableRefObject<MapRef | null>,
+  punto: PuntoMapaHuasteca
+) {
+  if (
+    !Number.isFinite(punto.latitud) ||
+    !Number.isFinite(punto.longitud)
+  ) {
+    return;
+  }
+
+  mapRef.current?.flyTo({
+    center: [punto.longitud, punto.latitud],
+    zoom: 18,
+    duration: 800,
+  });
+}
+
+function fitMapToGermoplasma(
+  mapRef: React.MutableRefObject<MapRef | null>,
+  germoplasma: GermoplasmaMapa,
+) {
+  const lat = germoplasma.ubicacion?.latitud;
+  const lng = germoplasma.ubicacion?.longitud;
+
+  if (
+    typeof lat !== 'number' ||
+    !Number.isFinite(lat) ||
+    typeof lng !== 'number' ||
     !Number.isFinite(lng)
   ) {
     return;
@@ -329,6 +382,8 @@ const MapaHuastecaMaplibreClient: React.FC<
 
     // ─── Estado del mapa ────────────────────────────────────────────────────────
 
+    const { data: germoplasmas = [] } = useGermoplasmaMapa();
+
     const {
       data: mediosParcela = [],
     } = useMedioParcela();
@@ -343,15 +398,39 @@ const MapaHuastecaMaplibreClient: React.FC<
       [puntos]
     );
 
+    const [showGermoplasma, setShowGermoplasma] = useState(false);
+    const [germoplasmaPopup, setGermoplasmaPopup] =
+      useState<GermoplasmaMapa | null>(null);
+
     const mediosVisibles = useMemo(
       () =>
-        mediosParcela.filter((medio) =>
-          idsParcelasPermitidas.has(
-            String(medio.parcela_id)
-          )
-        ),
-      [mediosParcela, idsParcelasPermitidas]
+        mediosParcela.filter((medio) => {
+          const latitud = medio.ubicacion?.latitud;
+          const longitud = medio.ubicacion?.longitud;
+
+          return (
+            Number.isFinite(latitud) &&
+            Number.isFinite(longitud)
+          );
+        }),
+      [mediosParcela]
     );
+
+    const germoplasmasVisibles = useMemo(() => {
+      if (!showGermoplasma) return [];
+
+      return germoplasmas.filter((germoplasma) => {
+        const lat = germoplasma.ubicacion?.latitud;
+        const lng = germoplasma.ubicacion?.longitud;
+
+        return (
+          typeof lat === 'number' &&
+          Number.isFinite(lat) &&
+          typeof lng === 'number' &&
+          Number.isFinite(lng)
+        );
+      });
+    }, [germoplasmas, showGermoplasma]);
 
     const [municipiosGeoJson, setMunicipiosGeoJson] =
       useState<MunicipiosGeoJson | null>(null);
@@ -432,9 +511,11 @@ const MapaHuastecaMaplibreClient: React.FC<
       [puntos]
     );
 
+
     const elementosMapa = useMemo<ElementoMapa[]>(() => {
       const elementos: ElementoMapa[] = [];
 
+      // Parcelas y comunidades
       puntosValidos.forEach((punto) => {
         const tipoPunto = punto.tipo ?? 'parcela';
 
@@ -449,12 +530,18 @@ const MapaHuastecaMaplibreClient: React.FC<
         });
       });
 
+      // Fotografías y medios de parcela
       if (showMediosParcela) {
         mediosVisibles.forEach((medio) => {
           const latitud = medio.ubicacion?.latitud;
           const longitud = medio.ubicacion?.longitud;
 
-          if (!Number.isFinite(latitud) || !Number.isFinite(longitud)) {
+          if (
+            typeof latitud !== 'number' ||
+            !Number.isFinite(latitud) ||
+            typeof longitud !== 'number' ||
+            !Number.isFinite(longitud)
+          ) {
             return;
           }
 
@@ -475,8 +562,45 @@ const MapaHuastecaMaplibreClient: React.FC<
         });
       }
 
+      // Germoplasma: capa independiente
+      if (showGermoplasma) {
+        germoplasmasVisibles.forEach((germoplasma) => {
+          const latitud = germoplasma.ubicacion?.latitud;
+          const longitud = germoplasma.ubicacion?.longitud;
+
+          if (
+            typeof latitud !== 'number' ||
+            !Number.isFinite(latitud) ||
+            typeof longitud !== 'number' ||
+            !Number.isFinite(longitud)
+          ) {
+            return;
+          }
+
+          elementos.push({
+            key: `germoplasma-${germoplasma.id}`,
+            id: germoplasma.id,
+            tipo: 'germoplasma',
+            nombre:
+              germoplasma.nombre_local ||
+              germoplasma.codigo_accesion ||
+              'Germoplasma',
+            latitud,
+            longitud,
+            germoplasma,
+          });
+        });
+      }
+
       return elementos;
-    }, [puntosValidos, mediosVisibles, showMediosParcela]);
+    }, [
+      puntosValidos,
+      mediosVisibles,
+      showMediosParcela,
+      germoplasmasVisibles,
+      showGermoplasma,
+    ]);
+
 
     // ─── Medios de parcela como GeoJSON ─────────────────────────────────────────
 
@@ -801,47 +925,27 @@ const MapaHuastecaMaplibreClient: React.FC<
         return;
       }
 
+
       setPopupInfo(null);
 
-      const map =
-        mapRef.current?.getMap?.();
+      setPopupInfo({
+        id: String(
+          municipioFeature.properties
+            ?.municipio_key ??
+          municipioFeature.properties
+            ?.municipio ??
+          'municipio'
+        ),
+        comunidad: '',
+        municipio: String(
+          municipioFeature.properties
+            ?.municipio ?? ''
+        ),
+        latitud: lat,
+        longitud: lng,
+        idx: 0,
+      });
 
-      const openPopup = () =>
-        setPopupInfo({
-          id: String(
-            municipioFeature.properties
-              ?.municipio_key ??
-            municipioFeature.properties
-              ?.municipio ??
-            'municipio'
-          ),
-          comunidad: '',
-          municipio: String(
-            municipioFeature.properties
-              ?.municipio ?? ''
-          ),
-          latitud: lat,
-          longitud: lng,
-          idx: 0,
-        });
-
-      if (map) {
-        map.once(
-          'moveend',
-          openPopup
-        );
-
-        map.easeTo({
-          center: [lng, lat],
-          duration: 400,
-          zoom: Math.max(
-            map.getZoom(),
-            11
-          ),
-        });
-      } else {
-        openPopup();
-      }
     };
 
     // ─── Handler: medios de parcela ─────────────────────────────────────────────
@@ -907,6 +1011,8 @@ const MapaHuastecaMaplibreClient: React.FC<
       setCirculoSeleccion(null);
       setPopupInfo(null);
       setActiveId(null);
+      setGermoplasmaPopup(null);
+      setMedioPopup(null);
     };
 
     const abrirPopupDeElemento = (
@@ -928,6 +1034,7 @@ const MapaHuastecaMaplibreClient: React.FC<
         elemento.punto
       ) {
         setMedioPopup(null);
+        setGermoplasmaPopup(null);
         setActiveId(elemento.punto.id);
 
         setPopupInfo({
@@ -937,6 +1044,14 @@ const MapaHuastecaMaplibreClient: React.FC<
 
         onSelectPoint?.(elemento.punto.id);
 
+        return;
+      }
+
+      if (elemento.tipo === 'germoplasma' && elemento.germoplasma) {
+        setPopupInfo(null);
+        setActiveId(null);
+        setMedioPopup(null);
+        setGermoplasmaPopup(elemento.germoplasma);
         return;
       }
 
@@ -1590,21 +1705,46 @@ const MapaHuastecaMaplibreClient: React.FC<
               Carreteras principales
             </label>
 
-            <label>
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 4,
+                cursor: 'pointer',
+              }}
+            >
               <input
                 type="checkbox"
-                checked={
-                  showMediosParcela
-                }
+                checked={showMediosParcela}
                 onChange={(e) =>
-                  setShowMediosParcela(
-                    e.target.checked
-                  )
+                  setShowMediosParcela(e.target.checked)
                 }
               />
 
               Fotos y medios de parcela
             </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 4,
+                cursor: 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={showGermoplasma}
+                onChange={(e) =>
+                  setShowGermoplasma(e.target.checked)
+                }
+              />
+
+              Germoplasma
+            </label>
+
 
             <label
               style={{
@@ -1913,6 +2053,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                     zIndex: 10,
                   }}
                 >
+
                   <div
                     title={
                       medio.descripcion ||
@@ -1922,7 +2063,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                       'Medio de parcela'
                     }
                     style={{
-                      fontSize: 18,
+                      fontSize: 22,
                       lineHeight: 1,
                       display: 'flex',
                       alignItems: 'center',
@@ -1932,21 +2073,11 @@ const MapaHuastecaMaplibreClient: React.FC<
                     }}
                   >
                     📷
-                    <span
-                      style={{
-                        fontSize: 18,
-                        lineHeight: 1,
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        filter:
-                          'drop-shadow(0 1px 1px rgba(0,0,0,0.25))',
-                      }}
-                    >
-                      📷
-                    </span>
                   </div>
+
+
                 </Marker>
+
               );
             })}
           {/*}
@@ -1978,6 +2109,69 @@ const MapaHuastecaMaplibreClient: React.FC<
               </Source>
             )}
             */}
+
+          {showGermoplasma &&
+            germoplasmasVisibles.map((germoplasma) => {
+              const lat = germoplasma.ubicacion?.latitud;
+              const lng = germoplasma.ubicacion?.longitud;
+
+              if (
+                typeof lat !== 'number' ||
+                !Number.isFinite(lat) ||
+                typeof lng !== 'number' ||
+                !Number.isFinite(lng)
+              ) {
+                return null;
+              }
+
+              return (
+                <Marker
+                  key={`germoplasma-${germoplasma.id}`}
+                  longitude={lng}
+                  latitude={lat}
+                  anchor="center"
+                  onClick={(e) => {
+                    e.originalEvent.stopPropagation();
+
+                    const elemento = elementosMapa.find(
+                      (item) =>
+                        item.tipo === 'germoplasma' &&
+                        item.id === germoplasma.id,
+                    );
+
+                    if (elemento) {
+                      seleccionarElementoContextual(elemento);
+                    } else {
+                      setPopupInfo(null);
+                      setMedioPopup(null);
+                      setGermoplasmaPopup(germoplasma);
+                    }
+                  }}
+                  style={{ cursor: 'pointer', zIndex: 11 }}
+                >
+
+                  <div
+                    title={`Germoplasma: ${germoplasma.nombre_local ||
+                      germoplasma.codigo_accesion
+                      }`}
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      background: 'transparent',
+                      border: 'none',
+                      boxShadow: 'none',
+                      fontSize: 26,
+                      lineHeight: 1,
+                      cursor: 'pointer',
+                    }}
+                  >
+                    🌽
+                  </div>
+
+                </Marker>
+              );
+            })}
 
           {/* Ubicación actual del usuario */}
           {ubicacionUsuario && (
@@ -2089,29 +2283,6 @@ const MapaHuastecaMaplibreClient: React.FC<
                       >
                         {punto.tipo === 'comunidad' ? '🏘️' : '📍'}
                       </span>
-                      {/* Ícono grano de maíz */}
-                      {/*
-                      <svg
-                        width={Math.round(
-                          size * 0.5
-                        )}
-                        height={Math.round(
-                          size * 0.6
-                        )}
-                        viewBox="0 0 12 16"
-                        fill="none"
-                      >
-                        <ellipse
-                          cx="6"
-                          cy="8"
-                          rx="5"
-                          ry="7"
-                          fill="#FFD600"
-                          stroke="#C8820A"
-                          strokeWidth="1.5"
-                        />
-                      </svg>
-                      */}
                     </div>
                   </Marker>
                 );
@@ -2130,26 +2301,35 @@ const MapaHuastecaMaplibreClient: React.FC<
                 zIndex: 3005,
               }}
             >
-              <PopupParcela
-                info={popupInfo}
-                onClose={() => {
-                  setPopupInfo(null);
-                  setCirculoSeleccion(null);
-                }}
-                onAcercar={() => {
-                  const polygon =
-                    wktPolygonToGeoJSON(
+              {popupInfo.tipo === 'comunidad' ? (
+                <PopupComunidad
+                  info={popupInfo}
+                  onClose={() => {
+                    setPopupInfo(null);
+                    setCirculoSeleccion(null);
+                  }}
+                  onAcercar={() => {
+                    fitMapToComunidad(mapRef, popupInfo);
+                  }}
+                />
+              ) : (
+                <PopupParcela
+                  info={popupInfo}
+                  onClose={() => {
+                    setPopupInfo(null);
+                    setCirculoSeleccion(null);
+                  }}
+                  onAcercar={() => {
+                    const polygon = wktPolygonToGeoJSON(
                       popupInfo.poligono!
                     );
 
-                  if (polygon) {
-                    fitMapToPolygon(
-                      mapRef,
-                      polygon
-                    );
-                  }
-                }}
-              />
+                    if (polygon) {
+                      fitMapToPolygon(mapRef, polygon);
+                    }
+                  }}
+                />
+              )}
             </div>
           )}
 
@@ -2201,6 +2381,61 @@ const MapaHuastecaMaplibreClient: React.FC<
               />
             </div>
           )}
+
+
+          {/* Popup de germoplasma */}
+          {germoplasmaPopup && (
+            <div
+              style={{
+                position: 'absolute',
+
+                top: isMobile
+                  ? 'auto'
+                  : 'calc(var(--topbar-h, 64px) + 60px)',
+
+                bottom: isMobile
+                  ? 'calc(var(--topbar-h, 64px) + 144px)'
+                  : 'auto',
+
+                right: isMobile
+                  ? 'auto'
+                  : 248,
+
+                left: isMobile
+                  ? '50%'
+                  : 'auto',
+
+                transform: isMobile
+                  ? 'translateX(-50%)'
+                  : 'none',
+
+                width: isMobile
+                  ? 'min(340px, calc(100vw - 24px))'
+                  : 340,
+
+                maxWidth: 'calc(100vw - 48px)',
+                zIndex: 3005,
+              }}
+            >
+              <PopupGermoplasma
+                germoplasma={germoplasmaPopup}
+                latitud={germoplasmaPopup.ubicacion!.latitud!}
+                longitud={germoplasmaPopup.ubicacion!.longitud!}
+                isMobile={isMobile}
+                onClose={() => {
+                  setGermoplasmaPopup(null);
+                  setCirculoSeleccion(null);
+                }}
+                onAcercar={() => {
+                  fitMapToGermoplasma(
+                    mapRef,
+                    germoplasmaPopup,
+                  );
+                }}
+              />
+            </div>
+          )}
+
         </Map>
 
         {/* Popup móvil */}
@@ -2258,26 +2493,35 @@ const MapaHuastecaMaplibreClient: React.FC<
                     width: '100%',
                   }}
                 >
-                  <PopupParcela
-                    info={popupInfo}
-                    onClose={() => {
-                      setPopupInfo(null);
-                      setCirculoSeleccion(null);
-                    }}
-                    onAcercar={() => {
-                      const polygon =
-                        wktPolygonToGeoJSON(
+                  {popupInfo.tipo === 'comunidad' ? (
+                    <PopupComunidad
+                      info={popupInfo}
+                      onClose={() => {
+                        setPopupInfo(null);
+                        setCirculoSeleccion(null);
+                      }}
+                      onAcercar={() => {
+                        fitMapToComunidad(mapRef, popupInfo);
+                      }}
+                    />
+                  ) : (
+                    <PopupParcela
+                      info={popupInfo}
+                      onClose={() => {
+                        setPopupInfo(null);
+                        setCirculoSeleccion(null);
+                      }}
+                      onAcercar={() => {
+                        const polygon = wktPolygonToGeoJSON(
                           popupInfo.poligono!
                         );
 
-                      if (polygon) {
-                        fitMapToPolygon(
-                          mapRef,
-                          polygon
-                        );
-                      }
-                    }}
-                  />
+                        if (polygon) {
+                          fitMapToPolygon(mapRef, polygon);
+                        }
+                      }}
+                    />
+                  )}
                 </div>
               </div>
             </div>

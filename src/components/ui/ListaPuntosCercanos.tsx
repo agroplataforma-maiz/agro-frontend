@@ -163,6 +163,8 @@ export default function ListaPuntosCercanos({
                                     ? '🏘️'
                                     : elemento.tipo === 'medio'
                                         ? '📷'
+                                        : elemento.tipo === 'germoplasma'
+                                        ? '🌽'
                                         : '📍'}
                             </span>
 

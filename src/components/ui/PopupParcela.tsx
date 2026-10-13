@@ -77,7 +77,7 @@ export default function PopupParcela({
       </button>
 
       {info.comunidad ? (
-        <>
+        <>{/*
           <div
             style={{
               fontSize: 12,
@@ -88,7 +88,7 @@ export default function PopupParcela({
             }}
           >
             Proyecto territorial
-          </div>
+          </div>*/}
 
           <strong
             style={{

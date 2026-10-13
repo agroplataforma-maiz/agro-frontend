@@ -37,7 +37,7 @@ const SECCIONES: { key: string; emoji: string; label: string; path: (id: string)
 export default function PerfilTecnico({ id, onVolver }: Props) {
   const { data: tecnico, isLoading } = useQuery<TecnicoCampo>({
     queryKey: ['tecnico', id],
-    queryFn:  () => GET(`/core/tecnico/${id}`),
+    //queryFn:  () => GET(`/core/tecnico/${id}`),
   })
 
   if (isLoading) return (

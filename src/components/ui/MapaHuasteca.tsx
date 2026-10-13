@@ -18,6 +18,13 @@ export interface PuntoMapaHuasteca {
   tenencia?: string | null;
   topografia?: string | null;
   densidad_plantas_ha?: number | null;
+
+  // Comunidad
+  tipo_comunidad?: string | null;
+  nombre_lengua_orig?: string | null;
+  poblacion_total?: number | null;
+  presencia_maiz_nativo?: boolean | null;
+  fuente?: string | null;
 }
 
 interface MapaHuastecaProps {

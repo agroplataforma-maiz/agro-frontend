@@ -73,7 +73,7 @@ export interface Comunidad {
   municipio_id: number
   municipio_nombre?: string
 
-  ubicacion_id?: UUID
+  ubicacion_id?: UUID | null
 
   presencia_maiz_nativo?: boolean
   presencia_historica_maiz?: boolean
@@ -272,4 +272,36 @@ export interface OrganizacionMiembro {
   usuario_id: string;
   fecha_ingreso: string;
   activo?: boolean;
+}
+
+export interface Germoplasma {
+  id: UUID;
+  identificador: string
+  codigo_accesion: string;
+  nombre_local: string;
+  nombre_lengua_orig?: string | null;
+  nombre_asignado_productor?: string | null
+  estado?: string
+  raza_id?: number | null;
+  color_grano_id?: number | null;
+  ciclo_vegetativo?: string | null;
+  duracion_dias?: number | null;
+  estado_conservacion_id?: number | null;
+  origen_muestra_id?: number | null;
+  comunidad_id: UUID;
+  ubicacion_id?: UUID | null;
+  tecnico_id?: UUID | null;
+  productor_id?: UUID | null;
+  fuente_id?: number | null;
+  notas?: string | null;
+  fecha_registro?: string | null;
+}
+
+export interface UsuarioGermoplasma {
+    id: string
+    username: string
+    email: string
+    nombre_completo: string
+    rol: string
+    activo: boolean
 }

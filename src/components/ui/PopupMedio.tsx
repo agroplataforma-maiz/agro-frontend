@@ -72,7 +72,7 @@ export default function PopupMedio({
           }}
         >
           <div style={{ paddingRight: 22 }}>
-            <div
+           {/*<div
               style={{
                 fontSize: 12,
                 color: 'var(--maiz)',
@@ -82,7 +82,7 @@ export default function PopupMedio({
               }}
             >
               Medio de parcela
-            </div>
+            </div>*/}
 
             <div
               style={{

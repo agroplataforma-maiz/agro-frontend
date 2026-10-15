@@ -493,6 +493,11 @@ const MapaHuastecaMaplibreClient: React.FC<
     const [showMediosParcela, setShowMediosParcela] =
       useState(false);
 
+
+    const [showParcelas, setShowParcelas] = useState(true);
+    const [showComunidades, setShowComunidades] = useState(true);
+
+
     const [panelCapasAbierto, setPanelCapasAbierto] =
       useState(false);
 
@@ -511,12 +516,24 @@ const MapaHuastecaMaplibreClient: React.FC<
       [puntos]
     );
 
+    const puntosVisibles = useMemo(
+      () =>
+        puntosValidos.filter((punto) => {
+          const tipo = punto.tipo ?? 'parcela';
+
+          if (tipo === 'parcela') return showParcelas;
+          if (tipo === 'comunidad') return showComunidades;
+
+          return false;
+        }),
+      [puntosValidos, showParcelas, showComunidades]
+    );
 
     const elementosMapa = useMemo<ElementoMapa[]>(() => {
       const elementos: ElementoMapa[] = [];
 
-      // Parcelas y comunidades
-      puntosValidos.forEach((punto) => {
+      // Parcelas y comunidades visibles
+      puntosVisibles.forEach((punto) => {
         const tipoPunto = punto.tipo ?? 'parcela';
 
         elementos.push({
@@ -594,7 +611,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
       return elementos;
     }, [
-      puntosValidos,
+      puntosVisibles,
       mediosVisibles,
       showMediosParcela,
       germoplasmasVisibles,
@@ -646,6 +663,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
     const poligonoSeleccionado = useMemo(() => {
       if (
+        !showParcelas ||
         selectedId === null ||
         selectedId === undefined
       ) {
@@ -665,7 +683,7 @@ const MapaHuastecaMaplibreClient: React.FC<
       return wktPolygonToGeoJSON(
         puntoSeleccionado.poligono
       );
-    }, [puntosValidos, selectedId]);
+    }, [puntosValidos, selectedId, showParcelas]);
 
     // ─── Municipio activo ───────────────────────────────────────────────────────
 
@@ -1659,7 +1677,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                 }
               />
 
-              Municipios
+              🏛️ Municipios
             </label>
 
             <label
@@ -1667,6 +1685,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                 display: 'flex',
                 alignItems: 'center',
                 gap: 6,
+                marginBottom: 4,
                 cursor: 'pointer',
               }}
             >
@@ -1680,9 +1699,9 @@ const MapaHuastecaMaplibreClient: React.FC<
                 }
               />
 
-              Envolvente regional
+              𓊆𓊇 Envolvente regional
             </label>
-
+            {/*
             <label
               style={{
                 display: 'flex',
@@ -1703,7 +1722,43 @@ const MapaHuastecaMaplibreClient: React.FC<
               />
 
               Carreteras principales
+            </label>*/}
+
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 4,
+                cursor: 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={showParcelas}
+                onChange={(e) => setShowParcelas(e.target.checked)}
+              />
+              📍 Parcelas
             </label>
+
+            <label
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 6,
+                marginBottom: 4,
+                cursor: 'pointer',
+              }}
+            >
+              <input
+                type="checkbox"
+                checked={showComunidades}
+                onChange={(e) => setShowComunidades(e.target.checked)}
+              />
+              🏘️ Comunidades
+            </label>
+
 
             <label
               style={{
@@ -1721,8 +1776,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                   setShowMediosParcela(e.target.checked)
                 }
               />
-
-              Fotos y medios de parcela
+            📷 Fotos
             </label>
 
             <label
@@ -1741,8 +1795,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                   setShowGermoplasma(e.target.checked)
                 }
               />
-
-              Germoplasma
+              🌽 Germoplasma
             </label>
 
 
@@ -1766,8 +1819,7 @@ const MapaHuastecaMaplibreClient: React.FC<
                   )
                 }
               />
-
-              Terreno 3D
+              ⛰️ Terreno 3D
             </label>
           </div>
         )}
@@ -2074,8 +2126,6 @@ const MapaHuastecaMaplibreClient: React.FC<
                   >
                     📷
                   </div>
-
-
                 </Marker>
 
               );
@@ -2224,7 +2274,7 @@ const MapaHuastecaMaplibreClient: React.FC<
 
           {/* Marcadores de parcelas */}
           {!geoJsonLoading &&
-            puntosValidos.map(
+            puntosVisibles.map(
               (punto, idx) => {
                 if (
                   popupInfo &&

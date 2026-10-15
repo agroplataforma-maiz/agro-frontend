@@ -360,21 +360,21 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
                 <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{ marginLeft: 4 }}>Nuevo</span>
               </button>
               {/* Parcelas */}
-              {/*
+              {
               <button
-                className={styles['sb-item'] + (pathname.startsWith('/admin/parcelas') ? ' ' + styles['active'] : '')}
+                className={styles['sb-item'] + (pathname.startsWith('/parcelas') ? ' ' + styles['active'] : '')}
                 aria-current={pathname.startsWith('/parcelas') ? 'page' : undefined}
                 aria-label="Parcelas"
                 data-tooltip="Parcelas"
                 onClick={() => {
-                  onNavigate('/admin/parcelas')
+                  onNavigate('/parcelas')
                   if (onMobileClose) onMobileClose()
                 }}
               >
                 <span className={styles['sb-item-ico']} aria-hidden="true">🌾</span>
                 <span className={styles['sb-item-txt']}>Parcelas</span>
                 <span className={styles['sb-item-badge'] + ' ' + styles['badge-nuevo']} aria-label="Nuevo" style={{ marginLeft: 4 }}>Nuevo</span>
-              </button>*/}
+              </button>}
               {/* Sociocultural */}
               <button
                 className={
@@ -486,12 +486,12 @@ export const Sidebar: React.FC<SidebarProps> = ({ user, rol, onLogout, onNavigat
 
       {/* En construcción */}
       {puedeCapturar && (
-        <>
+        <>{/*
         <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Parcelas - próximamente" data-tooltip="Parcelas" aria-disabled="true" tabIndex={-1} onClick={() => { }}>
             <span className={styles['sb-item-ico']} aria-hidden="true">🌾</span>
             <span className={styles['sb-item-txt']}>Parcelas</span>
             <span className={styles['sb-item-badge'] + ' ' + styles['badge-pronto']} aria-label="Próximamente">Pronto</span>
-          </button>
+          </button>*/}
           <button className={`${styles['sb-item']} ${styles['disabled']}`} aria-label="Módulo Mapas y SIG - próximamente" data-tooltip="Mapas y SIG" aria-disabled="true" tabIndex={-1} onClick={() => { }}>
             <span className={styles['sb-item-ico']} aria-hidden="true">🗺️</span>
             <span className={styles['sb-item-txt']}>Mapas y SIG</span>

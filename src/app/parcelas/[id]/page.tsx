@@ -601,17 +601,17 @@ export default function FichaParcelaPage() {
     const fotos = medios.filter((m) => Boolean(m.url_temporal))
     const imagenActual = fotos[indiceImagen]
 
-    const abrirMapa = () => {
-        if (coordenadas) {
-            const [lng, lat] = coordenadas
 
-            window.open(
-                `https://www.google.com/maps?q=${lat},${lng}`,
-                '_blank',
-                'noopener,noreferrer'
-            )
-        }
+    const abrirMapa = () => {
+        if (!coordenadas) return
+
+        const [lng, lat] = coordenadas
+
+        router.push(
+            `/comunidades?lat=${lat}&lng=${lng}&tipo=parcela&id=${encodeURIComponent(parcela.id)}`
+        )
     }
+
 
     return (
         <AdminShell contentPadding="0">
@@ -631,9 +631,9 @@ export default function FichaParcelaPage() {
 
                     <h1>{parcela.nombre || 'Parcela sin nombre'}</h1>
 
-                    <p className={styles.subtitulo}>
+                    {/*<p className={styles.subtitulo}>
                         ID: {parcela.id}
-                    </p>
+                    </p>*/}
                 </header>
 
                 <nav
@@ -709,10 +709,10 @@ export default function FichaParcelaPage() {
                                 valor={parcela.sistema_manejo_id}
                             />
 
-                            <Dato
+                            {/*<Dato
                                 etiqueta="Productor (ID)"
                                 valor={parcela.productor_id}
-                            />
+                            />*/}
 
                             <Dato
                                 etiqueta="Fecha de registro"
@@ -768,14 +768,13 @@ export default function FichaParcelaPage() {
                                         }
                                     />
 
-                                    <Dato
+                                    {/*<Dato
                                         etiqueta="ID de ubicación"
                                         valor={parcela.ubicacion_id}
-                                    />
+                                    />*/}
                                 </div>
 
                                 <div className={styles.mapa}>
-                                    ```tsx
                                     <div className={styles.mapa}>
                                         <MapaUbicacion
                                             lat={coordenadas[1]}
@@ -785,7 +784,6 @@ export default function FichaParcelaPage() {
                                             zoom={geojson ? 15 : 13}
                                         />
                                     </div>
-                                    ```
                                 </div>
 
                                 <button
@@ -793,7 +791,7 @@ export default function FichaParcelaPage() {
                                     className={styles.botonSecundario}
                                     onClick={abrirMapa}
                                 >
-                                    Abrir ubicación en Google Maps ↗
+                                    Ver ubicación en el mapa de comunidades →
                                 </button>
                             </>
                         ) : (

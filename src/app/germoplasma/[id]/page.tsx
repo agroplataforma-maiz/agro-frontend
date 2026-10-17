@@ -461,6 +461,7 @@ export default function FichaGermoplasmaPage() {
                                         <MapaUbicacion
                                             lat={Number(ubicacion.latitud)}
                                             lng={Number(ubicacion.longitud)}
+                                            interactive
                                         />
                                     </div>
                                     {/*

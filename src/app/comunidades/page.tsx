@@ -2,7 +2,7 @@
 'use client'
 
 import { useState, useEffect, useMemo } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { useAppStore } from '@/store/useAppStore';
 import { GET } from '@/lib/api';
 import ModalComunidad from '@/components/comunidades/ModalComunidad';
@@ -257,6 +257,11 @@ export default function ComunidadesPage() {
 
 
   const router = useRouter();
+
+  const searchParams = useSearchParams();
+
+  const idSeleccionadoUrl = searchParams.get('id');
+  const tipoSeleccionadoUrl = searchParams.get('tipo');
 
   // Ubicaciones reales provenientes del backend
   const [ubicacionesParcela, setUbicacionesParcela] = useState<UbicacionApi[]>([]);
@@ -659,6 +664,15 @@ export default function ComunidadesPage() {
   );
 
   const [puntoActivoId, setPuntoActivoId] = useState<number | string | null>(null);
+
+  // Seleccionar automáticamente la parcela indicada en la URL.
+  useEffect(() => {
+    if (tipoSeleccionadoUrl !== 'parcela' || !idSeleccionadoUrl) {
+      return;
+    }
+
+    setPuntoActivoId(idSeleccionadoUrl);
+  }, [tipoSeleccionadoUrl, idSeleccionadoUrl]);
 
   // Cierra el panel de perfil si se entra a móvil
   useEffect(() => {

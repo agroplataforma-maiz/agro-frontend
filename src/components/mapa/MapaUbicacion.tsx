@@ -141,13 +141,19 @@ export default function MapaUbicacion({
             markerRef.current?.remove()
             markerRef.current = null
         } else {
+            if (!Number.isFinite(lat) || !Number.isFinite(lng)) {
+                return
+            }
+
             if (!markerRef.current) {
                 markerRef.current = new maplibregl.Marker({
                     color: '#2A5C3F',
-                }).addTo(map)
+                })
+                    .setLngLat([lng, lat])
+                    .addTo(map)
+            } else {
+                markerRef.current.setLngLat([lng, lat])
             }
-
-            markerRef.current.setLngLat([lng, lat])
         }
 
         map.flyTo({
